@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="完善功能 班">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,7 +53,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/DOWNLOAD/项目/student/studentDemo/student",
+    "last_opened_file_path": "D:/DOWNLOAD/项目/student/studentDemo/student/src/main/resources/backend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -64,18 +68,18 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend\img" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend\plugins" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\element_ui" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\element\fonts" />
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend" />
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\img" />
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\mapper" />
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\service" />
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\pojo" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\static" />
       <recent name="F:\DOWNLOADS\studentDemo\studentDemo\src\main\resources\static" />
       <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend" />
       <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources" />
       <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\static" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\element" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.student.config" />
@@ -106,8 +110,17 @@
       <workItem from="1687321430357" duration="5000" />
       <workItem from="1687321472026" duration="5000" />
       <workItem from="1687321485564" duration="3000" />
-      <workItem from="1687332602999" duration="65000" />
+      <workItem from="1687332602999" duration="529000" />
+      <workItem from="1687333242424" duration="1898000" />
     </task>
+    <task id="LOCAL-00001" summary="完善功能 班">
+      <created>1687332962216</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1687332962216</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,6 +136,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="完善功能 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="完善功能 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

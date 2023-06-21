@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../backend/plugins/element-ui/index.css">
-    <script src="../backend/plugins/vue/vue.js"></script>
-    <script src="../backend/plugins/element-ui/index.js"></script>
-    <script src="../backend/plugins/axios/axios.min.js"></script>
-    <title>学生添加</title>
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <title>注册</title>
 </head>
 <style>
     .el-input {
@@ -83,8 +83,8 @@
         <el-col :span="12">
           <el-form-item>
             <div class="block">
-              <label>姓名:</label>
-              <el-input v-model="ruleForm.name"></el-input>
+              <label>用户名:</label>
+              <el-input v-model="ruleForm.username"></el-input>
             </div>
           </el-form-item>
         </el-col>
@@ -140,7 +140,14 @@
         created() {
 
         },
-        methods: {}
+        methods: {
+          beforeAvatarUpload(){
+
+          },
+          handleAvatarSuccess(){
+
+          },
+        }
     })
 </script>
 </html>
