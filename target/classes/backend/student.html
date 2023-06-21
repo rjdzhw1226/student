@@ -48,128 +48,87 @@
 <body>
 <div id="app">
   <el-container style="border: 1px solid #eee">
-    <div class="toggle-button" @click="toggleCollapse">
-      <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'">
-      </i>
-    </div>
-    <el-aside :class="[isBin ? 'blockClass' : 'flexClass']" :width="isCollapse ? '60px' : '200px'" style="background-color: rgb(238, 241, 246)">
-      <el-menu router
-               :default-openeds="['1']"
-               :collapse="isCollapse"
-               :collapse-transition="false"
-        >
-
-        <el-submenu index="1">
-          <template slot="title"><i class="el-icon-message"></i><span>学生成绩</span></template>
-          <el-menu-item-group>
-            <template slot="title">成绩分析</template>
-            <el-menu-item index="1-1">各科</el-menu-item>
-            <el-menu-item index="1-3">图表</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-        <el-submenu index="2">
-          <template slot="title"><i class="el-icon-menu"></i><span>导航二</span></template>
-          <el-menu-item-group>
-            <template slot="title">分组一</template>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="2-3">选项3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="2-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title"><i class="el-icon-setting"></i><span>导航三</span></template>
-          <el-menu-item-group>
-            <template slot="title">分组一</template>
-            <el-menu-item index="3-1">选项1</el-menu-item>
-            <el-menu-item index="3-2">选项2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="3-3">选项3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="3-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-      </el-menu>
-    </el-aside>
-
-    <el-container>
-      <el-header style="text-align: right; font-size: 12px">
-        <i class="el-icon-setting" style="margin-right: 15px"></i>
+    <el-header style="text-align: right; font-size: 12px">
+      <el-form :inline="true" class="demo-form-inline" style="margin-top: 10px;">
         <span>{{username}}</span>
-        <el-button @click="addMemberHandle()">新增</el-button>
-      </el-header>
+        <el-form-item label="模糊查询:">
+          <el-input v-model="queryString" ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="query()">查询</el-button>
+          <el-button type="primary" @click="addMemberHandle()">新增</el-button>
+          <el-button type="danger" @click="deleteIds()">批量删除</el-button>
+        </el-form-item>
+      </el-form>
+    </el-header>
 
-      <el-main>
-        <el-table :data="tableData">
-          <el-table-column type="index" align="center" label="序号">
-          </el-table-column>
-          <el-table-column prop="id" label="学号" width="160">
-          </el-table-column>
-          <el-table-column prop="name" label="姓名" width="120">
-          </el-table-column>
-          <el-table-column prop="grade" label="班级" width="120">
-          </el-table-column>
-          <el-table-column prop="phone" label="手机号" width="160">
-          </el-table-column>
-          <el-table-column prop="age" label="年龄" width="120">
-          </el-table-column>
-          <el-table-column prop="gender" label="性别" width="120">
-          </el-table-column>
-          <el-table-column
-                  label="操作"
-                  width="160"
-                  align="center"
-          >
-            <template slot-scope="scope">
-              <el-button
-                      type="text"
-                      size="small"
-                      class="blueBug"
-                      @click="editMemberHandle(scope.row.id)">
-<!--                      :class="{notAdmin:user !== 'admin'}"-->
+    <el-main>
+      <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="50">
+        </el-table-column>
+        <el-table-column type="index" align="center" label="序号">
+        </el-table-column>
+        <el-table-column prop="id" label="学号" width="160">
+        </el-table-column>
+        <el-table-column prop="name" label="姓名" width="120">
+        </el-table-column>
+        <el-table-column prop="grade" label="年级" width="120">
+        </el-table-column>
+        <el-table-column prop="grade_class" label="班级" width="120">
+        </el-table-column>
+        <el-table-column prop="phone" label="手机号" width="160">
+        </el-table-column>
+        <el-table-column prop="age" label="年龄" width="120">
+        </el-table-column>
+        <el-table-column prop="gender" label="性别" width="120">
+        </el-table-column>
+        <el-table-column
+                label="操作"
+                width="160"
+                align="center"
+        >
+          <template slot-scope="scope">
+            <el-button
+                    type="text"
+                    size="small"
+                    class="blueBug"
+                    @click="editMemberHandle(scope.row.id)">
+              <!--                      :class="{notAdmin:user !== 'admin'}"-->
 
-                编辑
-              </el-button>
-              <el-button
-                      type="text"
-                      size="small"
-                      class="greenBug"
-                      @click="deleteMemberHandle(scope.row.id)">
-<!--                      :class="{notAdmin:user !== 'admin'}"-->
+              编辑
+            </el-button>
+            <el-button
+                    type="text"
+                    size="small"
+                    class="greenBug"
+                    @click="deleteMemberHandle(scope.row.id)">
+              <!--                      :class="{notAdmin:user !== 'admin'}"-->
 
-                删除
-              </el-button>
-              <el-button
-                      type="text"
-                      size="small"
-                      class="delBut non"
-                      @click="statusHandle(scope.row)">
-<!--                      v-if="user === 'admin'"-->
+              删除
+            </el-button>
+            <el-button
+                    type="text"
+                    size="small"
+                    class="delBut non"
+                    @click="statusHandle(scope.row)">
+              <!--                      v-if="user === 'admin'"-->
 
-                {{ scope.row.station == '1' ? '禁用' : '启用' }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage4"
-                :page-sizes="[100, 200, 300, 400]"
-                :page-size="100"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="400">
-        </el-pagination>
-      </el-main>
-    </el-container>
+              {{ scope.row.station == '1' ? '启用' : '禁用' }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="pageBean.page"
+              :page-sizes="[5,10,20,50,100]"
+              :page-size="pageBean.size"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total">
+      </el-pagination>
+    </el-main>
+
   </el-container>
   <el-dialog title="添加学生" :visible.sync="outerVisibleAdd">
     <el-form ref="dataAddFormAdd" :model="formDataAdd" :rules="rules" label-position="right" label-width="100px">
@@ -182,7 +141,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="姓名">
+          <el-form-item label="姓名" prop="name">
             <el-input v-model="formDataAdd.name"></el-input>
           </el-form-item>
         </el-col>
@@ -204,8 +163,13 @@
       </el-row>
       <el-row>
         <el-col :span="12">
+          <el-form-item label="年级">
+            <el-input v-model="formDataAdd.grade"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item label="班级">
-            <el-input v-model="formDataAdd.grader"></el-input>
+            <el-input v-model="formDataAdd.grade_class"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -220,11 +184,13 @@
         <el-col :span="12">
           <el-form-item label="状态">
             <el-switch
-                    v-model="formDataAdd.switch_value"
+                    v-model="formDataAdd.station"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
                     active-text="启用"
-                    inactive-text="禁用">
+                    inactive-text="禁用"
+                    active-value=1
+                    inactive-value=0>
             </el-switch>
           </el-form-item>
         </el-col>
@@ -248,7 +214,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="姓名">
+          <el-form-item label="姓名" prop="name">
             <el-input v-model="formDataEdit.name"></el-input>
           </el-form-item>
         </el-col>
@@ -270,8 +236,13 @@
       </el-row>
       <el-row>
         <el-col :span="12">
+          <el-form-item label="年级">
+            <el-input v-model="formDataEdit.grade"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item label="班级">
-            <el-input v-model="formDataEdit.grader"></el-input>
+            <el-input v-model="formDataEdit.grade_class"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -286,11 +257,13 @@
         <el-col :span="12">
           <el-form-item label="状态">
             <el-switch
-                    v-model="formDataEdit.switch_value"
+                    v-model="formDataEdit.station"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
                     active-text="启用"
-                    inactive-text="禁用">
+                    inactive-text="禁用"
+                    active-value=1
+                    inactive-value=0>
             </el-switch>
           </el-form-item>
         </el-col>
@@ -303,6 +276,7 @@
       </el-row>
     </el-form>
   </el-dialog>
+
 </div>
 </body>
 
@@ -311,19 +285,26 @@
     el: '#app',
     data: function() {
       return {
-        isCollapse: false,
-        isBin: true,
+        tableData:[],
+        multipleSelection: [],
+        username:'',
+        queryString:'',
+        editid:'',
+        pageBean:{
+          page:1,
+          size:10
+        },
+        total:0,
         outerVisibleAdd:false,
         outerVisibleEdit:false,
-        tableData:[],
-        formDataAdd:{
-          switch_value:true,
+        formDataAdd:{},
+        formDataEdit:{},
+        rules: {//校验规则
+          name: [
+            { required: true, message: '必填项', trigger: 'blur' },
+            { pattern: /^([\\u4e00-\\u9fa5]{1,20}|[a-zA-Z\\.\\s]{1,20})$/, message: '请输入正确的姓名格式', trigger: 'change' }
+          ]
         },
-        formDataEdit:{
-          switch_value:true,
-        },
-        username:'',
-        currentPage4:'1'
       }
     },
     created() {
@@ -333,27 +314,89 @@
       });
     },
     methods: {
-      toggleCollapse() {
-        this.isCollapse = !this.isCollapse;
-        this.isBin = !this.isBin;
-      },
       findPage() {
-        axios.post("/student/All").then((response)=> {
+        var pageBean = this.pageBean;
+        axios.post("/student/All",pageBean).then((response)=> {
           //为模型数据赋值，基于VUE的双向绑定展示到页面
-          this.tableData = response.data;
+          this.tableData = response.data.data;
+          this.total = response.data.total;
         });
       },
       addMemberHandle(){
         this.outerVisibleAdd=true;
       },
-      editMemberHandle(){
+      editMemberHandle(row){
+        var id = row;
+        this.editid = row;
         this.outerVisibleEdit=true;
+        axios.get("/student/"+id+"").then((response) => {
+          if (String(response.data.code) === '1'){
+            this.formDataEdit = response.data.data;
+            this.formDataEdit.age = parseInt(response.data.data.age);
+          }
+        }).catch(err => {
+          this.$message.error('请求出错了：' + err)
+        })
       },
-      deleteMemberHandle(){
-
+      deleteMemberHandle(id){
+        axios.get("/student/deleteId/"+id+"").then((response) => {
+          if (String(response.data.code) >= 1) {
+            this.$message.success('删除成功！')
+            this.findPage()
+          }
+        }).catch(err => {
+          this.$message.error('请求出错了：' + err)
+        })
       },
-      statusHandle(){
-
+      statusHandle(row){
+        this.id = row.id
+        this.status = row.status
+        var statusBean = {
+          'id': this.id,
+          'station': this.status ? 1 : 0
+        }
+        console.log("statusBean:"+statusBean.station);
+        this.$confirm('确认调整该账号的状态?', '提示', {
+          'confirmButtonText': '确定',
+          'cancelButtonText': '取消',
+          'type': 'warning'
+        }).then(() => {
+          axios.post("/student/status",statusBean).then((response) => {
+            if (String(response.data) === '1') {
+              this.$message.success('账号状态更改成功！')
+              this.findPage()
+            }
+          }).catch(err => {
+            this.$message.error('请求出错了：' + err)
+          })
+        })
+      },
+      handleSizeChange(val){
+        this.pageBean.page = 1;
+        this.pageBean.size = val;
+        this.findPage();
+      },
+      handleCurrentChange(val){
+        this.pageBean.page = val;
+        this.findPage();
+      },
+      handleSelectionChange(val){
+        this.multipleSelection = val;
+      },
+      deleteIds(){
+        var array = [];
+        var multipleSelection = this.multipleSelection;
+        for (let i = 0; i < multipleSelection.length; i++) {
+          array.push(multipleSelection[i].id);
+        }
+        axios.post("/student/deleteIds",array).then((response) => {
+          if (String(response.data.code) >= 1) {
+            this.$message.success('批量删除成功！')
+            this.findPage()
+          }
+        }).catch(err => {
+          this.$message.error('请求出错了：' + err)
+        })
       },
       reset(){
         this.formDataAdd={};
@@ -364,12 +407,59 @@
         this.outerVisibleEdit = false;
       },
       confirmE(){
+        var student = this.formDataEdit;
+        var id = this.editid;
+        axios.post("/student/edit/"+id+"",student).then((response) => {
+          if (String(response.data.code) === '1') {
+            this.$message.success('修改成功！');
+            this.outerVisibleEdit = false;
+            this.findPage()
+          }
+        }).catch(err => {
+          this.$message.error('请求出错了：' + err)
+        })
 
       },
       confirm(){
-
+        var student = this.formDataAdd;
+        axios.post("/student/add",student).then((response)=> {
+          if (String(response.data.code) === '1') {
+            this.$message.success('添加成功！');
+            this.outerVisibleAdd=false;
+            this.findPage();
+          }
+        }).catch(err => {
+          this.$message.error('请求出错了：' + err)
+        });
       },
-
+      query(){
+        var queryStr = this.queryString;
+        var pageBean = this.pageBean;
+        axios.post("/student/query/"+queryStr+"",pageBean).then((response)=>{
+          this.tableData = response.data.data;
+          this.total = response.data.total;
+        })
+      },
+      // 导航栏跳转
+      routhTo(value) {
+        this.$router.push(value);
+        if (value == "/login") {
+          // 退出登录
+          getLogout().then((res) => {
+            if (res.code == 2) {
+              this.$message({
+                message: res.message,
+                type: "success",
+              });
+            } else {
+              this.$message({
+                message: res.message,
+                type: "error",
+              });
+            }
+          });
+        }
+      },
     }
   })
 </script>

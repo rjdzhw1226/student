@@ -1,10 +1,7 @@
 package com.student.mapper;
 
 import com.student.pojo.student;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Map;
@@ -31,4 +28,11 @@ public interface StudentMapper {
     @Update("update student set id=#{studentId},name=#{name},grade=#{grade},grade_class=#{grade_class},phone=#{phone},age=#{age},gender=#{gender},station=#{station} where id=#{idEdit}")
     public int edit(String studentId,String name,String grade,String grade_class,String phone, String age, String gender,String station, String idEdit);
 
+    @Select("select  * from student where name like concat('%',#{queryStr},'%') or id like concat('%',#{queryStr},'%') or phone like concat('%',#{queryStr},'%') limit #{page},#{size}")
+    public List<student> queryLike(String queryStr, Integer page, Integer size);
+    @Select("select count(1) from student where name like concat('%',#{queryStr},'%') or id like concat('%',#{queryStr},'%') or phone like concat('%',#{queryStr},'%')")
+    public int queryCountLike(String queryStr);
+
+    @Delete("delete from student where id = #{id}")
+    public int deleteId(String id);
 }

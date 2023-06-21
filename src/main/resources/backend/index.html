@@ -47,24 +47,12 @@
     margin: 0px;
     height: 100%;
   }
-
-  .app-wrapper {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    overflow-y: hidden;
-    min-width: 1366px;
-    overflow-x: auto;
-    display: flex;
-  }
 </style>
 <body>
 <div id="app">
-  <div class="app-wrapper">
     <el-container style="border: 1px solid #eee">
       <div class="toggle-button" @click="toggleCollapse">
-        <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'">
-        </i>
+        <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></i>
       </div>
       <el-aside :class="[isBin ? 'blockClass' : 'flexClass']" :width="isCollapse ? '0px' : '200px'" style="background-color: rgb(238, 241, 246)">
         <el-menu
@@ -72,12 +60,11 @@
                 :default-active="defAct"
                 :collapse-transition="false"
                 text-color="black"
-                active-text-color="white"
+                active-text-color="blue"
         >
           <div v-for="item in menuList" :key="item.id">
             <el-submenu :index="item.id" v-if="item.children && item.children.length>0">
               <template slot="title">
-                <i class="iconfont" :class="item.icon"></i>
                 <span>{{item.name}}</span>
               </template>
               <el-menu-item
@@ -86,13 +73,11 @@
                       :key="sub.id"
                       @click="menuHandle(sub,false)"
               >
-                <i :class="iconfont" :class="sub.icon"></i>
                 <span slot="title">{{sub.name}}</span>
               </el-menu-item
               >
             </el-submenu>
             <el-menu-item v-else :index="item.id" @click="menuHandle(item,false)">
-              <i class="iconfont" :class="item.icon"></i>
               <span slot="title">{{item.name}}</span>
             </el-menu-item>
           </div>
@@ -128,6 +113,7 @@
       return {
         isCollapse: false,
         isBin: true,
+        defAct:'1',
         menuList: [
           {
             id: '1',
@@ -137,31 +123,26 @@
             id: '2',
             name: '基本信息管理',
             url: 'page/member/list.html',
-            icon: 'icon-member'
           },
           {
             id: '3',
             name: '成绩管理',
             url: 'page/category/list.html',
-            icon: 'icon-category'
           },
           {
             id: '4',
             name: '班级管理',
             url: 'page/food/list.html',
-            icon: 'icon-food'
           },
           {
             id: '5',
             name: '课程管理',
             url: 'page/combo/list.html',
-            icon: 'icon-combo'
           },
           {
             id: '6',
             name: '考试管理',
             url: 'page/order/list.html',
-            icon: 'icon-order'
           }
             ],
           },
@@ -177,6 +158,12 @@
       toggleCollapse() {
         this.isCollapse = !this.isCollapse;
         this.isBin = !this.isBin;
+      },
+      logout(){
+        axios.post("user/")
+      },
+      menuHandle(){
+
       },
     }
   })

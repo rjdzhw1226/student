@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -71,6 +72,41 @@ public class StudentController {
             map.put("code",1);
         }catch (Exception e){
             e.printStackTrace();
+            map.put("code",0);
+        }
+        return map;
+    }
+
+    @RequestMapping("/query/{queryStr}")
+    @ResponseBody
+    public page<student> queryStr(@PathVariable("queryStr") String queryStr, @RequestBody pageBean pageBean){
+        Integer Page = pageBean.getPage();
+        Integer Size = pageBean.getSize();
+        page<student> studentpage = service.queryLike(queryStr, Page, Size);
+        return studentpage;
+    }
+
+    @RequestMapping("/deleteIds")
+    @ResponseBody
+    public Map<String, Object> deleteIds( @RequestBody List<String> array){
+        Map<String, Object> map = new HashMap<>();
+        int i = service.deleteIds(array);
+        if(i>0){
+            map.put("code",1);
+        }else {
+            map.put("code",0);
+        }
+        return map;
+    }
+
+    @RequestMapping("/deleteId/{id}")
+    @ResponseBody
+    public Map<String, Object> deleteId( @PathVariable("id") String id){
+        Map<String, Object> map = new HashMap<>();
+        int i = service.deleteId(id);
+        if(i>0){
+            map.put("code",1);
+        }else {
             map.put("code",0);
         }
         return map;
