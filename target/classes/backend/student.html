@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="plugins/element-ui/index.css">
+  <script src="plugins/vue/vue.js"></script>
+  <script src="plugins/element-ui/index.js"></script>
+  <script src="plugins/axios/axios.min.js"></script>
+  <title>学生后台管理系统</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100%;
+    }
+    .el-header {
+      background-color: #B3C0D1;
+      color: #333;
+      line-height: 60px;
+    }
+
+    .blockClass .el-menu .el-submenu__title .span{
+      display: block;
+    }
+    .flexClass .el-menu .el-submenu__title .span{
+      display: none;
+    }
+    .el-aside {
+
+    }
+    .toggle-button {
+      font-size: 20px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .el-main {
+
+    }
+
+    .el-container {
+      height: 100%;
+    }
+
+  </style>
+</head>
+<body>
+<div id="app">
+  <el-container style="border: 1px solid #eee">
+    <div class="toggle-button" @click="toggleCollapse">
+      <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'">
+      </i>
+    </div>
+    <el-aside :class="[isBin ? 'blockClass' : 'flexClass']" :width="isCollapse ? '60px' : '200px'" style="background-color: rgb(238, 241, 246)">
+      <el-menu router
+               :default-openeds="['1']"
+               :collapse="isCollapse"
+               :collapse-transition="false"
+        >
+
+        <el-submenu index="1">
+          <template slot="title"><i class="el-icon-message"></i><span>学生成绩</span></template>
+          <el-menu-item-group>
+            <template slot="title">成绩分析</template>
+            <el-menu-item index="1-1">各科</el-menu-item>
+            <el-menu-item index="1-3">图表</el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title"><i class="el-icon-menu"></i><span>导航二</span></template>
+          <el-menu-item-group>
+            <template slot="title">分组一</template>
+            <el-menu-item index="2-1">选项1</el-menu-item>
+            <el-menu-item index="2-2">选项2</el-menu-item>
+          </el-menu-item-group>
+          <el-menu-item-group title="分组2">
+            <el-menu-item index="2-3">选项3</el-menu-item>
+          </el-menu-item-group>
+          <el-submenu index="2-4">
+            <template slot="title">选项4</template>
+            <el-menu-item index="2-4-1">选项4-1</el-menu-item>
+          </el-submenu>
+        </el-submenu>
+        <el-submenu index="3">
+          <template slot="title"><i class="el-icon-setting"></i><span>导航三</span></template>
+          <el-menu-item-group>
+            <template slot="title">分组一</template>
+            <el-menu-item index="3-1">选项1</el-menu-item>
+            <el-menu-item index="3-2">选项2</el-menu-item>
+          </el-menu-item-group>
+          <el-menu-item-group title="分组2">
+            <el-menu-item index="3-3">选项3</el-menu-item>
+          </el-menu-item-group>
+          <el-submenu index="3-4">
+            <template slot="title">选项4</template>
+            <el-menu-item index="3-4-1">选项4-1</el-menu-item>
+          </el-submenu>
+        </el-submenu>
+      </el-menu>
+    </el-aside>
+
+    <el-container>
+      <el-header style="text-align: right; font-size: 12px">
+        <i class="el-icon-setting" style="margin-right: 15px"></i>
+        <span>{{username}}</span>
+        <el-button @click="addMemberHandle()">新增</el-button>
+      </el-header>
+
+      <el-main>
+        <el-table :data="tableData">
+          <el-table-column type="index" align="center" label="序号">
+          </el-table-column>
+          <el-table-column prop="id" label="学号" width="160">
+          </el-table-column>
+          <el-table-column prop="name" label="姓名" width="120">
+          </el-table-column>
+          <el-table-column prop="grade" label="班级" width="120">
+          </el-table-column>
+          <el-table-column prop="phone" label="手机号" width="160">
+          </el-table-column>
+          <el-table-column prop="age" label="年龄" width="120">
+          </el-table-column>
+          <el-table-column prop="gender" label="性别" width="120">
+          </el-table-column>
+          <el-table-column
+                  label="操作"
+                  width="160"
+                  align="center"
+          >
+            <template slot-scope="scope">
+              <el-button
+                      type="text"
+                      size="small"
+                      class="blueBug"
+                      @click="editMemberHandle(scope.row.id)">
+<!--                      :class="{notAdmin:user !== 'admin'}"-->
+
+                编辑
+              </el-button>
+              <el-button
+                      type="text"
+                      size="small"
+                      class="greenBug"
+                      @click="deleteMemberHandle(scope.row.id)">
+<!--                      :class="{notAdmin:user !== 'admin'}"-->
+
+                删除
+              </el-button>
+              <el-button
+                      type="text"
+                      size="small"
+                      class="delBut non"
+                      @click="statusHandle(scope.row)">
+<!--                      v-if="user === 'admin'"-->
+
+                {{ scope.row.station == '1' ? '禁用' : '启用' }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage4"
+                :page-sizes="[100, 200, 300, 400]"
+                :page-size="100"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="400">
+        </el-pagination>
+      </el-main>
+    </el-container>
+  </el-container>
+  <el-dialog title="添加学生" :visible.sync="outerVisibleAdd">
+    <el-form ref="dataAddFormAdd" :model="formDataAdd" :rules="rules" label-position="right" label-width="100px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="学号">
+            <el-input v-model="formDataAdd.id"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="姓名">
+            <el-input v-model="formDataAdd.name"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="性别">
+            <el-select v-model="formDataAdd.gender">
+              <el-option label="男" value="男"></el-option>
+              <el-option label="女" value="女"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="手机号">
+            <el-input v-model="formDataAdd.phone"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="班级">
+            <el-input v-model="formDataAdd.grader"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="年龄">
+            <el-slider v-model="formDataAdd.age" show-input></el-slider>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="状态">
+            <el-switch
+                    v-model="formDataAdd.switch_value"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="启用"
+                    inactive-text="禁用">
+            </el-switch>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-form-item>
+          <el-button @click="reset()">取消</el-button>
+          <el-button @click="confirm()">确定</el-button>
+        </el-form-item>
+      </el-row>
+    </el-form>
+  </el-dialog>
+  <el-dialog title="编辑学生" :visible.sync="outerVisibleEdit">
+    <el-form ref="dataAddFormEdit" :model="formDataEdit" :rules="rules" label-position="right" label-width="100px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="学号">
+            <el-input v-model="formDataEdit.id"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="姓名">
+            <el-input v-model="formDataEdit.name"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="性别">
+            <el-select v-model="formDataEdit.gender">
+              <el-option label="男" value="男"></el-option>
+              <el-option label="女" value="女"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="手机号">
+            <el-input v-model="formDataEdit.phone"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="班级">
+            <el-input v-model="formDataEdit.grader"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item label="年龄">
+            <el-slider v-model="formDataEdit.age" show-input></el-slider>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="状态">
+            <el-switch
+                    v-model="formDataEdit.switch_value"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="启用"
+                    inactive-text="禁用">
+            </el-switch>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-form-item>
+          <el-button @click="resetE()">取消</el-button>
+          <el-button @click="confirmE()">确定</el-button>
+        </el-form-item>
+      </el-row>
+    </el-form>
+  </el-dialog>
+</div>
+</body>
+
+<script>
+  new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        isCollapse: false,
+        isBin: true,
+        outerVisibleAdd:false,
+        outerVisibleEdit:false,
+        tableData:[],
+        formDataAdd:{
+          switch_value:true,
+        },
+        formDataEdit:{
+          switch_value:true,
+        },
+        username:'',
+        currentPage4:'1'
+      }
+    },
+    created() {
+      this.findPage();
+      axios.get('/login/getUserName').then((response)=>{
+        this.username = response.data;
+      });
+    },
+    methods: {
+      toggleCollapse() {
+        this.isCollapse = !this.isCollapse;
+        this.isBin = !this.isBin;
+      },
+      findPage() {
+        axios.post("/student/All").then((response)=> {
+          //为模型数据赋值，基于VUE的双向绑定展示到页面
+          this.tableData = response.data;
+        });
+      },
+      addMemberHandle(){
+        this.outerVisibleAdd=true;
+      },
+      editMemberHandle(){
+        this.outerVisibleEdit=true;
+      },
+      deleteMemberHandle(){
+
+      },
+      statusHandle(){
+
+      },
+      reset(){
+        this.formDataAdd={};
+        this.outerVisibleAdd = false;
+      },
+      resetE(){
+        this.formDataEdit={};
+        this.outerVisibleEdit = false;
+      },
+      confirmE(){
+
+      },
+      confirm(){
+
+      },
+
+    }
+  })
+</script>
+</html>

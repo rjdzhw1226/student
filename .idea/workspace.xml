@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="F:\DOWNLOADS\apache-maven-3.6.3-bin\repository" />
+        <option name="mavenHome" value="$PROJECT_DIR$/../../maven3.6.3/apache-maven-3.6.3" />
+        <option name="userSettingsFile" value="F:\DOWNLOADS\apache-maven-3.6.3-bin\apache-maven-3.6.3\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2RPWjrCaQYMMKYKEgE9ivaSOuVl" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/DOWNLOADS/studentDemo/studentDemo/studentDemo&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Facets&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.21954022&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;eef0d89606b091b9d36fd193265f9f25&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend\img" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend\plugins" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\element_ui" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\element\fonts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\DOWNLOADS\studentDemo\studentDemo\src\main\resources\static" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\static" />
+      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\element" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.student.config" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="StudentDemoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="studentDemo" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.student.StudentDemoApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="" />
+      <created>1687152334503</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1687152334503</updated>
+      <workItem from="1687152335763" duration="5045000" />
+      <workItem from="1687162402050" duration="355000" />
+      <workItem from="1687162822604" duration="7049000" />
+      <workItem from="1687223843166" duration="24751000" />
+      <workItem from="1687268394442" duration="6439000" />
+      <workItem from="1687321430357" duration="5000" />
+      <workItem from="1687321472026" duration="5000" />
+      <workItem from="1687321485564" duration="3000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

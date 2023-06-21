@@ -1,0 +1,19 @@
+package com.student.mapper;
+
+import com.student.pojo.student;
+import com.student.pojo.user;
+import com.student.pojo.userDto;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+
+@Mapper
+public interface LoginMapper {
+    @Select("select username, password from user where username = #{username}")
+    public userDto login(String username);
+
+    @Insert("insert into user( id,birthday,gender,username,password,station,telephone) values(#{id},#{birthday},#{gender},#{username},#{password},#{station},#{telephone}) ")
+    public void register(user user);
+}

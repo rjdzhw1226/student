@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="../backend/plugins/element-ui/index.css">
+  <script src="../backend/plugins/vue/vue.js"></script>
+  <script src="../backend/plugins/element-ui/index.js"></script>
+  <script src="../backend/plugins/axios/axios.min.js"></script>
+  <title>注册</title>
+  <style>
+    .box-card {
+      border: 1px solid #EBEEF5;
+      border-radius: 0 50px 0 50px;
+      background-color: #FFF;
+      color: #303133;
+      -webkit-transition: .3s;
+      transition: .3s;
+      width: 400px;
+    }
+    .card {
+      width: auto;
+      border-radius: 0 50px 0 50px;
+      background: rgba(168, 155, 155, 0.6);
+      padding: 20px;
+    }
+    #app {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <el-card class="box-card" shadow="always">
+      <div slot="header" class="clearfix">
+        <span>用户登录</span>
+      </div>
+      <el-card class="card">
+        <el-form label-position="top" ref="dataAddForm" :rules="rules" :model="ruleForm" label-width="100px">
+          <el-form-item label="用户名:" prop="username">
+            <i class="el-icon-loading"></i>
+            <el-input v-model="ruleForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密 码:" prop="password">
+            <i class="el-icon-key"></i>
+            <el-input v-model="ruleForm.password" type="password" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="重复密码:" prop="passwordConfirm" v-if="ruleForm.password != null && ruleForm.password != ''">
+            <i class="el-icon-key"></i>
+            <el-input v-model="ruleForm.passwordConfirm" type="password" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item style="text-align: center;">
+            <el-button @click="reset()">取消</el-button>
+            <el-button @click="confirm()">提交</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </el-card>
+
+  </div>
+</body>
+<script>
+  let number = '';
+  let validatePass = (rule, value, callback) => {
+    if (value === '') {
+      callback(new Error('请输入密码'));
+    } else {
+      number = value;
+      callback();
+    }
+  };
+  let validatePass2 = (rule, value, callback) => {
+    if (value === '') {
+      callback(new Error('请再次输入密码'));
+    } else if (value !== number) {
+      callback(new Error('两次输入密码不一致!'));
+    } else {
+      callback();
+    }
+  };
+
+  new Vue({
+    el: '#app',
+    data:{
+      ruleForm:{},
+      rules: {//校验规则
+        password: [
+          { validator: validatePass, trigger: 'blur'},
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        passwordConfirm: [
+          { validator: validatePass2, trigger: 'blur'},
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        username: [
+          { required: true, message: '必填项', trigger: 'blur' },
+          { pattern: /^([\\u4e00-\\u9fa5]{1,20}|[a-zA-Z\\.\\s]{1,20})$/, message: '请输入正确的姓名格式', trigger: 'change' }
+        ]
+      },
+    },
+    created() {
+
+    },
+    methods: {
+      reset(){
+        var vm = this;
+        vm.ruleForm={};
+      },
+      confirm(){
+        this.$refs['dataAddForm'].validate((valid) =>{
+          if(valid){
+
+          }else {
+
+          }
+        })
+      }
+    }
+  })
+</script>
+</html>
