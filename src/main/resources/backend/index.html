@@ -122,28 +122,35 @@
           {
             id: '2',
             name: '基本信息管理',
-            url: 'page/member/list.html',
+            url: 'student.html',
           },
           {
             id: '3',
             name: '成绩管理',
-            url: 'page/category/list.html',
+            url: 'score.html',
           },
           {
             id: '4',
             name: '班级管理',
-            url: 'page/food/list.html',
+            url: 'class.html',
           },
           {
             id: '5',
             name: '课程管理',
-            url: 'page/combo/list.html',
+            url: 'subject.html',
           },
           {
             id: '6',
             name: '考试管理',
-            url: 'page/order/list.html',
+            url: 'exam.html',
           }
+            ],
+          },
+          {
+            id: '2',
+            name: '老师管理',
+            children: [
+
             ],
           },
         ],
@@ -160,7 +167,9 @@
         this.isBin = !this.isBin;
       },
       logout(){
-        axios.post("user/")
+        axios.post("/login/logout").then((response)=>{
+
+        })
       },
       menuHandle(){
 
