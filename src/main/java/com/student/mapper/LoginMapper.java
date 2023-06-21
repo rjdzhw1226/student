@@ -1,13 +1,10 @@
 package com.student.mapper;
 
-import com.student.pojo.student;
 import com.student.pojo.user;
 import com.student.pojo.userDto;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
 
 @Mapper
 public interface LoginMapper {

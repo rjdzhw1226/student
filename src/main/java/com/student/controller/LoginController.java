@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/login")
@@ -55,7 +54,7 @@ public class LoginController {
 
     @RequestMapping("/getUserName")
     public String getUserName(HttpServletRequest req){
-        userDto user = (com.student.pojo.userDto) req.getSession().getAttribute("user");
+        userDto user = (userDto) req.getSession().getAttribute("user");
         return user.getUsername();
     }
 
