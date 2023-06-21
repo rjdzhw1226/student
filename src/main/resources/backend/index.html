@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="plugins/element-ui/index.css">
+  <script src="plugins/vue/vue.js"></script>
+  <script src="plugins/element-ui/index.js"></script>
+  <script src="plugins/axios/axios.min.js"></script>
+    <title>学生管理系统后台首页</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    height: 100%;
+  }
+  .el-header {
+    background-color: #B3C0D1;
+    color: #333;
+    line-height: 60px;
+  }
+
+  .blockClass .el-menu .el-submenu__title .span{
+    display: block;
+  }
+  .flexClass .el-menu .el-submenu__title .span{
+    display: none;
+  }
+  .el-aside {
+
+  }
+  .toggle-button {
+    font-size: 20px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .el-main {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+  }
+
+  html,body,#app,.el-container{
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+  }
+
+  .app-wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow-y: hidden;
+    min-width: 1366px;
+    overflow-x: auto;
+    display: flex;
+  }
+</style>
+<body>
+<div id="app">
+  <div class="app-wrapper">
+    <el-container style="border: 1px solid #eee">
+      <div class="toggle-button" @click="toggleCollapse">
+        <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'">
+        </i>
+      </div>
+      <el-aside :class="[isBin ? 'blockClass' : 'flexClass']" :width="isCollapse ? '0px' : '200px'" style="background-color: rgb(238, 241, 246)">
+        <el-menu
+                :collapse="isCollapse"
+                :default-active="defAct"
+                :collapse-transition="false"
+                text-color="black"
+                active-text-color="white"
+        >
+          <div v-for="item in menuList" :key="item.id">
+            <el-submenu :index="item.id" v-if="item.children && item.children.length>0">
+              <template slot="title">
+                <i class="iconfont" :class="item.icon"></i>
+                <span>{{item.name}}</span>
+              </template>
+              <el-menu-item
+                      v-for="sub in item.children"
+                      :index="sub.id"
+                      :key="sub.id"
+                      @click="menuHandle(sub,false)"
+              >
+                <i :class="iconfont" :class="sub.icon"></i>
+                <span slot="title">{{sub.name}}</span>
+              </el-menu-item
+              >
+            </el-submenu>
+            <el-menu-item v-else :index="item.id" @click="menuHandle(item,false)">
+              <i class="iconfont" :class="item.icon"></i>
+              <span slot="title">{{item.name}}</span>
+            </el-menu-item>
+          </div>
+        </el-menu>
+      </el-aside>
+      <el-container>
+        <el-header style="text-align: right; font-size: 12px">
+          <img src="img/btn_close@2x.png" style="width: 25px;height: 25px;" class="outLogin" alt="退出" @click="logout" />
+        </el-header>
+        <el-main>
+          <iframe
+                  id="cIframe"
+                  class="c_iframe"
+                  name="cIframe"
+                  :src="iframeUrl"
+                  width="100%"
+                  height="100%"
+                  frameborder="0"
+                  v-show="!loading"
+          ></iframe>
+        </el-main>
+      </el-container>
+
+    </el-container>
+  </div>
+
+</div>
+</body>
+<script>
+  new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        isCollapse: false,
+        isBin: true,
+        menuList: [
+          {
+            id: '1',
+            name: '学生管理',
+            children: [
+          {
+            id: '2',
+            name: '基本信息管理',
+            url: 'page/member/list.html',
+            icon: 'icon-member'
+          },
+          {
+            id: '3',
+            name: '成绩管理',
+            url: 'page/category/list.html',
+            icon: 'icon-category'
+          },
+          {
+            id: '4',
+            name: '班级管理',
+            url: 'page/food/list.html',
+            icon: 'icon-food'
+          },
+          {
+            id: '5',
+            name: '课程管理',
+            url: 'page/combo/list.html',
+            icon: 'icon-combo'
+          },
+          {
+            id: '6',
+            name: '考试管理',
+            url: 'page/order/list.html',
+            icon: 'icon-order'
+          }
+            ],
+          },
+        ],
+        iframeUrl:'student.html',
+        loading: false
+      }
+    },
+    created() {
+
+    },
+    methods: {
+      toggleCollapse() {
+        this.isCollapse = !this.isCollapse;
+        this.isBin = !this.isBin;
+      },
+    }
+  })
+</script>
+</html>
