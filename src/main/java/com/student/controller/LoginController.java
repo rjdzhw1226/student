@@ -35,6 +35,22 @@ public class LoginController {
         }
     }
 
+    @RequestMapping("/logout")
+    public Map<String,Object> logout(HttpServletRequest req){
+        Map<String,Object> map = new HashMap<>();
+        try{
+            userDto user = (userDto) req.getSession().getAttribute("user");
+            if(user != null){
+                map.put("code",1);
+            }else{
+                map.put("code",0);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            map.put("code",e.getMessage());
+        }
+        return map;
+    }
     @RequestMapping("/register")
     public Map<String,Object> register(@RequestBody user user){
         Map<String,Object> map = new HashMap<>();

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <title>学生管理系统后台首页</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        height: 100%;
+    }
+
+    .time {
+        font-size: 13px;
+        color: #999;
+    }
+
+    .bottom {
+        margin-top: 13px;
+        line-height: 12px;
+    }
+
+    .button {
+        padding: 0;
+        float: right;
+    }
+
+    .image {
+        width: 100%;
+        display: block;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        display: table;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both
+    }
+
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-container {
+        height: 100%;
+    }
+</style>
+<body>
+<div id="app">
+    <el-container style="border: 1px solid #eee">
+        <el-header style="text-align: right; font-size: 12px">
+
+        </el-header>
+
+        <el-main>
+            <el-row :gutter="24">
+                <el-col :span="3" v-for="(item) in tableData" :key="item.id">
+                    <el-card :body-style="{ padding: '0px' }" shadow="hover">
+                        <div slot="header" class="clearfix">
+                            <span>学生：{{item.name}}</span>
+                        </div>
+                        <img :src="item.url" class="image">
+                        <div style="padding: 14px;">
+                            <div class="bottom clearfix">
+                                <el-button type="text" class="button">查看成绩</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </el-main>
+    </el-container>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            currentDate: new Date(),
+            tableData: [{
+                id: '123456',
+                name: '王小虎',
+                url: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png'
+            }, {
+                id: '123457',
+                name: '王小虎',
+            }, {
+                id: '123458',
+                name: '王小虎',
+            }, {
+                id: '123459',
+                name: '王小虎',
+            },
+
+            ],
+            count: 12,
+        },
+        created() {
+
+        },
+        methods: {}
+    })
+</script>
+</html>

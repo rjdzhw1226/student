@@ -114,46 +114,6 @@
         isCollapse: false,
         isBin: true,
         defAct:'1',
-        // menuList: [
-        //   {
-        //     id: '1',
-        //     name: '学生管理',
-        //     children: [
-        //   {
-        //     id: '2',
-        //     name: '基本信息管理',
-        //     url: 'student.html',
-        //   },
-        //   {
-        //     id: '3',
-        //     name: '成绩管理',
-        //     url: 'score.html',
-        //   },
-        //   {
-        //     id: '4',
-        //     name: '班级管理',
-        //     url: 'class.html',
-        //   },
-        //   {
-        //     id: '5',
-        //     name: '课程管理',
-        //     url: 'subject.html',
-        //   },
-        //   {
-        //     id: '6',
-        //     name: '考试管理',
-        //     url: 'exam.html',
-        //   }
-        //     ],
-        //   },
-        //   {
-        //     id: '2',
-        //     name: '老师管理',
-        //     children: [
-        //
-        //     ],
-        //   },
-        // ],
         menuList:[],
         iframeUrl:'student.html',
         loading: false
@@ -170,12 +130,21 @@
         this.isBin = !this.isBin;
       },
       logout(){
-        axios.post("/login/logout").then((response)=>{
-
+        axios.get("/login/logout").then((response)=>{
+          if(String(response.data.code) === '1'){
+            window.location = 'login.html';
+          }else{
+            this.$message.error('请求出错了：退出失败！');
+          }
         })
       },
-      menuHandle(){
-
+      menuHandle(item){
+        this.loading = true
+        this.iframeUrl = item.url
+        this.closeLoading()
+      },
+      closeLoading(){
+        this.loading = false
       },
     }
   })
