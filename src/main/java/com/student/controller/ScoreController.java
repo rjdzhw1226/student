@@ -27,8 +27,8 @@ public class ScoreController {
     @Autowired
     private ScoreService scoreService;
 
-    @RequestMapping("/download/{name}")
-    public void download(@PathVariable("name") String name, HttpServletResponse response){
+    @RequestMapping("/download")
+    public void download(String name, HttpServletResponse response){
 
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(basePath + name));

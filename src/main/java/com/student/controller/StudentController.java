@@ -6,16 +6,24 @@ import com.student.pojo.statusBean;
 import com.student.pojo.student;
 import com.student.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
 @RequestMapping("/student")
 public class StudentController {
+
+    @Value("${student.path}")
+    private String basePath;
 
     @Autowired
     private StudentService service;
@@ -108,6 +116,31 @@ public class StudentController {
             map.put("code",1);
         }else {
             map.put("code",0);
+        }
+        return map;
+    }
+
+    @RequestMapping("/upload")
+    @ResponseBody
+    public Map<String,Object> upload(MultipartFile file){
+        Map<String,Object> map = new HashMap<>();
+        map.put("code",0);
+        map.put("fileName","");
+        String originalFilename = file.getOriginalFilename();
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileName = UUID.randomUUID().toString() + suffix;
+        File dir = new File(basePath);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        try {
+            file.transferTo(new File(basePath + fileName));
+            map.put("code",1);
+            map.put("fileName",fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            map.put("code",0);
+            map.put("fileName","");
         }
         return map;
     }

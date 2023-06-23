@@ -42,7 +42,11 @@
     .el-container {
       height: 100%;
     }
-
+    .avatar {
+      width: 160px;
+      height: 160px;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -134,6 +138,26 @@
     <el-form ref="dataAddFormAdd" :model="formDataAdd" :rules="rules" label-position="right" label-width="100px">
       <el-row>
         <el-col :span="12">
+          <el-form-item label="头像">
+            <div class="block">
+              <el-upload
+                      class="avatar-uploader"
+                      action="/student/upload"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :on-change="onChange"
+                      ref="upload"
+              >
+
+                <img v-if="imageUrl" :src="imageUrl" class="avatar"></img>
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
           <el-form-item label="学号">
             <el-input v-model="formDataAdd.id"></el-input>
           </el-form-item>
@@ -205,6 +229,25 @@
   </el-dialog>
   <el-dialog title="编辑学生" :visible.sync="outerVisibleEdit">
     <el-form ref="dataAddFormEdit" :model="formDataEdit" :rules="rules" label-position="right" label-width="100px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="头像">
+            <div class="block">
+              <el-upload
+                      class="avatar-uploader"
+                      action="/student/upload"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :on-change="onChange"
+                      ref="upload"
+              >
+                <img v-if="imageUrl" :src="imageUrl" class="avatar"></img>
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-col :span="12">
           <el-form-item label="学号">
@@ -290,6 +333,7 @@
         username:'',
         queryString:'',
         editid:'',
+        imageUrl:'',
         pageBean:{
           page:1,
           size:10
@@ -331,6 +375,10 @@
         this.outerVisibleEdit=true;
         axios.get("/student/"+id+"").then((response) => {
           if (String(response.data.code) === '1'){
+            // axios.get("/score/download/"+response.data.data.url+"").then((res)=>{
+            //   this.imageUrl = res;
+            // })
+            this.imageUrl = `/score/download?name=${response.data.data.url}`
             this.formDataEdit = response.data.data;
             this.formDataEdit.age = parseInt(response.data.data.age);
           }
@@ -400,10 +448,12 @@
       },
       reset(){
         this.formDataAdd={};
+        this.imageUrl ='';
         this.outerVisibleAdd = false;
       },
       resetE(){
         this.formDataEdit={};
+        this.imageUrl ='';
         this.outerVisibleEdit = false;
       },
       confirmE(){
@@ -458,6 +508,28 @@
               });
             }
           });
+        }
+      },
+      handleAvatarSuccess(response, file, fileList){
+          this.imageUrl = `/score/download?name=${response.fileName}`
+          this.formDataAdd.url = response.fileName;
+          this.formDataEdit.url = response.fileName;
+
+      },
+      onChange(file){
+        if(file){
+          const suffix = file.name.split('.')[1]
+          const size = file.size / 1024 / 1024 < 2
+          if(['png','jpeg','jpg'].indexOf(suffix) < 0){
+            this.$message.error('上传图片只支持 png、jpeg、jpg 格式！')
+            this.$refs.upload.clearFiles()
+            return false
+          }
+          if(!size){
+            this.$message.error('上传文件大小不能超过 2MB!')
+            return false
+          }
+          return file
         }
       },
     }

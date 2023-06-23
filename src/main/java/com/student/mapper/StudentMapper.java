@@ -22,11 +22,11 @@ public interface StudentMapper {
     @Update("update student set station=#{station} where id=#{id}")
     public int update(String station, String id);
 
-    @Insert("insert into student (id, name, grade, grade_class, phone, age, gender, station) values (#{id},#{name},#{grade},#{grade_class},#{phone},#{age},#{gender},#{station})")
+    @Insert("insert into student (id, name, grade, grade_class, phone, age, gender, station,url) values (#{id},#{name},#{grade},#{grade_class},#{phone},#{age},#{gender},#{station},#{url})")
     public int add(student student);
 
-    @Update("update student set id=#{studentId},name=#{name},grade=#{grade},grade_class=#{grade_class},phone=#{phone},age=#{age},gender=#{gender},station=#{station} where id=#{idEdit}")
-    public int edit(String studentId,String name,String grade,String grade_class,String phone, String age, String gender,String station, String idEdit);
+    @Update("update student set id=#{studentId},name=#{name},grade=#{grade},grade_class=#{grade_class},phone=#{phone},age=#{age},gender=#{gender},url=#{url},station=#{station} where id=#{idEdit}")
+    public int edit(String studentId,String name,String grade,String grade_class,String phone, String age, String gender,String station,String url, String idEdit);
 
     @Select("select  * from student where name like concat('%',#{queryStr},'%') or id like concat('%',#{queryStr},'%') or phone like concat('%',#{queryStr},'%') limit #{page},#{size}")
     public List<student> queryLike(String queryStr, Integer page, Integer size);

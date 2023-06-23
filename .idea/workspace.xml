@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="成绩前端完善 家">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ScoreController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/score.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ScoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="成绩后端 家">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ScoreController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ScoreController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/StudentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/StudentController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/student.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/student.java" afterDir="false" />
@@ -16,8 +13,11 @@
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/student.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/StudentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/StudentController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/pojo/student.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/pojo/student.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/student/service/StudentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/service/StudentService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -136,7 +136,7 @@
       <workItem from="1687403469515" duration="10768000" />
       <workItem from="1687449637430" duration="2668000" />
       <workItem from="1687488583374" duration="4924000" />
-      <workItem from="1687518044675" duration="8531000" />
+      <workItem from="1687518044675" duration="9933000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -173,7 +173,21 @@
       <option name="project" value="LOCAL" />
       <updated>1687452302068</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="成绩后端 家">
+      <created>1687526891878</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1687526891878</updated>
+    </task>
+    <task id="LOCAL-00007" summary="成绩后端 家">
+      <created>1687526913170</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1687526913170</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,7 +210,8 @@
     <MESSAGE value="完善首页功能 家" />
     <MESSAGE value="解耦首页边栏 家" />
     <MESSAGE value="成绩前端完善 家" />
-    <option name="LAST_COMMIT_MESSAGE" value="成绩前端完善 家" />
+    <MESSAGE value="成绩后端 家" />
+    <option name="LAST_COMMIT_MESSAGE" value="成绩后端 家" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

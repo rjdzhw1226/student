@@ -55,7 +55,8 @@ public class StudentService {
         String gender = student.getGender();
         String age = student.getAge();
         String phone = student.getPhone();
-        int i = mapper.edit(studentId, name, grade, grade_class, phone, age, gender, station, idEdit);
+        String url = student.getUrl();
+        int i = mapper.edit(studentId, name, grade, grade_class, phone, age, gender, station, url, idEdit);
         return i;
     }
 

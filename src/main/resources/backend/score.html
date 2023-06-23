@@ -16,11 +16,6 @@
         height: 100%;
     }
 
-    .time {
-        font-size: 13px;
-        color: #999;
-    }
-
     .bottom {
         margin-top: 13px;
         line-height: 12px;
@@ -30,10 +25,22 @@
         padding: 0;
         float: right;
     }
-
-    .image {
+    .picbox{
+        position: relative;
         width: 100%;
+    }
+    .picbox:before {
+        content: "";
         display: block;
+        padding-top: 100%;
+    }
+
+    .picbox img {
+        position:  absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 
     .clearfix:before,
@@ -60,27 +67,60 @@
 <div id="app">
     <el-container style="border: 1px solid #eee">
         <el-header style="text-align: right; font-size: 12px">
-
+            <el-form :inline="true" class="demo-form-inline" style="margin-top: 10px;">
+                <span>{{username}}</span>
+                <el-form-item label="模糊查询:">
+                    <el-input v-model="queryString" ></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="query()">查询</el-button>
+                </el-form-item>
+            </el-form>
         </el-header>
 
         <el-main>
-            <el-row :gutter="24">
-                <el-col :span="3" v-for="(item) in tableData" :key="item.id">
-                    <el-card :body-style="{ padding: '0px' }" shadow="hover">
-                        <div slot="header" class="clearfix">
-                            <span>学生：{{item.name}}</span>
-                        </div>
-                        <img :src="item.url" class="image">
-                        <div style="padding: 14px;">
-                            <div class="bottom clearfix">
-                                <el-button type="text" class="button">查看成绩</el-button>
+            <el-form>
+                <el-row :gutter="24">
+                    <el-col :span="3" v-for="(item) in tableData" :key="item.id">
+                        <el-card :body-style="{ padding: '0px' }" shadow="hover">
+                            <div slot="header" class="clearfix">
+                                <span>学生：{{item.name}}</span>
                             </div>
-                        </div>
-                    </el-card>
-                </el-col>
-            </el-row>
+                            <div class="picbox">
+                                <img :src="item.url" class="image">
+                            </div>
+                            <div style="padding: 14px;">
+                                <div class="bottom clearfix">
+                                    <el-button type="text" class="button" @click="show(item.id)">查看成绩</el-button>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                </el-row>
+            </el-form>
+
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pageBean.page"
+                    :page-sizes="[5,10,20,50,100]"
+                    :page-size="pageBean.size"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
         </el-main>
     </el-container>
+    <el-dialog title="查看成绩" :visible.sync="outerVisibleShow">
+        <el-form :model="formDataAdd" label-position="right" label-width="100px">
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="课程">
+                        <el-input v-model="formDataAdd.name"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+    </el-dialog>
 </div>
 </body>
 <script>
@@ -88,28 +128,52 @@
         el: '#app',
         data: {
             currentDate: new Date(),
-            tableData: [{
-                id: '123456',
-                name: '王小虎',
-                url: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png'
-            }, {
-                id: '123457',
-                name: '王小虎',
-            }, {
-                id: '123458',
-                name: '王小虎',
-            }, {
-                id: '123459',
-                name: '王小虎',
+            username:'',
+            queryString:'',
+            tableData: [],
+            count: 0,
+            outerVisibleShow:false,
+            formDataAdd:{},
+            pageBean:{
+                page:1,
+                size:10
             },
-
-            ],
-            count: 12,
+            total:0,
         },
         created() {
-
+            this.findpage();
+            axios.get('/login/getUserName').then((response)=>{
+                this.username = response.data;
+            });
         },
-        methods: {}
+        methods: {
+            findpage(){
+                var pageBean = this.pageBean;
+                axios.post("/score/All",pageBean).then((response)=> {
+                    this.tableData = response.data.data;
+                    for (let i = 0; i < this.tableData.length; i++) {
+                        this.tableData[i].url =`/score/download?name=${response.data.data[i].url}`;
+                    }
+                    this.total = response.data.total;
+                });
+            },
+            show(val){
+                this.outerVisibleShow = true;
+                axios.post("/score/")
+            },
+            query(){
+
+            },
+            handleSizeChange(val){
+                this.pageBean.page = 1;
+                this.pageBean.size = val;
+                this.findpage();
+            },
+            handleCurrentChange(val){
+                this.pageBean.page = val;
+                this.findpage();
+            },
+        }
     })
 </script>
 </html>

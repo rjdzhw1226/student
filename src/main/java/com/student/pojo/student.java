@@ -12,5 +12,6 @@ public class student {
     private String age;
     private String gender;
     private String station;
+    private String url;
 
 }

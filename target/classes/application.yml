@@ -14,5 +14,7 @@ mybatis:
   type-aliases-package: com.student.pojo
   # ??MyBatis?xml??????
   mapper-locations: classpath:mapper/*.xml
+student:
+  path: F:\img\
 
 
