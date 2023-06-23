@@ -4,12 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="解耦首页边栏 家">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="成绩前端完善 家">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ScoreController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/score.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ScoreService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/StudentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/StudentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/student.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/student.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/StudentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/StudentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/StudentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/StudentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/service/StudentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/service/StudentService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +30,8 @@
       <list>
         <option value="JavaScript File" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="HTML File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -73,6 +82,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.student.service" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\plugins\element-ui" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend" />
@@ -122,7 +134,9 @@
       <workItem from="1687355521876" duration="4121000" />
       <workItem from="1687402606418" duration="696000" />
       <workItem from="1687403469515" duration="10768000" />
-      <workItem from="1687449637430" duration="2650000" />
+      <workItem from="1687449637430" duration="2668000" />
+      <workItem from="1687488583374" duration="4924000" />
+      <workItem from="1687518044675" duration="8531000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -152,7 +166,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687420840328</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="成绩前端完善 家">
+      <created>1687452302068</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1687452302068</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -174,7 +195,8 @@
     <MESSAGE value="完善功能 家" />
     <MESSAGE value="完善首页功能 家" />
     <MESSAGE value="解耦首页边栏 家" />
-    <option name="LAST_COMMIT_MESSAGE" value="解耦首页边栏 家" />
+    <MESSAGE value="成绩前端完善 家" />
+    <option name="LAST_COMMIT_MESSAGE" value="成绩前端完善 家" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
