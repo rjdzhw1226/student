@@ -63,5 +63,14 @@ public class ScoreController {
         List<scoreVo> scoreVos = scoreService.queryScore(id);
         return scoreVos;
     }
+
+    @RequestMapping("/query/{queryString}")
+    @ResponseBody
+    public page<student> query(@PathVariable("queryString") String queryString, @RequestBody pageBean page){
+        Integer Page = page.getPage();
+        Integer Size = page.getSize();
+        page<student> studentpage = studentService.queryLike(queryString, Page, Size);
+        return studentpage;
+    }
 }
 

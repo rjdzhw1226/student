@@ -180,7 +180,15 @@
                 })
             },
             query(){
-
+                var pageBean = this.pageBean;
+                let queryString = this.queryString;
+                axios.post("/score/query/"+queryString+"",pageBean).then((response)=>{
+                    this.tableData = response.data.data;
+                    for (let i = 0; i < this.tableData.length; i++) {
+                        this.tableData[i].url =`/score/download?name=${response.data.data[i].url}`;
+                    }
+                    this.total = response.data.total;
+                })
             },
             handleSizeChange(val){
                 this.pageBean.page = 1;
