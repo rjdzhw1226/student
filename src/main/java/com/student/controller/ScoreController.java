@@ -1,8 +1,6 @@
 package com.student.controller;
 
-import com.student.pojo.page;
-import com.student.pojo.pageBean;
-import com.student.pojo.student;
+import com.student.pojo.*;
 import com.student.service.ScoreService;
 import com.student.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
 @RequestMapping("/score")
 @RestController
@@ -55,6 +54,14 @@ public class ScoreController {
         Integer Size = page.getSize();
         page<student> students = studentService.queryAll(Page, Size);
         return students;
+    }
+
+
+    @RequestMapping("/show/{id}")
+    @ResponseBody
+    public List<scoreVo> show(@PathVariable("id") String id){
+        List<scoreVo> scoreVos = scoreService.queryScore(id);
+        return scoreVos;
     }
 }
 

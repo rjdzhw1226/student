@@ -111,15 +111,30 @@
         </el-main>
     </el-container>
     <el-dialog title="查看成绩" :visible.sync="outerVisibleShow">
-        <el-form :model="formDataAdd" label-position="right" label-width="100px">
-            <el-row>
-                <el-col :span="12">
-                    <el-form-item label="课程">
-                        <el-input v-model="formDataAdd.name"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </el-form>
+        <el-table
+                :data="tableDataDialog"
+                style="width: 100%">
+            <el-table-column
+                    prop="name"
+                    label="课程"
+                    width="100%">
+            </el-table-column>
+            <el-table-column
+                    prop="score"
+                    label="成绩"
+                    width="120">
+            </el-table-column>
+        </el-table>
+<!--     <el-row>-->
+<!--         <el-col :span="12" v-for="(item) in tableDataDialog">-->
+<!--                 <el-descriptions title="成绩信息">-->
+<!--                     <el-descriptions-item>-->
+<!--                         <label>{{item.name}}:</label>-->
+<!--                         {{item.score}}-->
+<!--                     </el-descriptions-item>-->
+<!--                 </el-descriptions>-->
+<!--         </el-col>-->
+<!--     </el-row>-->
     </el-dialog>
 </div>
 </body>
@@ -131,6 +146,7 @@
             username:'',
             queryString:'',
             tableData: [],
+            tableDataDialog: [],
             count: 0,
             outerVisibleShow:false,
             formDataAdd:{},
@@ -157,9 +173,11 @@
                     this.total = response.data.total;
                 });
             },
-            show(val){
+            show(id){
                 this.outerVisibleShow = true;
-                axios.post("/score/")
+                axios.get("/score/show/"+id+"").then((response)=>{
+                    this.tableDataDialog = response.data;
+                })
             },
             query(){
 
