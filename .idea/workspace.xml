@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="班级前端 家">
-      <change afterPath="$PROJECT_DIR$/studentDemo.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="sql文件 家 暂时" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,11 +78,11 @@
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\service" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\工作项目\studentDemo\student" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\static" />
       <recent name="F:\DOWNLOADS\studentDemo\studentDemo\src\main\resources\static" />
       <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend" />
       <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\static" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.student.config" />
@@ -127,7 +124,7 @@
       <workItem from="1687518044675" duration="10254000" />
       <workItem from="1687542652146" duration="1211000" />
       <workItem from="1687543871708" duration="970000" />
-      <workItem from="1687591220949" duration="3540000" />
+      <workItem from="1687591220949" duration="4801000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -199,7 +196,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687594127910</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="sql文件 家 暂时">
+      <created>1687607861604</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1687607861604</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -224,7 +228,8 @@
     <MESSAGE value="成绩前端完善 家" />
     <MESSAGE value="成绩后端 家" />
     <MESSAGE value="班级前端 家" />
-    <option name="LAST_COMMIT_MESSAGE" value="班级前端 家" />
+    <MESSAGE value="sql文件 家 暂时" />
+    <option name="LAST_COMMIT_MESSAGE" value="sql文件 家 暂时" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
