@@ -8,6 +8,7 @@
     <script src="plugins/vue/vue.js"></script>
     <script src="plugins/element-ui/index.js"></script>
     <script src="plugins/axios/axios.min.js"></script>
+    <link href="img/favicon.ico" rel="shortcut icon">
     <title>学生管理系统后台首页</title>
     <style>
         body {
@@ -23,13 +24,29 @@
         .el-container {
             height: 100%;
         }
+        .el-main {
+            padding: 0px;
+            margin: 0px;
+            height: 100%;
+        }
+
+        html,body,#app,.el-container{
+            padding: 0px;
+            margin: 0px;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
 <div id="app">
     <el-container style="border: 1px solid #eee">
         <el-header style="text-align: right; font-size: 12px">
-
+            <el-form :inline="true" class="demo-form-inline" style="margin-top: 10px;">
+                <span>{{username}}</span>
+                <el-form-item label="年级快速查找:">
+                    <el-input v-model="filterText" placeholder="输入关键字进行过滤"></el-input>
+                </el-form-item>
+            </el-form>
         </el-header>
         <el-container>
             <el-aside>
@@ -40,6 +57,7 @@
                         ref="tree"
                         highlight-current
                         :props="defaultProps"
+                        :filter-node-method="filterNode"
                         @node-click="handleTreeNodeClick"
                         @check-change="handleCheckChange"
                 >
@@ -67,12 +85,19 @@
 <script>
     new Vue({
         el: '#app',
+        watch: {
+            filterText(val) {
+                this.$refs.tree.filter(val);
+            }
+        },
         data: {
             size: '',
+            username: '',
             data: [],
             tableData:[
 
             ],
+            filterText:'',
             defaultProps: {
                 children: 'children',
                 label: 'label'
@@ -80,6 +105,10 @@
         },
         created() {
             this.findTree();
+
+            axios.get('/login/getUserName').then((response)=>{
+                this.username = response.data;
+            });
         },
         methods: {
             findTree(){
@@ -93,6 +122,10 @@
             handleCheckChange(data, checked, indeterminate) {
                 console.log(data, checked, indeterminate);
             },
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
+            }
         }
     })
 </script>

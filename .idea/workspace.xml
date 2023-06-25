@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="班级树查询后端 班">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/img/favicon.ico" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/backend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/class.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +62,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "F:/工作项目/studentDemo/student/src/main/resources/backend/plugins/element-ui",
+    "last_opened_file_path": "F:/工作项目/studentDemo/student/src/main/resources/backend/img",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -74,18 +80,18 @@
       <recent name="com.student.service" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\img" />
       <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\plugins\element-ui" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\img" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\mapper" />
-      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\service" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\img" />
+      <recent name="F:\工作项目\studentDemo\student\src\main\resources" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\static" />
       <recent name="F:\DOWNLOADS\studentDemo\studentDemo\src\main\resources\static" />
       <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\backend" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources" />
-      <recent name="D:\DOWNLOAD\项目\studentDemo\src\main\resources\static" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.student.config" />
