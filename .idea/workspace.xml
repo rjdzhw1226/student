@@ -4,17 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="页面修改 班">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/tree.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/treeVo.java" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="班级树查询后端 班">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/MenuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/MenuController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/MenuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/MenuService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/class.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +217,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687594127910</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="班级树查询后端 班">
+      <created>1687681596507</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1687681596508</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -250,7 +249,8 @@
     <MESSAGE value="成绩前端完善 家" />
     <MESSAGE value="成绩后端 家" />
     <MESSAGE value="班级前端 家" />
-    <option name="LAST_COMMIT_MESSAGE" value="班级前端 家" />
+    <MESSAGE value="班级树查询后端 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="班级树查询后端 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
