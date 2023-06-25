@@ -70,56 +70,56 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col>
-            <el-form-item label="上传文件">
-              <el-col :span="24">
-                <el-upload
-                        class="upload-demo"
-                        drag
-                        action="/setmeal/file/upload"
-                        accept=".xlsx"
-                        :before-upload="beforeUploadFile"
-                        :on-change="fileChange"
-                        :on-exceed="exceedFile"
-                        :on-remove="fileRemove"
-                        :on-success="handleSuccess"
-                        :on-error="handleError"
-                        :file-list="fileList"
-                        :limit="2"
-                        multiple>
-                  <i class="el-icon-upload"></i>
-                  <div class="el-upload__text"><em>点击上传</em></div>
-                  <div class="el-upload__tip" slot="tip">只能上传xlsx文件</div>
-                </el-upload>
-              </el-col>
-              <el-col>
-                <el-button @click="submitFile()">按钮</el-button>
-              </el-col>
-            </el-form-item>
-          </el-col>
-          <el-col>
-            <el-form-item label="附件上传" prop="fysjtDesc">
-              <el-upload
-                      class="upload-demo"
-                      ref="upload"
-                      action="/setmeal/fileList/upload"
-                      :data="getfileData()"
-                      :file-list="fileList"
-                      :auto-upload="false">
-                <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
-                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-              </el-upload>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="formData.remark" type="textarea"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+<!--        <el-row>-->
+<!--          <el-col>-->
+<!--            <el-form-item label="上传文件">-->
+<!--              <el-col :span="24">-->
+<!--                <el-upload-->
+<!--                        class="upload-demo"-->
+<!--                        drag-->
+<!--                        action="/setmeal/file/upload"-->
+<!--                        accept=".xlsx"-->
+<!--                        :before-upload="beforeUploadFile"-->
+<!--                        :on-change="fileChange"-->
+<!--                        :on-exceed="exceedFile"-->
+<!--                        :on-remove="fileRemove"-->
+<!--                        :on-success="handleSuccess"-->
+<!--                        :on-error="handleError"-->
+<!--                        :file-list="fileList"-->
+<!--                        :limit="2"-->
+<!--                        multiple>-->
+<!--                  <i class="el-icon-upload"></i>-->
+<!--                  <div class="el-upload__text"><em>点击上传</em></div>-->
+<!--                  <div class="el-upload__tip" slot="tip">只能上传xlsx文件</div>-->
+<!--                </el-upload>-->
+<!--              </el-col>-->
+<!--              <el-col>-->
+<!--                <el-button @click="submitFile()">按钮</el-button>-->
+<!--              </el-col>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col>-->
+<!--            <el-form-item label="附件上传" prop="fysjtDesc">-->
+<!--              <el-upload-->
+<!--                      class="upload-demo"-->
+<!--                      ref="upload"-->
+<!--                      action="/setmeal/fileList/upload"-->
+<!--                      :data="getfileData()"-->
+<!--                      :file-list="fileList"-->
+<!--                      :auto-upload="false">-->
+<!--                <el-button slot="trigger" size="small" type="primary">选取附件</el-button>-->
+<!--                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>-->
+<!--              </el-upload>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
+<!--        <el-row>-->
+<!--          <el-col :span="24">-->
+<!--            <el-form-item label="备注">-->
+<!--              <el-input v-model="formData.remark" type="textarea"></el-input>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="reset()">取消</el-button>

@@ -15,6 +15,7 @@ mybatis:
   # ??MyBatis?xml??????
   mapper-locations: classpath:mapper/*.xml
 student:
-  path: F:\img\
+  #path: F:\img\
+  path: D:\img\
 
 

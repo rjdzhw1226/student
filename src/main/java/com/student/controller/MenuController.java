@@ -1,6 +1,8 @@
 package com.student.controller;
 
 import com.student.pojo.menu;
+import com.student.pojo.tree;
+import com.student.pojo.treeVo;
 import com.student.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,20 @@ public class MenuController {
         try{
             List<menu> menus = menuService.queryMenu();
             map.put("data",menus);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    @RequestMapping("/queryClass")
+    @ResponseBody
+    public Map<String,Object> queryClass(){
+        Map<String,Object> map = new HashMap<>();
+        try{
+            //List<treeVo> tree = menuService.queryClass("0");
+            List<tree> tree = menuService.queryClassDiGui("0");
+            map.put("data",tree);
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -2,6 +2,8 @@ package com.student.mapper;
 
 import com.student.pojo.menuVo;
 import com.student.pojo.menu_children;
+import com.student.pojo.tree;
+import com.student.pojo.treeVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -15,4 +17,10 @@ public interface MenuMapper {
 
     @Select("select * from menu where 1=1")
     public List<menuVo> queryMenu();
+
+    @Select("select * from tree where id in(select id from tree where father_id= #{id})")
+    public List<treeVo> queryClass(String id);
+
+    @Select("select * from tree where level = #{level}")
+    public List<treeVo> queryLevel(String level);
 }

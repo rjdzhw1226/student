@@ -1,9 +1,7 @@
 package com.student.service;
 
 import com.student.mapper.MenuMapper;
-import com.student.pojo.menu;
-import com.student.pojo.menuVo;
-import com.student.pojo.menu_children;
+import com.student.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,4 +31,32 @@ public class MenuService {
         }
         return menuResult;
     }
+
+    public List<treeVo> queryClass(String id){
+        List<treeVo> tree = new ArrayList<>();
+        List<treeVo> trees = mapper.queryClass(id);
+        if(trees.size() > 0){
+            tree.addAll(trees);
+            for (treeVo treeVo : trees) {
+                tree.addAll(queryClass(treeVo.getId()));
+            }
+        }
+        return tree;
+    }
+
+    public List<tree> queryClassDiGui(String id){
+        List<tree> tree = new ArrayList<>();
+        List<treeVo> trees = mapper.queryClass(id);
+        if(trees.size() > 0){
+            for (treeVo treeVo : trees) {
+                tree tr = new tree();
+                tr.setId(treeVo.getId());
+                tr.setLabel(treeVo.getLabel());
+                tr.setChildren(queryClassDiGui(treeVo.getId()));
+                tree.add(tr);
+            }
+        }
+        return tree;
+    }
+
 }
