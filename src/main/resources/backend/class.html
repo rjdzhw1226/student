@@ -31,10 +31,36 @@
         <el-header style="text-align: right; font-size: 12px">
 
         </el-header>
+        <el-container>
+            <el-aside>
+                <el-tree
+                        :data="data"
+                        show-checkbox
+                        node-key="id"
+                        ref="tree"
+                        highlight-current
+                        :props="defaultProps"
+                        @node-click="handleTreeNodeClick"
+                        @check-change="handleCheckChange"
+                >
+                </el-tree>
+            </el-aside>
+            <el-main>
+                <h4>班级信息</h4>
+                <el-table
+                        :show-header="false"
+                        :data="tableData"
+                        border
+                        style="width: 100%">
+                    <el-table-column
+                            prop="name"
+                            label="学生姓名">
+                    </el-table-column>
+                </el-table>
+            </el-main>
+        </el-container>
 
-        <el-main>
 
-        </el-main>
     </el-container>
 </div>
 </body>
@@ -43,12 +69,30 @@
         el: '#app',
         data: {
             size: '',
+            data: [],
+            tableData:[
+
+            ],
+            defaultProps: {
+                children: 'children',
+                label: 'label'
+            },
         },
         created() {
-
+            this.findTree();
         },
         methods: {
-
+            findTree(){
+                axios.get("/menu/queryClass").then((response)=>{
+                    this.data = response.data.data;
+                })
+            },
+            handleTreeNodeClick(node){
+                alert(node.id);
+            },
+            handleCheckChange(data, checked, indeterminate) {
+                console.log(data, checked, indeterminate);
+            },
         }
     })
 </script>
