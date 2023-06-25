@@ -4,15 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="班级树查询后端 班">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/img/favicon.ico" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="前端 家">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/class.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/student.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,30 +50,30 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "F:/工作项目/studentDemo/student/src/main/resources/backend/img",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Facets",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.21954022",
-    "settings.editor.selected.configurable": "MavenSettings",
-    "spring.configuration.checksum": "eef0d89606b091b9d36fd193265f9f25",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/工作项目/studentDemo/student/src/main/resources/backend/img&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Facets&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.21954022&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;eef0d89606b091b9d36fd193265f9f25&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.student.service" />
@@ -152,6 +151,7 @@
       <workItem from="1687542652146" duration="1211000" />
       <workItem from="1687543871708" duration="970000" />
       <workItem from="1687591220949" duration="3540000" />
+      <workItem from="1687705262019" duration="1532000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -230,7 +230,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687681596508</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="前端 家">
+      <created>1687701741062</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1687701741062</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -256,7 +263,8 @@
     <MESSAGE value="成绩后端 家" />
     <MESSAGE value="班级前端 家" />
     <MESSAGE value="班级树查询后端 班" />
-    <option name="LAST_COMMIT_MESSAGE" value="班级树查询后端 班" />
+    <MESSAGE value="前端 家" />
+    <option name="LAST_COMMIT_MESSAGE" value="前端 家" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

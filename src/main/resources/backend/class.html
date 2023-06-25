@@ -77,8 +77,6 @@
                 </el-table>
             </el-main>
         </el-container>
-
-
     </el-container>
 </div>
 </body>
@@ -105,19 +103,24 @@
         },
         created() {
             this.findTree();
-
             axios.get('/login/getUserName').then((response)=>{
                 this.username = response.data;
             });
         },
         methods: {
+            findpage(id){
+                axios.get("/class/query/"+id+"").then((response)=>{
+                    this.tableData = response.data.data;
+                })
+            },
             findTree(){
                 axios.get("/menu/queryClass").then((response)=>{
                     this.data = response.data.data;
                 })
             },
             handleTreeNodeClick(node){
-                alert(node.id);
+                //alert(node.id);
+                this.findpage(node.id);
             },
             handleCheckChange(data, checked, indeterminate) {
                 console.log(data, checked, indeterminate);
