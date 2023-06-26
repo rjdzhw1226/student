@@ -64,16 +64,32 @@
                 </el-tree>
             </el-aside>
             <el-main>
-                <h4>班级信息</h4>
+                <el-row>
+                    <el-col :span="12">
+                        <h4>班级信息:{{tableData.name}}</h4>
+                    </el-col>
+                    <el-col :span="12" :push="10" style="margin-top: 10px">
+                        <el-button type="primary">编辑</el-button>
+                    </el-col>
+                </el-row>
                 <el-table
-                        :show-header="false"
-                        :data="tableData"
+                        :data="studentsList"
                         border
                         style="width: 100%">
                     <el-table-column
                             prop="name"
                             label="学生姓名">
                     </el-table-column>
+                </el-table>
+                <el-table
+                        :show-header="false"
+                        :data="tableDataBll"
+                        border
+                        style="width: 100%;"
+                >
+                    <el-table-column prop="total" align="center" ></el-table-column>
+                    <el-table-column prop="countC" ></el-table-column>
+                    <el-table-column prop="teacherName"  ></el-table-column>
                 </el-table>
             </el-main>
         </el-container>
@@ -91,26 +107,47 @@
         data: {
             size: '',
             username: '',
+            countC: 0,
+            teacherName: '',
             data: [],
-            tableData:[
-
-            ],
+            tableData:[],
+            studentsList:[],
             filterText:'',
             defaultProps: {
                 children: 'children',
                 label: 'label'
             },
         },
+        computed: {
+            tableDataBll() {
+                return [
+                    {
+                        total: '班级基本信息',
+                        countC: '班级人数:' + ' ' + this.countC,
+                        teacherName: '老师姓名:' + ' ' + this.teacherName
+                    }
+                ]
+            }
+        },
         created() {
             this.findTree();
             axios.get('/login/getUserName').then((response)=>{
                 this.username = response.data;
             });
+            axios.get('/class/findStudent').then((response)=>{
+
+            });
         },
         methods: {
             findpage(id){
                 axios.get("/class/query/"+id+"").then((response)=>{
-                    this.tableData = response.data.data;
+                    this.tableData = response.data;
+                    this.countC = response.data.countC;
+                    this.teacherName = response.data.teacherName;
+                    var students = response.data.students;
+                    for (let i = 0; i < students.length; i++) {
+                        this.studentsList.push(students[i]);
+                    }
                 })
             },
             findTree(){

@@ -23,4 +23,10 @@ public interface MenuMapper {
 
     @Select("select * from tree where level = #{level}")
     public List<treeVo> queryLevel(String level);
+
+    @Select("select label from tree where id = #{id}")
+    public String queryTreeById(String id);
+
+    @Select("select label from tree where id = #{fatherId}")
+    public String queryTreeTwoId(String fatherId);
 }
