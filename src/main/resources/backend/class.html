@@ -76,6 +76,7 @@
                                 action="/class/posts"
                                 accept=".xlsx"
                                 :limit="1"
+                                :before-upload="handleBeforeUpload"
                                 :on-success="handleAvatarSuccess"
                                 :on-change="onChange"
                                 multiple>
@@ -152,7 +153,7 @@
             </el-tab-pane>
         </el-tabs>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button @click="reset()">取消</el-button>
             <el-button type="primary" @click="handleEdit()">确定</el-button>
         </div>
     </el-dialog>
@@ -219,10 +220,9 @@
                 this.findStudentByClassName();
             },
             findStudentByClassName(){
-                var name = this.tableData.name;
-                axios.get('/class/findStudentChange/'+name+"").then((response)=>{
-                    this.formData = response.data;
-                });
+                this.formData.name = this.tableData.name;
+                this.formData.teacherName = this.tableData.teacherName;
+
             },
             findTree(){
                 axios.get("/menu/queryClass").then((response)=>{
@@ -243,8 +243,14 @@
             handleEdit(){
 
             },
+            reset(){
+                this.dialogFormVisible = false;
+            },
             handleAvatarSuccess(){
 
+            },
+            handleBeforeUpload(){
+                alert();
             },
             onChange(){
 

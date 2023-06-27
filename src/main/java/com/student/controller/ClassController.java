@@ -39,9 +39,11 @@ public class ClassController {
     public Map<String,Object> posts(MultipartFile file){
         Map<String,Object> map = new HashMap<>();
         try {
-            List<student> students = ExcelUtils.readMultipartFile(file, student.class);
-            log.info("数据：{}"+students);
-            classService.upData(students);
+            //
+            //List<student> students = ExcelUtils.readMultipartFile(file, student.class);
+            //log.info("数据：{}"+students);
+            //classService.upDataGiveUp(students);
+            classService.upData(file);
         } catch (Exception e) {
             e.printStackTrace();
         }
