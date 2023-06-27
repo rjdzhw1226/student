@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="sql更新 班">
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="暂时 班">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/StudentDemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/StudentDemoApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/config/ThreadPoolConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/config/ThreadPoolConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/demo.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/demo.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/StudentDemoApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/StudentDemoApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/static/demo.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/demo.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,7 +168,7 @@
       <workItem from="1687543871708" duration="970000" />
       <workItem from="1687591220949" duration="3540000" />
       <workItem from="1687705262019" duration="1532000" />
-      <workItem from="1687828111478" duration="22347000" />
+      <workItem from="1687828111478" duration="23534000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -295,7 +289,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687852254757</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="暂时 班">
+      <created>1687856282063</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1687856282063</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -327,7 +328,8 @@
     <MESSAGE value="班级人数修改01 班" />
     <MESSAGE value="班级excel文件导入功能 init 班" />
     <MESSAGE value="sql更新 班" />
-    <option name="LAST_COMMIT_MESSAGE" value="sql更新 班" />
+    <MESSAGE value="暂时 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="暂时 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
