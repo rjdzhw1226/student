@@ -36,6 +36,9 @@ public interface StudentMapper {
     @Delete("delete from student where id = #{id}")
     public int deleteId(String id);
 
+    @Delete("delete from student where id in #{ids};")
+    public int deleteIds(String ids);
+
     @Select("select  * from student where grade = #{grade} and grade_class = #{gradeClass}")
     public List<student> queryByGradeClass(String grade, String gradeClass);
 }

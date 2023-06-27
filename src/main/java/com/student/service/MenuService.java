@@ -32,13 +32,13 @@ public class MenuService {
         return menuResult;
     }
 
-    public List<treeVo> queryClass(String id){
+    public List<treeVo> queryClassAll(String id){
         List<treeVo> tree = new ArrayList<>();
         List<treeVo> trees = mapper.queryClass(id);
         if(trees.size() > 0){
             tree.addAll(trees);
             for (treeVo treeVo : trees) {
-                tree.addAll(queryClass(treeVo.getId()));
+                tree.addAll(queryClassAll(treeVo.getId()));
             }
         }
         return tree;

@@ -69,7 +69,7 @@
                         <h4>班级信息:{{tableData.name}}</h4>
                     </el-col>
                     <el-col :span="12" :push="10" style="margin-top: 10px">
-                        <el-button type="primary" @click="edit">编辑</el-button>
+                        <el-button v-if="tableData.name" type="primary" @click="edit">编辑</el-button>
                     </el-col>
                 </el-row>
                 <el-table
@@ -97,11 +97,11 @@
     <el-dialog :visible.sync="dialogFormVisible">
         <el-tabs v-model="activeName" type="card">
             <el-tab-pane label="班级基本信息" name="first">
-                <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                <el-form ref="dataAddForm" :model="formData" label-position="right" label-width="100px">
                     <el-row>
                         <el-col :span="12">
                             <el-form-item label="班级名称" prop="name">
-                                <el-input v-model="formData.name"/>
+                                <el-input readonly="true" v-model="formData.name"/>
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
@@ -137,6 +137,10 @@
                 </div>
             </el-tab-pane>
         </el-tabs>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleEdit()">确定</el-button>
+        </div>
     </el-dialog>
 </div>
 </body>
@@ -185,6 +189,7 @@
         },
         methods: {
             findpage(id){
+                this.studentsList = [];
                 axios.get("/class/query/"+id+"").then((response)=>{
                     this.tableData = response.data;
                     this.countC = response.data.countC;
@@ -220,7 +225,10 @@
             filterNode(value, data) {
                 if (!value) return true;
                 return data.label.indexOf(value) !== -1;
-            }
+            },
+            handleEdit(){
+
+            },
         }
     })
 </script>

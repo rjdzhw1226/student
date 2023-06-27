@@ -68,6 +68,7 @@ public class StudentService {
 
     @Transactional
     public int edit(student student, String idEdit) {
+        String labelIdC = common(idEdit);
         String studentId = student.getId();
         String name = student.getName();
         String station = student.getStation();
@@ -78,10 +79,13 @@ public class StudentService {
         String phone = student.getPhone();
         String url = student.getUrl();
         String labelId = menuMapper.queryTreeTwoByLabel(grade,grade_class);
-        if (CommonUtil.isNotNullJson(labelId)){
+        if (CommonUtil.isNotNullJson(labelId) && CommonUtil.isNotNullJson(labelIdC)){
             classDto dto = classMapper.query(labelId);
+            classDto dtoBefore = classMapper.query(labelIdC);
             int i1 = dto.getCount() + 1;
+            int i = dtoBefore.getCount() - 1;
             classMapper.editCount(i1,labelId);
+            classMapper.editCount(i,labelIdC);
         }else{
             return 0;
         }
@@ -105,14 +109,38 @@ public class StudentService {
     public int deleteIds(List<String> array) {
         int count = 0;
         for (String id : array) {
-            int i = mapper.deleteId(id);
-            count = count + i;
+            String labelId = common(id);
+            if (CommonUtil.isNotNullJson(labelId)){
+                classDto dto = classMapper.query(labelId);
+                int i1 = dto.getCount() - 1;
+                classMapper.editCount(i1,labelId);
+                int i = mapper.deleteId(id);
+                count = count + i;
+            }else{
+                return 0;
+            }
         }
         return count;
     }
+    private String common(String id){
+        student student = mapper.queryById(id);
+        String grade = student.getGrade();
+        String grade_class = student.getGrade_class();
+        String labelId = menuMapper.queryTreeTwoByLabel(grade,grade_class);
+        return labelId;
+    }
 
-    public int deleteId(String id) {
-
+    public int deleteId(String id, String name) {
+        String grade = name.split(",")[0];
+        String gradeClass = name.split(",")[1];
+        String labelId = menuMapper.queryTreeTwoByLabel(grade,gradeClass);
+        if (CommonUtil.isNotNullJson(labelId)){
+            classDto dto = classMapper.query(labelId);
+            int i1 = dto.getCount() - 1;
+            classMapper.editCount(i1,labelId);
+        }else{
+            return 0;
+        }
         int i = mapper.deleteId(id);
         return i;
     }

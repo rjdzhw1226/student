@@ -106,7 +106,7 @@
                     type="text"
                     size="small"
                     class="greenBug"
-                    @click="deleteMemberHandle(scope.row.id)">
+                    @click="deleteMemberHandle(scope.row)">
               <!--                      :class="{notAdmin:user !== 'admin'}"-->
 
               删除
@@ -387,8 +387,13 @@
           this.$message.error('请求出错了：' + err)
         })
       },
-      deleteMemberHandle(id){
-        axios.get("/student/deleteId/"+id+"").then((response) => {
+      deleteMemberHandle(row){
+        var name = row.grade +","+ row.grade_class;
+        var param = {
+          id : row.id,
+          name : name
+        }
+        axios.post("/student/deleteId",param).then((response) => {
           if (String(response.data.code) >= 1) {
             this.$message.success('删除成功！')
             this.findPage()

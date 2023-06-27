@@ -107,11 +107,13 @@ public class StudentController {
         return map;
     }
 
-    @RequestMapping("/deleteId/{id}")
+    @RequestMapping("/deleteId")
     @ResponseBody
-    public Map<String, Object> deleteId( @PathVariable("id") String id){
+    public Map<String, Object> deleteId( @RequestBody Map<String,Object> param){
         Map<String, Object> map = new HashMap<>();
-        int i = service.deleteId(id);
+        String id = (String) param.get("id");
+        String name = (String) param.get("name");
+        int i = service.deleteId(id,name);
         if(i>0){
             map.put("code",1);
         }else {
