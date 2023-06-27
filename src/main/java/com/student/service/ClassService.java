@@ -2,8 +2,8 @@ package com.student.service;
 
 import com.student.mapper.*;
 import com.student.pojo.*;
+import com.student.util.BatchInsertThread;
 import com.student.util.CommonUtil;
-import com.student.util.TestBatchInsertThread;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -101,7 +101,7 @@ public class ClassService {
     }
 
     private void extractedAdd() {
-
+        //TODO edi项目代码里 留给导出 实现和单位一样效果
 
     }
 
@@ -152,7 +152,7 @@ public class ClassService {
                     startIdx = (i * count);
                     endIdx = (i + 1) * count;
                 }
-                TestBatchInsertThread thread = new TestBatchInsertThread(sheet, begin, end, excelService,startIdx,endIdx);
+                BatchInsertThread thread = new BatchInsertThread(sheet, begin, end, excelService,startIdx,endIdx);
                 threadPoolTaskExecutor.execute(thread);
             }
             begin.countDown();

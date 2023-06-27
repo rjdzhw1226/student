@@ -5,23 +5,19 @@ import com.student.service.ExcelService;
 import org.apache.poi.ss.usermodel.Sheet;
 
 
-public class TestBatchInsertThread implements Runnable {
+public class BatchInsertThread implements Runnable {
 
     private ExcelService excelService;
-    /** 每个线程处理的起始数据 */
     private CountDownLatch begin;
-    /** 每个线程处理的结束数据 */
     private CountDownLatch end;
-    /**excel中读取的首行*/
     private int sta;
-    /**excel中读取的条数*/
     private int size;
 
     private Sheet sheet;
-    public TestBatchInsertThread() {
+    public BatchInsertThread() {
     }
 
-    public TestBatchInsertThread(Sheet sheet, CountDownLatch begin, CountDownLatch end,
+    public BatchInsertThread(Sheet sheet, CountDownLatch begin, CountDownLatch end,
                                  ExcelService excelService,int sta,int size) {
         this.begin = begin;
         this.end = end;
