@@ -68,7 +68,21 @@
                     <el-col :span="12">
                         <h4>班级信息:{{tableData.name}}</h4>
                     </el-col>
-                    <el-col :span="12" :push="10" style="margin-top: 10px">
+                    <el-col :span="6" :push="6">
+                        <el-upload
+                                v-if="tableData.name"
+                                class="upload-demo"
+                                style="margin-top: 10px"
+                                action="/class/posts"
+                                accept=".xlsx"
+                                :limit="1"
+                                :on-success="handleAvatarSuccess"
+                                :on-change="onChange"
+                                multiple>
+                            <el-button type="primary">点击上传</el-button>
+                        </el-upload>
+                    </el-col>
+                    <el-col :span="6" :push="4" style="margin-top: 10px">
                         <el-button v-if="tableData.name" type="primary" @click="edit">编辑</el-button>
                     </el-col>
                 </el-row>
@@ -206,7 +220,7 @@
             },
             findStudentByClassName(){
                 var name = this.tableData.name;
-                axios.get('/class/findStudent/'+name+"").then((response)=>{
+                axios.get('/class/findStudentChange/'+name+"").then((response)=>{
                     this.formData = response.data;
                 });
             },
@@ -227,6 +241,12 @@
                 return data.label.indexOf(value) !== -1;
             },
             handleEdit(){
+
+            },
+            handleAvatarSuccess(){
+
+            },
+            onChange(){
 
             },
         }

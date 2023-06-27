@@ -1,17 +1,21 @@
 package com.student.controller;
 
 import com.student.pojo.classVo;
+import com.student.pojo.student;
 import com.student.service.ClassService;
+import com.student.util.excel.ExcelUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/class")
+@Slf4j
 public class ClassController {
 
     @Autowired
@@ -23,10 +27,23 @@ public class ClassController {
         return queryResult;
     }
 
-    @RequestMapping("/findStudent/{name}")
-    public Map<String,Object> findStudentByClass(@PathVariable("name") String name){
+    @RequestMapping("/findStudentChange/{name}")
+    public Map<String,Object> findStudentByClassChange(@PathVariable("name") String name){
         Map<String,Object> map = new HashMap<>();
-        classService.findStudentByClass(name);
+        classService.findStudentByClassChange(name);
+        return map;
+    }
+
+    @RequestMapping("/posts")
+    @ResponseBody
+    public Map<String,Object> posts(MultipartFile file){
+        Map<String,Object> map = new HashMap<>();
+        try {
+            List<student> students = ExcelUtils.readMultipartFile(file, student.class);
+            log.info("数据：{}"+students);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return map;
     }
 }

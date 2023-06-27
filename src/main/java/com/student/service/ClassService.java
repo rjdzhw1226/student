@@ -44,7 +44,7 @@ public class ClassService {
         String labelGradeClass = menuMapper.queryTreeTwoId(father_id);
         String teacherName = teacherMapper.queryById(teacher_id);
         List<student> students = studentMapper.queryByGradeClass(labelGradeClass, labelGrade);
-        classVo.setName(labelGradeClass+labelGrade);
+        classVo.setName(labelGradeClass+"-"+labelGrade);
         classVo.setId(id1);
         classVo.setFather_id(teacher_id);
         classVo.setTeacherName(teacherName);
@@ -55,9 +55,8 @@ public class ClassService {
     }
 
     @Transactional
-    public void findStudentByClass(String name) {
+    public void findStudentByClass() {
         int timeSize = 1;  // 获取需要的线程数
-        final String nameStr = name;
         CountDownLatch countDownLatch=new CountDownLatch(timeSize);
         for(int i = 0; i < timeSize; i++){
             threadPoolTaskExecutor.submit(new Runnable() {   //线程池
@@ -65,7 +64,7 @@ public class ClassService {
                 public void run() {
                     try {
                         //数据内容查询和数据操作
-                        extractedAdd(nameStr);
+                        extractedAdd();
                     }catch (Exception e) {
                         System.out.println("exception"+e.getMessage());
                     }finally{
@@ -83,16 +82,12 @@ public class ClassService {
         }
     }
 
-    private void extractedAdd(String name) {
-        List<student> students = studentMapper.queryAll();
-        for (student student : students) {
-            String id = student.getId();
-            List<score> scores = scoreMapper.queryScore(id);
-            for (score score : scores) {
-                String subId = score.getSubId();
-                String querySubNameById = scoreMapper.querySubNameById(subId);
-                System.out.println(querySubNameById);
-            }
-        }
+    private void extractedAdd() {
+
+
+    }
+
+    public classVo findStudentByClassChange(String name) {
+        return null;
     }
 }
