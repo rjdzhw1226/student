@@ -1,8 +1,12 @@
 package com.student.service;
 
+import com.student.mapper.ClassMapper;
+import com.student.mapper.MenuMapper;
 import com.student.mapper.StudentMapper;
+import com.student.pojo.classDto;
 import com.student.pojo.page;
 import com.student.pojo.student;
+import com.student.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,12 @@ public class StudentService {
 
     @Autowired
     private StudentMapper mapper;
+
+    @Autowired
+    private ClassMapper classMapper;
+
+    @Autowired
+    private MenuMapper menuMapper;
 
     @Transactional
     public page<student> queryAll(int page, int size) {
@@ -40,12 +50,23 @@ public class StudentService {
         return i;
     }
 
+    @Transactional
     public int add(student student) {
+        String grade = student.getGrade();
+        String gradeClass = student.getGrade_class();
+        String labelId = menuMapper.queryTreeTwoByLabel(grade,gradeClass);
+        if (CommonUtil.isNotNullJson(labelId)) {
+            classDto dto = classMapper.query(labelId);
+            int i1 = dto.getCount() + 1;
+            classMapper.editCount(i1,labelId);
+        }else{
+            return 0;
+        }
         int i = mapper.add(student);
         return i;
     }
 
-
+    @Transactional
     public int edit(student student, String idEdit) {
         String studentId = student.getId();
         String name = student.getName();
@@ -56,6 +77,14 @@ public class StudentService {
         String age = student.getAge();
         String phone = student.getPhone();
         String url = student.getUrl();
+        String labelId = menuMapper.queryTreeTwoByLabel(grade,grade_class);
+        if (CommonUtil.isNotNullJson(labelId)){
+            classDto dto = classMapper.query(labelId);
+            int i1 = dto.getCount() + 1;
+            classMapper.editCount(i1,labelId);
+        }else{
+            return 0;
+        }
         int i = mapper.edit(studentId, name, grade, grade_class, phone, age, gender, station, url, idEdit);
         return i;
     }
@@ -83,6 +112,7 @@ public class StudentService {
     }
 
     public int deleteId(String id) {
+
         int i = mapper.deleteId(id);
         return i;
     }

@@ -23,10 +23,10 @@ public class ClassController {
         return queryResult;
     }
 
-    @RequestMapping("/findStudent")
-    public Map<String,Object> findStudentByClass(){
+    @RequestMapping("/findStudent/{name}")
+    public Map<String,Object> findStudentByClass(@PathVariable("name") String name){
         Map<String,Object> map = new HashMap<>();
-        classService.findStudentByClass();
+        classService.findStudentByClass(name);
         return map;
     }
 }

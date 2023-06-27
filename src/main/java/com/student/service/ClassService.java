@@ -55,31 +55,21 @@ public class ClassService {
     }
 
     @Transactional
-    public void findStudentByClass() {
-        int timeSize = 5;  // 上游数据获取需要的线程数
+    public void findStudentByClass(String name) {
+        int timeSize = 1;  // 获取需要的线程数
+        final String nameStr = name;
         CountDownLatch countDownLatch=new CountDownLatch(timeSize);
         for(int i = 0; i < timeSize; i++){
-            //数据内容查询和数据操作
             threadPoolTaskExecutor.submit(new Runnable() {   //线程池
                 @Override
                 public void run() {
                     try {
                         //数据内容查询和数据操作
-                        List<student> students = studentMapper.queryAll();
-                        for (student student : students) {
-                            String id = student.getId();
-                            List<score> scores = scoreMapper.queryScore(id);
-                            for (score score : scores) {
-                                String subId = score.getSubId();
-                                String querySubNameById = scoreMapper.querySubNameById(subId);
-                                System.out.println(querySubNameById);
-                            }
-                        }
+                        extractedAdd(nameStr);
                     }catch (Exception e) {
                         System.out.println("exception"+e.getMessage());
                     }finally{
                         countDownLatch.countDown(); //当前线程的任务执行完毕，任务计数器-1
-                        System.out.println("count: -1");
                     }
                 }
             });
@@ -90,6 +80,19 @@ public class ClassService {
             System.out.println("-------执行完毕-------");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void extractedAdd(String name) {
+        List<student> students = studentMapper.queryAll();
+        for (student student : students) {
+            String id = student.getId();
+            List<score> scores = scoreMapper.queryScore(id);
+            for (score score : scores) {
+                String subId = score.getSubId();
+                String querySubNameById = scoreMapper.querySubNameById(subId);
+                System.out.println(querySubNameById);
+            }
         }
     }
 }

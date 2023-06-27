@@ -29,4 +29,7 @@ public interface MenuMapper {
 
     @Select("select label from tree where id = #{fatherId}")
     public String queryTreeTwoId(String fatherId);
+
+    @Select("select id from tree where label = #{labelClass} and father_id = (select id from tree where label = #{label})")
+    public String queryTreeTwoByLabel(String label, String labelClass);
 }

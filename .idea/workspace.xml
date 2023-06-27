@@ -4,22 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="注册提交 班">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/config/ThreadPoolConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/ClassMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/TeacherMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/classDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/classVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="班级管理优化 多线程操作添加学生 班">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CommonUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/StudentDemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/StudentDemoApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/ClassMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/ClassMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/StudentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/StudentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/class.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/StudentDemoApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/StudentDemoApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +98,19 @@
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.StudentDemoApplication">
+    <configuration name="ClassService" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.student.service.ClassService" />
+      <module name="studentDemo" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.student.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="MenuService" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.student.service.MenuService" />
       <module name="studentDemo" />
@@ -127,6 +133,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.ClassService" />
         <item itemvalue="Application.MenuService" />
       </list>
     </recent_temporary>
@@ -160,6 +167,7 @@
       <workItem from="1687543871708" duration="970000" />
       <workItem from="1687591220949" duration="3540000" />
       <workItem from="1687705262019" duration="1532000" />
+      <workItem from="1687828111478" duration="8008000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -245,7 +253,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687701741062</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="班级管理优化 多线程操作添加学生 班">
+      <created>1687769648064</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1687769648064</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,7 +287,8 @@
     <MESSAGE value="班级前端 家" />
     <MESSAGE value="班级树查询后端 班" />
     <MESSAGE value="前端 家" />
-    <option name="LAST_COMMIT_MESSAGE" value="前端 家" />
+    <MESSAGE value="班级管理优化 多线程操作添加学生 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="班级管理优化 多线程操作添加学生 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

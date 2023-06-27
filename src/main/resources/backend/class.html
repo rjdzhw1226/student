@@ -69,7 +69,7 @@
                         <h4>班级信息:{{tableData.name}}</h4>
                     </el-col>
                     <el-col :span="12" :push="10" style="margin-top: 10px">
-                        <el-button type="primary">编辑</el-button>
+                        <el-button type="primary" @click="edit">编辑</el-button>
                     </el-col>
                 </el-row>
                 <el-table
@@ -94,6 +94,50 @@
             </el-main>
         </el-container>
     </el-container>
+    <el-dialog :visible.sync="dialogFormVisible">
+        <el-tabs v-model="activeName" type="card">
+            <el-tab-pane label="班级基本信息" name="first">
+                <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="班级名称" prop="name">
+                                <el-input v-model="formData.name"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="老师姓名" prop="teacherName">
+                                <el-input v-model="formData.teacherName"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="学生信息" name="second">
+                <div class="checkScrol">
+                    <table class="datatable">
+                        <thead>
+                        <tr>
+                            <th>选择</th>
+                            <th>学生姓名</th>
+                            <th>学生年龄</th>
+                            <th>学生手机号</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="c in studentsList">
+                            <td>
+                                <input :id="c.id" v-model="checkitemIds" type="checkbox" :value="c.id">
+                            </td>
+                            <td><label :for="c.id">{{c.name}}</label></td>
+                            <td><label :for="c.id">{{c.age}}</label></td>
+                            <td><label :for="c.id">{{c.phone}}</label></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </el-dialog>
 </div>
 </body>
 <script>
@@ -106,13 +150,17 @@
         },
         data: {
             size: '',
+            activeName: 'first',
             username: '',
             countC: 0,
             teacherName: '',
             data: [],
             tableData:[],
             studentsList:[],
+            checkitemIds:[],
+            formData:{},
             filterText:'',
+            dialogFormVisible:false,
             defaultProps: {
                 children: 'children',
                 label: 'label'
@@ -134,9 +182,6 @@
             axios.get('/login/getUserName').then((response)=>{
                 this.username = response.data;
             });
-            axios.get('/class/findStudent').then((response)=>{
-
-            });
         },
         methods: {
             findpage(id){
@@ -149,6 +194,16 @@
                         this.studentsList.push(students[i]);
                     }
                 })
+            },
+            edit(){
+                this.dialogFormVisible = true;
+                this.findStudentByClassName();
+            },
+            findStudentByClassName(){
+                var name = this.tableData.name;
+                axios.get('/class/findStudent/'+name+"").then((response)=>{
+                    this.formData = response.data;
+                });
             },
             findTree(){
                 axios.get("/menu/queryClass").then((response)=>{
