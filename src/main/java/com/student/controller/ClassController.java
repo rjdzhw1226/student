@@ -41,6 +41,7 @@ public class ClassController {
         try {
             List<student> students = ExcelUtils.readMultipartFile(file, student.class);
             log.info("数据：{}"+students);
+            classService.upData(students);
         } catch (Exception e) {
             e.printStackTrace();
         }

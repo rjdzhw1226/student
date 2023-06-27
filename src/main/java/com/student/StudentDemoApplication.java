@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.student.**"})
+@EnableAsync
 public class StudentDemoApplication {
 
     public static void main(String[] args) {

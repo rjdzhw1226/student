@@ -2,7 +2,9 @@ package com.student.service;
 
 import com.student.mapper.*;
 import com.student.pojo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 @Service
+@Slf4j
 public class ClassService {
 
     @Resource(name = "taskExecutor")
@@ -89,5 +92,15 @@ public class ClassService {
 
     public classVo findStudentByClassChange(String name) {
         return null;
+    }
+    @Transactional
+    @Async("taskExecutor")
+    public void upData(List<student> students) {
+       log.info(Thread.currentThread().getName() + "正在处理请求");
+        for (student student : students) {
+            int add = studentMapper.add(student);
+            log.info("i:{}"+add);
+        }
+
     }
 }
