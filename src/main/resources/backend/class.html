@@ -165,10 +165,51 @@
 </body>
 <script>
     var studentArray = [];
+
     layui.config({
         base: 'backend/plugins/js/',
     }).extend({
         excel: 'excel',
+    });
+    layui.use(['excel','layer'], function(){
+        var excel = parent.layui.excel;
+        var data =[];
+        for (let i = 0; i < studentArray.length; i++) {
+            data.push(studentArray[i]);
+        }
+        console.log(data);
+        // 1. 如果需要调整顺序，请执行梳理函数
+        var dt = excel.filterExportData(data, [
+            'id'
+            ,'name'
+            ,'grade'
+            ,'grade_class'
+            ,'phone'
+            ,'age'
+            ,'gender'
+            ,'station'
+            ,'url'
+        ]);
+        // 2. 数组头部新增表头
+        dt.unshift({id: '学号', name: '姓名', grade: '年级', grade_class: '班级', age: '手机号', gender: '性别', station: '状态', url: '头像'});
+        // 意思是：A列40px，B列60px(默认)，C列120px，D、E、F等均未定义
+        var colConf = excel.makeColConfig({
+            'A': 120,
+            'E': 120,
+            'I': 120
+        }, 60);
+        var timestart = Date.now();
+        // 3. 执行导出函数，系统会弹出弹框
+        excel.exportExcel({
+            sheet1: dt
+        }, '管理员数据.xlsx', 'xlsx', {
+            extend: {
+                '!cols': colConf
+            }
+        });
+        var timeend = Date.now();
+        var spent = (timeend - timestart) / 1000;
+        layer.alert('导出耗时 '+spent+' s');
     });
 
     new Vue({
@@ -234,7 +275,7 @@
                 this.formData.name = this.tableData.name;
                 this.formData.teacherName = this.tableData.teacherName;
                 axios.get("/class/findStudentChange/"+this.formData.name+"").then((response)=>{
-                    this.export(response.data.data.students);
+                    this.Export(response.data.data.students);
                 })
 
             },

@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="修改logout 以及部分样式 班">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/SubjectMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/service/SubjectService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/plugins/js/excel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/plugins/js/layui.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/plugins/js/layui.all.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/class.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/student.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/config/MyIntercepter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/config/MyIntercepter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +65,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/DOWNLOAD/项目/student/studentDemo/student/src/main/resources/backend/plugins/js",
+    "last_opened_file_path": "F:/工作项目/studentDemo/student/src/main/resources/backend/plugins/js",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -92,11 +83,11 @@
       <recent name="com.student.service" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\plugins\js" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins\js" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\util\excel" />
       <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\img" />
-      <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\plugins\element-ui" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins\js" />
