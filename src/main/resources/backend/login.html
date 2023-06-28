@@ -31,7 +31,7 @@
         <el-input type="password" v-model="ruleForm.password"></el-input>
       </el-form-item>
       <el-form-item label="验证码">
-        <el-input type="password" v-model="ruleForm.checkCode"></el-input>
+        <el-input v-model="ruleForm.checkCode"></el-input>
       </el-form-item>
       <el-form-item>
         <img id="img" @click="ImgClick" src="/login/checkCode" alt="点击切换"></img>

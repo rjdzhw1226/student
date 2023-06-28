@@ -4,22 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="暂时 班">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/filter/loginFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CheckCodeUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/subject.html" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="过滤器添加 登录验证码功能开发 班">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/StudentDemoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/StudentDemoApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/userDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/userDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/LoginService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/LoginService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/config/MyIntercepter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/config/MyIntercepter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/StudentDemoApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/StudentDemoApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/pojo/userDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/pojo/userDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/service/LoginService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/service/LoginService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -325,7 +318,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687856282063</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="过滤器添加 登录验证码功能开发 班">
+      <created>1687933907931</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1687933907931</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +358,8 @@
     <MESSAGE value="班级excel文件导入功能 init 班" />
     <MESSAGE value="sql更新 班" />
     <MESSAGE value="暂时 班" />
-    <option name="LAST_COMMIT_MESSAGE" value="暂时 班" />
+    <MESSAGE value="过滤器添加 登录验证码功能开发 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="过滤器添加 登录验证码功能开发 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

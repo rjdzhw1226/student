@@ -6,6 +6,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+/**
+ * 登录验证拦截器
+ */
 @Slf4j
 public class MyIntercepter implements HandlerInterceptor {
     @Override

@@ -46,6 +46,9 @@ public class LoginController {
         try{
             userDto user = (userDto) req.getSession().getAttribute("user");
             if(user != null){
+                req.getSession().removeAttribute("user");
+                req.getSession().removeAttribute("code");
+                req.getSession().removeAttribute("codeTime");
                 map.put("code",1);
             }else{
                 map.put("code",0);
