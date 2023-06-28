@@ -42,5 +42,8 @@ public interface StudentMapper {
     @Select("select  * from student where grade = #{grade} and grade_class = #{gradeClass}")
     public List<student> queryByGradeClass(String grade, String gradeClass);
 
+    @Select("select  * from student where grade = #{grade}")
+    public List<student> queryStudentBetweenGrade(String grade);
+
     public void insertArticleTag(List<student> list);
 }

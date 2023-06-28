@@ -3,12 +3,17 @@ package com.student.controller;
 import com.student.pojo.user;
 import com.student.pojo.userDto;
 import com.student.service.LoginService;
+import com.student.util.CheckCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +27,7 @@ public class LoginController {
     @RequestMapping("/user")
     public Map<String,Object> login(@RequestBody userDto user, HttpServletRequest req){
         Map<String,Object> map = new HashMap<>();
-        if (loginService.login(user)) {
+        if (loginService.login(user,req)) {
             req.getSession().setAttribute("user",user);
             map.put("flag",true);
             map.put("message","登录成功");
@@ -72,6 +77,32 @@ public class LoginController {
     public String getUserName(HttpServletRequest req){
         userDto user = (userDto) req.getSession().getAttribute("user");
         return user.getUsername();
+    }
+
+    @RequestMapping("/checkCode")
+    public void getCheckCode(HttpServletRequest req, HttpServletResponse res){
+        res.setHeader("Pragma", "No-cache");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setDateHeader("Expires", 0);
+        res.setContentType("image/jpeg");
+        OutputStream fos = null;
+        String checkCode = "";
+        try {
+            fos = res.getOutputStream();
+            checkCode = CheckCodeUtil.outputVerifyImage(100, 50, fos, 4);
+            HttpSession session = req.getSession();
+            if (session.getAttribute("code") != null) {
+                session.removeAttribute("code");
+                session.removeAttribute("codeTime");
+                session.setAttribute("code", checkCode);
+                session.setAttribute("codeTime", System.currentTimeMillis());
+            }else {
+                session.setAttribute("code", checkCode);
+                session.setAttribute("codeTime", System.currentTimeMillis());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -158,6 +158,7 @@ public class ClassService {
             begin.countDown();
             end.await();
             threadPoolTaskExecutor.shutdown();
+            //时间统计
             long time2 = System.currentTimeMillis();
             log.info("学生文件数据入库总耗时："+(time2-time1));
             in.close();

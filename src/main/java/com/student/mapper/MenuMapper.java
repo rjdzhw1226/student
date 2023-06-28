@@ -32,4 +32,7 @@ public interface MenuMapper {
 
     @Select("select id from tree where label = #{labelClass} and father_id = (select id from tree where label = #{label})")
     public String queryTreeTwoByLabel(String label, String labelClass);
+
+    @Select("select label from tree where id between #{gradeMin} and #{gradeMax}")
+    public List<String> queryLabelList(String gradeMax, String gradeMin);
 }
