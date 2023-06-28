@@ -4,28 +4,35 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="过滤器添加 登录验证码功能开发 班">
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="修改logout 以及部分样式 班">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/SubjectMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/service/SubjectService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/plugins/js/excel.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/backend/plugins/js/layui.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/config/MyIntercepter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/config/MyIntercepter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/score.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/score.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/class.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/class.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/student.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/backend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/pojo/userDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/pojo/userDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/service/LoginService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/service/LoginService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/backend/student.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/backend/student.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/config/MyIntercepter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/config/MyIntercepter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="HTML File" />
         <option value="Interface" />
         <option value="Class" />
-        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -67,7 +74,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/DOWNLOAD/项目/brand-system",
+    "last_opened_file_path": "D:/DOWNLOAD/项目/student/studentDemo/student/src/main/resources/backend/plugins/js",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -75,7 +82,7 @@
     "project.structure.last.edited": "Facets",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.21954022",
-    "settings.editor.selected.configurable": "MavenSettings",
+    "settings.editor.selected.configurable": "project.propCompiler",
     "spring.configuration.checksum": "eef0d89606b091b9d36fd193265f9f25",
     "vue.rearranger.settings.migration": "true"
   }
@@ -85,18 +92,18 @@
       <recent name="com.student.service" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins\js" />
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\java\com\student\util\excel" />
       <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\img" />
       <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\plugins\element-ui" />
-      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend" />
-      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\img" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins\js" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student" />
       <recent name="F:\工作项目\studentDemo\student\src\main\resources\backend\img" />
       <recent name="F:\工作项目\studentDemo\student\src\main\resources" />
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\static" />
-      <recent name="F:\DOWNLOADS\studentDemo\studentDemo\src\main\resources\static" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.student.filter" />
@@ -145,8 +152,11 @@
       </method>
     </configuration>
     <configuration name="StudentDemoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="ACTIVE_PROFILES" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="studentDemo" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.student.StudentDemoApplication" />
+      <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -325,7 +335,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687933907931</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="修改logout 以及部分样式 班">
+      <created>1687934711877</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1687934711877</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -359,7 +376,8 @@
     <MESSAGE value="sql更新 班" />
     <MESSAGE value="暂时 班" />
     <MESSAGE value="过滤器添加 登录验证码功能开发 班" />
-    <option name="LAST_COMMIT_MESSAGE" value="过滤器添加 登录验证码功能开发 班" />
+    <MESSAGE value="修改logout 以及部分样式 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改logout 以及部分样式 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -30,7 +30,8 @@ public class ClassController {
     @RequestMapping("/findStudentChange/{name}")
     public Map<String,Object> findStudentByClassChange(@PathVariable("name") String name){
         Map<String,Object> map = new HashMap<>();
-        classService.findStudentByClassChange(name);
+        classVo studentByClassChange = classService.findStudentByClassChange(name);
+        map.put("data",studentByClassChange);
         return map;
     }
 

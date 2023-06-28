@@ -108,7 +108,10 @@ public class ClassService {
     public classVo findStudentByClassChange(String name) {
         String grade = name.split("-")[0];
         String gradeClass = name.split("-")[1];
-        return null;
+        List<student> students = studentMapper.queryByGradeClass(grade, gradeClass);
+        classVo classV = new classVo();
+        classV.setStudents(students);
+        return classV;
     }
 
     public void upData(MultipartFile file){

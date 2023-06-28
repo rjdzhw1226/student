@@ -8,6 +8,9 @@
     <script src="plugins/vue/vue.js"></script>
     <script src="plugins/element-ui/index.js"></script>
     <script src="plugins/axios/axios.min.js"></script>
+    <script type="text/javascript" src="plugins/jquery.min.js"></script>
+    <script src="plugins/js/layui.js"></script>
+    <script src="plugins/js/excel.js"></script>
     <link href="img/favicon.ico" rel="shortcut icon">
     <title>学生管理系统后台首页</title>
     <style>
@@ -68,9 +71,9 @@
                     <el-col :span="12">
                         <h4>班级信息:{{tableData.name}}</h4>
                     </el-col>
-                    <el-col :span="6" :push="6">
+                    <el-col :span="6" :push="4">
                         <el-upload
-                                v-if="tableData.name"
+
                                 class="upload-demo"
                                 style="margin-top: 10px"
                                 action="/class/posts"
@@ -83,8 +86,9 @@
                             <el-button type="primary">点击上传</el-button>
                         </el-upload>
                     </el-col>
-                    <el-col :span="6" :push="4" style="margin-top: 10px">
-                        <el-button v-if="tableData.name" type="primary" @click="edit">编辑</el-button>
+                    <el-col :span="6" :push="2" style="margin-top: 10px">
+                        <el-button  type="primary" @click="edit">编辑</el-button>
+                        <el-button  type="primary" @click="Export">导出</el-button>
                     </el-col>
                 </el-row>
                 <el-table
@@ -160,6 +164,13 @@
 </div>
 </body>
 <script>
+    var studentArray = [];
+    layui.config({
+        base: 'backend/plugins/js/',
+    }).extend({
+        excel: 'excel',
+    });
+
     new Vue({
         el: '#app',
         watch: {
@@ -222,6 +233,9 @@
             findStudentByClassName(){
                 this.formData.name = this.tableData.name;
                 this.formData.teacherName = this.tableData.teacherName;
+                axios.get("/class/findStudentChange/"+this.formData.name+"").then((response)=>{
+                    this.export(response.data.data.students);
+                })
 
             },
             findTree(){
@@ -245,6 +259,9 @@
             },
             reset(){
                 this.dialogFormVisible = false;
+            },
+            Export(data){
+                studentArray = data;
             },
             handleAvatarSuccess(){
 
