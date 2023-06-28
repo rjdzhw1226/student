@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan(basePackages = {"com.student.**"})
 @EnableAsync
 @EnableTransactionManagement
-@ServletComponentScan
+//@ServletComponentScan
 public class StudentDemoApplication {
 
     public static void main(String[] args) {
