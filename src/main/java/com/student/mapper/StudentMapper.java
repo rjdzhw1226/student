@@ -46,4 +46,6 @@ public interface StudentMapper {
     public List<student> queryStudentBetweenGrade(String grade);
 
     public void insertArticleTag(List<student> list);
+
+    public void load_file(@Param("path") String path);
 }

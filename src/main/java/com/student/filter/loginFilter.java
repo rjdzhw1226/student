@@ -48,7 +48,7 @@ public class loginFilter implements Filter {
             chain.doFilter(request, response);
         }else{
             req.setAttribute("login_msg","未登录，请登录");
-            req.getRequestDispatcher("/login.html").forward(req,response);
+            req.getRequestDispatcher("/backend/login.html").forward(req,response);
         }
     }
     public void init(FilterConfig config) throws ServletException {

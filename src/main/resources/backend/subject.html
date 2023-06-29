@@ -128,9 +128,17 @@
       }
     },
     created() {
-
+        this.findpage();
     },
     methods:{
+      findpage(){
+        var pageBean = this.pageBean;
+        axios.post("/subject/All",pageBean).then((response)=> {
+          //为模型数据赋值，基于VUE的双向绑定展示到页面
+          this.tableData = response.data.data;
+          this.total = response.data.total;
+        });
+      },
       handleSizeChange(){
 
       },

@@ -10,4 +10,10 @@
             (#{tag.id},#{tag.name},#{tag.grade},#{tag.grade_class},#{tag.phone},#{tag.age},#{tag.gender},#{tag.station},#{tag.url})
         </foreach>
     </insert>
+
+    <insert id="load_file">
+        LOAD DATA LOCAL INFILE #{path,jdbcType=VARCHAR} INTO TABLE student CHARACTER SET utf8
+        FIELDS TERMINATED BY ','
+        LINES TERMINATED BY '\n'
+    </insert>
 </mapper>

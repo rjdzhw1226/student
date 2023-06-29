@@ -4,6 +4,7 @@ import com.student.mapper.*;
 import com.student.pojo.*;
 import com.student.util.BatchInsertThread;
 import com.student.util.CommonUtil;
+import com.student.util.PoiUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -18,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 @Service
@@ -76,23 +79,31 @@ public class ClassService {
 
     @Transactional
     public void findStudentByClass(String name) {
-        int timeSize = 1;  // 获取需要的线程数
+        String grade = name.split("-")[0];
+        String gradeClass = name.split("-")[1];
+        List<student> students = studentMapper.queryByGradeClass(grade, gradeClass);
+        final List<FileVo> list = new ArrayList<>();
+        //分组
+        int size = students.size() % 10;
+        int remainders = size > 0 ? students.size() / 10 + 1 : students.size() / 10;
+        // 获取需要的线程数
+        int timeSize = 10;
         CountDownLatch countDownLatch=new CountDownLatch(timeSize);
         for(int i = 0; i < timeSize; i++){
-            threadPoolTaskExecutor.submit(new Runnable() {   //线程池
-                @Override
-                public void run() {
-                    try {
-                        //数据内容查询和数据操作
-                        extractedAdd();
-                    }catch (Exception e) {
-                        System.out.println("exception"+e.getMessage());
-                    }finally{
-                        countDownLatch.countDown(); //当前线程的任务执行完毕，任务计数器-1
-                    }
+            //数据分割
+            List<student> subList = students.subList(i * remainders, Math.min(students.size(), i * remainders + remainders));
+            threadPoolTaskExecutor.submit(() -> {
+                //线程池
+                try {
+                    //数据操作
+                    FileVo fileVo = extractedAdd(subList);
+                    list.add(fileVo);
+                }catch (Exception e) {
+                    System.out.println("exception"+e.getMessage());
+                }finally{
+                    countDownLatch.countDown(); //当前线程的任务执行完毕，任务计数器-1
                 }
             });
-
         }
         try {
             countDownLatch.await();    //主线程等待所有的子任务结束，如果有一个子任务没有完成则会一直等待
@@ -100,11 +111,26 @@ public class ClassService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //将异步处理的list整合
+        List<List<String>> getDownloadList = new ArrayList<>();
+        for (FileVo vo : list) {
+            getDownloadList.addAll(vo.getDownloadList());
+        }
+        log.info("getDownloadList:{}"+getDownloadList);
+        String[] strArray = new String[]{"学号","姓名","年级","班级","手机号","年龄","性别","状态","头像"};
+        try {
+            PoiUtil.exportCSVFile(strArray,getDownloadList,0,"D:\\DOWNLOAD\\student"+ UUID.randomUUID() +".csv");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void extractedAdd() {
-        //TODO edi项目代码里 留给导出 实现和单位一样效果
-
+    private FileVo extractedAdd(List<student> sublist) {
+        FileVo fileVo = new FileVo();
+        List<List<String>> downloadList = new ArrayList<>();
+        extracted(downloadList,sublist);
+        fileVo.setDownloadList(downloadList);
+        return fileVo;
     }
 
     public List<List<String>> findStudentByClassString(String name) {
@@ -112,6 +138,11 @@ public class ClassService {
         String grade = name.split("-")[0];
         String gradeClass = name.split("-")[1];
         List<student> students = studentMapper.queryByGradeClass(grade, gradeClass);
+        extracted(list, students);
+        return list;
+    }
+
+    private void extracted(List<List<String>> list, List<student> students) {
         for (student student : students) {
             List<String> listChildren = new LinkedList<>();
             String studentId = student.getId();
@@ -134,7 +165,6 @@ public class ClassService {
             listChildren.add(url);
             list.add(listChildren);
         }
-        return list;
     }
 
     public classVo findStudentByClassChange(String name) {

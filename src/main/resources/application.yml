@@ -17,5 +17,7 @@ mybatis:
 student:
   path: F:\img\
   #path: D:\img\
+file:
+  readPath: D:\DOWNLOAD\student.csv
 
 
