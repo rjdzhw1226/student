@@ -93,15 +93,14 @@ public class LoginController {
         try {
             fos = res.getOutputStream();
             checkCode = CheckCodeUtil.outputVerifyImage(100, 50, fos, 4);
-            HttpSession session = req.getSession();
-            if (session.getAttribute("code") != null) {
-                session.removeAttribute("code");
-                session.removeAttribute("codeTime");
-                session.setAttribute("code", checkCode);
-                session.setAttribute("codeTime", System.currentTimeMillis());
+            if (req.getSession().getAttribute("code") != null) {
+                req.getSession().removeAttribute("code");
+                req.getSession().removeAttribute("codeTime");
+                req.getSession().setAttribute("code", checkCode);
+                req.getSession().setAttribute("codeTime", System.currentTimeMillis());
             }else {
-                session.setAttribute("code", checkCode);
-                session.setAttribute("codeTime", System.currentTimeMillis());
+                req.getSession().setAttribute("code", checkCode);
+                req.getSession().setAttribute("codeTime", System.currentTimeMillis());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

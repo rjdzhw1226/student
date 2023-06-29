@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 @Service
@@ -19,7 +20,7 @@ public class LoginService {
         String code = (String) req.getSession().getAttribute("code");
         Long l2 = (Long) req.getSession().getAttribute("codeTime");
         long l1 = System.currentTimeMillis();
-        if(checkCode.equals(code) || (l1-l2) < 300000){
+        if(checkCode.equals(code.toLowerCase()) && (l1-l2) < 300000){
             userDto login = mapper.login(username);
             if (login.getPassword().equals(user.getPassword())) {
                 return true;

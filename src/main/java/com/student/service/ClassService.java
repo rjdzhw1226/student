@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -73,7 +75,7 @@ public class ClassService {
     }
 
     @Transactional
-    public void findStudentByClass() {
+    public void findStudentByClass(String name) {
         int timeSize = 1;  // 获取需要的线程数
         CountDownLatch countDownLatch=new CountDownLatch(timeSize);
         for(int i = 0; i < timeSize; i++){
@@ -103,6 +105,36 @@ public class ClassService {
     private void extractedAdd() {
         //TODO edi项目代码里 留给导出 实现和单位一样效果
 
+    }
+
+    public List<List<String>> findStudentByClassString(String name) {
+        List<List<String>> list = new ArrayList<>();
+        String grade = name.split("-")[0];
+        String gradeClass = name.split("-")[1];
+        List<student> students = studentMapper.queryByGradeClass(grade, gradeClass);
+        for (student student : students) {
+            List<String> listChildren = new LinkedList<>();
+            String studentId = student.getId();
+            listChildren.add(studentId);
+            String stName = student.getName();
+            listChildren.add(stName);
+            String station = student.getStation();
+            listChildren.add(station);
+            String stGrade = student.getGrade();
+            listChildren.add(stGrade);
+            String grade_class = student.getGrade_class();
+            listChildren.add(grade_class);
+            String gender = student.getGender();
+            listChildren.add(gender);
+            String age = student.getAge();
+            listChildren.add(age);
+            String phone = student.getPhone();
+            listChildren.add(phone);
+            String url = student.getUrl();
+            listChildren.add(url);
+            list.add(listChildren);
+        }
+        return list;
     }
 
     public classVo findStudentByClassChange(String name) {

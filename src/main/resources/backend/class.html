@@ -8,6 +8,10 @@
     <script src="plugins/vue/vue.js"></script>
     <script src="plugins/element-ui/index.js"></script>
     <script src="plugins/axios/axios.min.js"></script>
+    <script type="text/javascript" src="plugins/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="plugins/xlsxStyle.core.min.js"></script>
+    <script type="text/javascript" src="plugins/xlsxStyle.utils.js"></script>
+    <script type="text/javascript" src="plugins/FileSaver.js"></script>
     <link href="img/favicon.ico" rel="shortcut icon">
     <title>学生管理系统后台首页</title>
     <style>
@@ -70,7 +74,7 @@
                     </el-col>
                     <el-col :span="6" :push="4">
                         <el-upload
-
+                                v-if="tableData.name"
                                 class="upload-demo"
                                 style="margin-top: 10px"
                                 action="/class/posts"
@@ -80,12 +84,12 @@
                                 :on-success="handleAvatarSuccess"
                                 :on-change="onChange"
                                 multiple>
-                            <el-button type="primary">点击上传</el-button>
+                            <el-button v-if="tableData.name" type="primary">点击上传</el-button>
                         </el-upload>
                     </el-col>
                     <el-col :span="6" :push="2" style="margin-top: 10px">
-                        <el-button  type="primary" @click="edit">编辑</el-button>
-                        <el-button  type="primary" @click="Export">导出</el-button>
+                        <el-button v-if="tableData.name" type="primary" @click="edit">编辑</el-button>
+                        <el-button v-if="tableData.name" type="primary" @click="Export">导出</el-button>
                     </el-col>
                 </el-row>
                 <el-table
@@ -161,57 +165,6 @@
 </div>
 </body>
 <script>
-    var studentArray = [];
-    var data =[];
-        for (let i = 0; i < studentArray.length; i++) {
-            data.push(studentArray[i]);
-        }
-    //
-    // layui.config({
-    //     base: 'layui_exts/',
-    // }).extend({
-    //     excel: 'excel',
-    // });
-    // layui.use(['excel','layer'], function(){
-    //     var excel = parent.layui.excel;
-    //     var data =[];
-    //     for (let i = 0; i < studentArray.length; i++) {
-    //         data.push(studentArray[i]);
-    //     }
-    //     console.log(data);
-    //     // 1. 如果需要调整顺序，请执行梳理函数
-    //     var dt = excel.filterExportData(data, [
-    //         'id'
-    //         ,'name'
-    //         ,'grade'
-    //         ,'grade_class'
-    //         ,'phone'
-    //         ,'age'
-    //         ,'gender'
-    //         ,'station'
-    //         ,'url'
-    //     ]);
-    //     // 2. 数组头部新增表头
-    //     dt.unshift({id: '学号', name: '姓名', grade: '年级', grade_class: '班级', age: '手机号', gender: '性别', station: '状态', url: '头像'});
-    //     // 意思是：A列40px，B列60px(默认)，C列120px，D、E、F等均未定义
-    //     var colConf = excel.makeColConfig({
-    //         'A': 120,
-    //         'E': 120,
-    //         'I': 120
-    //     }, 60);
-    //     var timestart = Date.now();
-    //     // 3. 执行导出函数，系统会弹出弹框
-    //     excel.exportExcel({
-    //         sheet1: dt
-    //     }, '管理员数据.xlsx', 'xlsx', {
-    //         extend: {
-    //             '!cols': colConf
-    //         }
-    //     });
-    //     var timeend = Date.now();
-    //     var spent = (timeend - timestart) / 1000;
-    //     layer.alert('导出耗时 '+spent+' s');
-    // });
     new Vue({
         el: '#app',
         watch: {
@@ -255,6 +208,39 @@
             });
         },
         methods: {
+            sheet2Workbook(sheets){
+                if (!Array.isArray(sheets)){
+                    sheets = [sheets];
+                }
+                var workbook = {
+                    SheetNames: [],
+                    Sheets: {}
+                }
+                for (sheet of sheets){
+                    sheet.sheetName = sheet.sheetName || 'sheet'+(workbook.SheetNames.length+1);
+                    workbook.SheetNames.push(sheet.sheetName);
+                    workbook.Sheets[sheet.sheetName] = sheet.sheetData;
+                }
+                return workbook;
+            },
+            Workbook2Blob(workbook){
+                var wopts = {
+                    bookType: 'xlsx', // 要生成的文件类型
+                    bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+                    type: 'binary'
+                };
+                // 原本是XLSX.write, 需要样式则用xlsxStyle
+                var wbout = xlsxStyle.write(workbook, wopts);
+                var blob = new Blob([s2ab(wbout)], {type:"application/octet-stream"});
+                // 字符串转ArrayBuffer
+                function s2ab(s) {
+                    var buf = new ArrayBuffer(s.length);
+                    var view = new Uint8Array(buf);
+                    for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                    return buf;
+                }
+                return blob;
+            },
             findpage(id){
                 this.studentsList = [];
                 axios.get("/class/query/"+id+"").then((response)=>{
@@ -275,7 +261,7 @@
                 this.formData.name = this.tableData.name;
                 this.formData.teacherName = this.tableData.teacherName;
                 axios.get("/class/findStudentChange/"+this.formData.name+"").then((response)=>{
-                    this.Export(response.data.data.students);
+                    this.Export(response.data.data);
                 })
 
             },
@@ -302,7 +288,12 @@
                 this.dialogFormVisible = false;
             },
             Export(data){
-                studentArray = data;
+                var sheet1 = XLSX.utils.aoa_to_sheet(data);
+                var Workbook = this.sheet2Workbook([{
+                    sheetName: 'sheet1',
+                    sheetData: sheet1,
+                }]);
+                saveAs(this.Workbook2Blob(Workbook), '导出.xlsx');
             },
             handleAvatarSuccess(){
 
