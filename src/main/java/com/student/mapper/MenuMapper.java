@@ -1,9 +1,8 @@
 package com.student.mapper;
 
-import com.student.pojo.menuVo;
+import com.student.pojo.vo.menuVo;
 import com.student.pojo.menu_children;
-import com.student.pojo.tree;
-import com.student.pojo.treeVo;
+import com.student.pojo.vo.treeVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

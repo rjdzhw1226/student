@@ -2,7 +2,6 @@ package com.student.controller;
 
 import com.student.pojo.menu;
 import com.student.pojo.tree;
-import com.student.pojo.treeVo;
 import com.student.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

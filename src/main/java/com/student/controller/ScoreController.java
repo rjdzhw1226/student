@@ -1,6 +1,7 @@
 package com.student.controller;
 
 import com.student.pojo.*;
+import com.student.pojo.vo.scoreVo;
 import com.student.service.ScoreService;
 import com.student.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;

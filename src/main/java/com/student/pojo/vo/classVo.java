@@ -1,5 +1,6 @@
-package com.student.pojo;
+package com.student.pojo.vo;
 
+import com.student.pojo.student;
 import lombok.Data;
 
 import java.util.List;

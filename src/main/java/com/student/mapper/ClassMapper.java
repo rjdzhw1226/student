@@ -1,6 +1,6 @@
 package com.student.mapper;
 
-import com.student.pojo.classDto;
+import com.student.pojo.dto.classDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;

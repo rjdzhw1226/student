@@ -1,7 +1,7 @@
 package com.student.mapper;
 
 import com.student.pojo.user;
-import com.student.pojo.userDto;
+import com.student.pojo.dto.userDto;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

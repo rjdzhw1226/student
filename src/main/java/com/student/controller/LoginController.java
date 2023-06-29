@@ -1,7 +1,7 @@
 package com.student.controller;
 
 import com.student.pojo.user;
-import com.student.pojo.userDto;
+import com.student.pojo.dto.userDto;
 import com.student.service.LoginService;
 import com.student.util.CheckCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;

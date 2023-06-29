@@ -5,29 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="班级导出功能调试 班">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/SubjectController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/FileVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/subject.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CSVFileUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CsvWriter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/PoiUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/subjectVo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ClassController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/filter/loginFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/filter/loginFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/StudentMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/MenuController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/MenuController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/ScoreController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/ScoreController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/SubjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/SubjectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/ClassMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/ClassMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/LoginMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/LoginMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/SubjectMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/SubjectMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/FileVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/FileVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/classDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/dto/classDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/classVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/classVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/menuVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/menuVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/scoreVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/scoreVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/treeVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/treeVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/userDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/dto/userDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ClassService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ExcelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ExcelService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/LoginService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/LoginService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/MenuService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/MenuService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ScoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ScoreService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/StudentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/StudentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/SubjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/SubjectService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/util/CommonUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CommonUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/backend/subject.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/backend/subject.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/backend/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/test.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/StudentMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/StudentMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/demo.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/demo.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/mapper/StudentMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/static/demo.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/demo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/controller/LoginController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/mapper/LoginMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/mapper/LoginMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/pojo/userDto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/service/LoginService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/service/LoginService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/student/service/StudentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/student/service/StudentService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,9 +71,9 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="localRepository" value="D:\DOWNLOAD\maven3.6.3\repository" />
+        <option name="localRepository" value="F:\DOWNLOADS\apache-maven-3.6.3-bin\repository" />
         <option name="mavenHome" value="$PROJECT_DIR$/../../maven3.6.3/apache-maven-3.6.3" />
-        <option name="userSettingsFile" value="D:\DOWNLOAD\maven3.6.3\apache-maven-3.6.3\conf\settings.xml" />
+        <option name="userSettingsFile" value="F:\DOWNLOADS\apache-maven-3.6.3-bin\apache-maven-3.6.3\conf\settings.xml" />
       </MavenGeneralSettings>
     </option>
   </component>
@@ -93,7 +103,7 @@
     "project.structure.last.edited": "Facets",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.21954022",
-    "settings.editor.selected.configurable": "project.propCompiler",
+    "settings.editor.selected.configurable": "MavenSettings",
     "spring.configuration.checksum": "eef0d89606b091b9d36fd193265f9f25",
     "vue.rearranger.settings.migration": "true"
   }
@@ -117,6 +127,7 @@
       <recent name="D:\DOWNLOAD\项目\student\studentDemo\student\src\main\resources\backend\plugins\js" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.student.pojo.vo" />
       <recent name="com.student.filter" />
       <recent name="com.student.util" />
       <recent name="com.student.config" />

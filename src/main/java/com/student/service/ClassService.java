@@ -2,6 +2,9 @@ package com.student.service;
 
 import com.student.mapper.*;
 import com.student.pojo.*;
+import com.student.pojo.dto.classDto;
+import com.student.pojo.vo.FileVo;
+import com.student.pojo.vo.classVo;
 import com.student.util.BatchInsertThread;
 import com.student.util.CommonUtil;
 import com.student.util.PoiUtil;
@@ -12,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -51,6 +55,9 @@ public class ClassService {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Value("${file.readPath}")
+    private String path;
 
     private static final String XLSX = ".xlsx";
     private static final String XLS = ".xls";
@@ -119,7 +126,7 @@ public class ClassService {
         log.info("getDownloadList:{}"+getDownloadList);
         String[] strArray = new String[]{"学号","姓名","年级","班级","手机号","年龄","性别","状态","头像"};
         try {
-            PoiUtil.exportCSVFile(strArray,getDownloadList,0,"D:\\DOWNLOAD\\student"+ UUID.randomUUID() +".csv");
+            PoiUtil.exportCSVFile(strArray,getDownloadList,0,path + "student" +UUID.randomUUID() +".csv");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

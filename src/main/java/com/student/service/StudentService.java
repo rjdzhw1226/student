@@ -3,7 +3,7 @@ package com.student.service;
 import com.student.mapper.ClassMapper;
 import com.student.mapper.MenuMapper;
 import com.student.mapper.StudentMapper;
-import com.student.pojo.classDto;
+import com.student.pojo.dto.classDto;
 import com.student.pojo.page;
 import com.student.pojo.student;
 import com.student.util.CommonUtil;

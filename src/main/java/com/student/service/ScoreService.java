@@ -2,7 +2,7 @@ package com.student.service;
 
 import com.student.mapper.ScoreMapper;
 import com.student.pojo.score;
-import com.student.pojo.scoreVo;
+import com.student.pojo.vo.scoreVo;
 import com.student.pojo.student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

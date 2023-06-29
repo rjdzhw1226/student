@@ -1,5 +1,14 @@
 server:
   port: 8080
+#spring:
+#  application:
+#    name: student_demo
+#  datasource:
+#    druid:
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://localhost:3306/student_demo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+#      username: root
+#      password: 123456
 spring:
   application:
     name: student_demo
@@ -18,6 +27,7 @@ student:
   path: F:\img\
   #path: D:\img\
 file:
-  readPath: D:\DOWNLOAD\student.csv
+  readPath: F:\DOWNLOADS\student\
+  #readPath: D:\DOWNLOAD\student\
 
 

@@ -46,7 +46,7 @@
         </el-form>
       </el-header>
       <el-main>
-        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table id="LAY-EXPORT-TEST" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50">
           </el-table-column>
           <el-table-column type="index" align="center" label="序号">
@@ -57,7 +57,7 @@
           </el-table-column>
           <el-table-column prop="gradeBetween" label="所属年级区间" width="auto">
           </el-table-column>
-          <el-table-column prop="teacher" label="任课教师" width="auto">
+          <el-table-column prop="teacherName" label="任课教师" width="auto">
           </el-table-column>
           <el-table-column
                   label="操作"
@@ -111,6 +111,20 @@
   </div>
 </div>
 </body>
+<!--<script src="layui_exts/excel.js"></script>-->
+<!--<script>-->
+<!--  function exportTable() {-->
+<!--    // 获取头部和body-->
+<!--    var data = LAY_EXCEL.tableToJson(document.getElementById('LAY-EXPORT-TEST')) // 或者 $('#LAY-EXPORT-TEST')-->
+<!--    // console.log(data)-->
+<!--    var exportData = []-->
+<!--    exportData.push.apply(exportData, data.head)-->
+<!--    exportData.push.apply(exportData, data.body)-->
+<!--    // console.log(exportData)-->
+
+<!--    LAY_EXCEL.exportExcel(exportData, '表格导出.xlsx', 'xlsx')-->
+<!--  }-->
+<!--</script>-->
 <script>
   new Vue({
     el: '#app',

@@ -2,13 +2,11 @@ package com.student.service;
 
 import com.student.mapper.LoginMapper;
 import com.student.pojo.user;
-import com.student.pojo.userDto;
+import com.student.pojo.dto.userDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Date;
 
 @Service
 public class LoginService {
