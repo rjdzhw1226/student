@@ -1,5 +1,6 @@
 package com.student.pojo;
 
+import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import lombok.Data;
 
 import java.util.List;

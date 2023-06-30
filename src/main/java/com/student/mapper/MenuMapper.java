@@ -33,5 +33,5 @@ public interface MenuMapper {
     public String queryTreeTwoByLabel(String label, String labelClass);
 
     @Select("select label from tree where id between #{gradeMin} and #{gradeMax}")
-    public List<String> queryLabelList(String gradeMax, String gradeMin);
+    public List<String> queryLabelList(Integer gradeMax, Integer gradeMin);
 }

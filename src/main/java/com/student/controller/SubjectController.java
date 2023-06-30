@@ -29,7 +29,8 @@ public class SubjectController {
         Integer Page = page.getPage();
         Integer Size = page.getSize();
         try {
-            subjects = subjectService.queryAllSubject(Page, Size);
+            //subjects = subjectService.queryAllSubject(Page, Size);
+            subjects = subjectService.query(Page, Size);
         } catch (Exception e) {
             e.printStackTrace();
         }

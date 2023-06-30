@@ -1,5 +1,6 @@
 package com.student.filter;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.*;
@@ -30,6 +31,7 @@ public class loginFilter implements Filter {
                 "/login/checkCode",
                 "/file/**",
                 "/backend/**",
+                "/backend/plugins/**",
                 "/front/**",};
 
         String s = req.getRequestURI().toString();
@@ -48,7 +50,8 @@ public class loginFilter implements Filter {
             chain.doFilter(request, response);
         }else{
             req.setAttribute("login_msg","未登录，请登录");
-            req.getRequestDispatcher("/backend/login.html").forward(req,response);
+            req.getRequestDispatcher("login.html").forward(req,response);
+            response.getWriter().write(JSONObject.toJSONString("NOTLOGIN"));
         }
     }
     public void init(FilterConfig config) throws ServletException {

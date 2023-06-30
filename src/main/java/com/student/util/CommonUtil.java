@@ -3,15 +3,19 @@ package com.student.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.springframework.beans.BeanUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 public class CommonUtil {
     public static boolean isNotNullJson(String json){
@@ -139,5 +143,67 @@ public class CommonUtil {
             in.close();
             out.close();
         }
+
+    /**
+     * 复制单个Bean属性
+     * @param source
+     * @param clazz
+     * @return
+     */
+    public static <V,T> T copyBean(V source,Class<T> clazz) {
+        T vo = null;
+        try {
+            //获取目标对象
+            vo = clazz.newInstance();
+            //复制属性
+            BeanUtils.copyProperties(source, vo);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return vo;
+    }
+
+    /**
+     * 拷贝List型的Bean集合
+     * @param list
+     * @param clazz
+     * @param <V>
+     * @param <T>
+     * @return
+     */
+    public static <V,T> List<T> copyBeanList(List<V> list,Class<T> clazz) {
+        return list.stream()
+                .map(o ->
+                        copyBean(o,clazz)
+                ).collect(Collectors.toList());
+    }
+
+    /**
+     * 用于删除图片
+     */
+    public static void deleteImg(String basePath,String name) {
+        System.out.println(basePath + name);
+        //delFile(basePath + name);
+        File file = new File(basePath + name);
+        file.delete();
+    }
+
+    /**
+     * 删除文件
+     * @param filePathAndName 指定得路径
+     */
+    public static void delFile(String filePathAndName) {
+        try {
+            String filePath = filePathAndName;
+            filePath = filePath.toString();
+            java.io.File myDelFile = new java.io.File(filePath);
+            myDelFile.delete();
+        } catch (Exception e) {
+            System.out.println("删除文件操作出错");
+            e.printStackTrace();
+        }
+    }
 
     }

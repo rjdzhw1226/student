@@ -42,7 +42,8 @@ public class SubjectService {
     @Autowired
     private SubjectMapper subjectMapper;
 
-
+    @Autowired
+    private ExcelService excelService;
     /**
      * 同步
      */
@@ -71,6 +72,17 @@ public class SubjectService {
             }
         }
     }
+
+    public page<subject> query(Integer page, Integer size){
+        page<subject> pages =new page<>();
+        List<subject> multiCombineResult = excelService.getMultiCombineResult();
+        int count = subjectMapper.queryCount();
+        List<subject> lists = multiCombineResult.subList((page - 1) * size, (page - 1) * size + size);
+        pages.setData(lists);
+        pages.setTotal(count);
+        return pages;
+    }
+
     public page<subject> queryAllSubject(Integer page, Integer size) {
         Map<String, Object> params = new HashMap<>();
         params.put("page", (page - 1) * size);
@@ -82,11 +94,10 @@ public class SubjectService {
             subject sb = new subject();
             String id = subjectVo.getId();
             String name = subjectVo.getName();
-            String gradeMax = subjectVo.getGrade_max();
-            String gradeMin = subjectVo.getGrade_min();
-            String teacherId = subjectVo.getTeacher_id();
-            String teacherName = teacherMapper.queryById(teacherId);
-            List<String> strings = menuMapper.queryLabelList(gradeMin, gradeMax);
+            Integer gradeMax = Integer.parseInt(subjectVo.getGrade_max());
+            Integer gradeMin = Integer.parseInt(subjectVo.getGrade_min());
+            String teacherName = subjectVo.getTeacherName();
+            List<String> strings = menuMapper.queryLabelList(gradeMax, gradeMin);
             sb.setGradeBetween(strings.get(0)+"~"+strings.get(strings.size()-1));
             sb.setTeacherName(teacherName);
             sb.setName(name);
@@ -99,7 +110,6 @@ public class SubjectService {
         subjectpage.setTotal(count);
         return subjectpage;
     }
-
 
     public List<subject> queryAllSubjectGiveUp(Integer page, Integer size) throws ExecutionException, InterruptedException {
         Map<String, Object> params = new HashMap<>();

@@ -3,11 +3,10 @@ package com.student.pojo.vo;
 import lombok.Data;
 
 @Data
-public class subjectVo {
+public class subjectLabelVo {
     private String id;
     private String name;
-    private String grade_max;
-    private String grade_min;
-    private String teacher_id;
+    private String gradeMax;
+    private String gradeMin;
     private String teacherName;
 }

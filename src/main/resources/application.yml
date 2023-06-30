@@ -1,14 +1,5 @@
 server:
   port: 8080
-#spring:
-#  application:
-#    name: student_demo
-#  datasource:
-#    druid:
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#      url: jdbc:mysql://localhost:3306/student_demo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-#      username: root
-#      password: 123456
 spring:
   application:
     name: student_demo
@@ -18,16 +9,28 @@ spring:
       url: jdbc:mysql://localhost:3306/student_demo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 123456
+#spring:
+#  application:
+#    name: student_demo
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/student_demo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+#    username: root
+#    password: 123456
 mybatis:
-  # ??XML???????????????
   type-aliases-package: com.student.pojo
-  # ??MyBatis?xml??????
   mapper-locations: classpath:mapper/*.xml
+#  table:
+#    auto: none
+#  model:
+#    pack: com.student.pojo
+#  database:
+#    type: mysql
 student:
-  path: F:\img\
-  #path: D:\img\
+  #path: F:\img\
+  path: D:\img\
 file:
-  readPath: F:\DOWNLOADS\student\
-  #readPath: D:\DOWNLOAD\student\
+  #readPath: F:\DOWNLOADS\student\
+  readPath: D:\DOWNLOAD\student\
 
 
