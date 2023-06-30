@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <script type="text/javascript" src="plugins/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="plugins/xlsxStyle.core.min.js"></script>
+    <script type="text/javascript" src="plugins/xlsxStyle.utils.js"></script>
+    <script type="text/javascript" src="plugins/FileSaver.js"></script>
+    <link href="img/favicon.ico" rel="shortcut icon">
+    <title>学生管理系统后台首页</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100%;
+        }
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-container {
+            height: 100%;
+        }
+        .el-main {
+            padding: 0px;
+            margin: 0px;
+            height: 100%;
+        }
+
+        html,body,#app,.el-container{
+            padding: 0px;
+            margin: 0px;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-container style="border: 1px solid #eee">
+        <el-header style="text-align: right; font-size: 12px">
+            <el-form :inline="true" class="demo-form-inline" style="margin-top: 10px;">
+                <span>{{username}}</span>
+                <el-form-item label="年级快速查找:">
+                    <el-input v-model="filterText" placeholder="输入关键字进行过滤"></el-input>
+                </el-form-item>
+            </el-form>
+        </el-header>
+        <el-container>
+            <el-aside>
+                <el-tree
+                        :data="data"
+                        show-checkbox
+                        node-key="id"
+                        ref="tree"
+                        highlight-current
+                        :props="defaultProps"
+                        :filter-node-method="filterNode"
+                        @node-click="handleTreeNodeClick"
+                        @check-change="handleCheckChange"
+                >
+                </el-tree>
+            </el-aside>
+            <el-main>
+                <el-row>
+                    <el-col :span="12">
+                        <h4>班级信息:{{tableData.name}}</h4>
+                    </el-col>
+                    <el-col :span="6" :push="4">
+                        <el-upload
+                                v-if="tableData.name"
+                                class="upload-demo"
+                                style="margin-top: 10px"
+                                action="/class/posts"
+                                accept=".xlsx"
+                                :limit="1"
+                                :before-upload="handleBeforeUpload"
+                                :on-success="handleAvatarSuccess"
+                                :on-change="onChange"
+                                multiple>
+                            <el-button v-if="tableData.name" type="primary">点击上传</el-button>
+                        </el-upload>
+                    </el-col>
+                    <el-col :span="6" :push="2" style="margin-top: 10px">
+                        <el-button v-if="tableData.name" type="primary" @click="edit">编辑</el-button>
+                        <el-button v-if="tableData.name" type="primary" @click="Export">导出</el-button>
+                    </el-col>
+                </el-row>
+                <el-table
+                        :data="studentsList"
+                        border
+                        style="width: 100%">
+                    <el-table-column
+                            prop="name"
+                            label="学生姓名">
+                    </el-table-column>
+                </el-table>
+                <el-table
+                        :show-header="false"
+                        :data="tableDataBll"
+                        border
+                        style="width: 100%;"
+                >
+                    <el-table-column prop="total" align="center" ></el-table-column>
+                    <el-table-column prop="countC" ></el-table-column>
+                    <el-table-column prop="teacherName"  ></el-table-column>
+                </el-table>
+            </el-main>
+        </el-container>
+    </el-container>
+    <el-dialog :visible.sync="dialogFormVisible">
+        <el-tabs v-model="activeName" type="card">
+            <el-tab-pane label="班级基本信息" name="first">
+                <el-form ref="dataAddForm" :model="formData" label-position="right" label-width="100px">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="班级名称" prop="name">
+                                <el-input readonly="true" v-model="formData.name"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="老师姓名" prop="teacherName">
+                                <el-input v-model="formData.teacherName"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="学生信息" name="second">
+                <div class="checkScrol">
+                    <table class="datatable">
+                        <thead>
+                        <tr>
+                            <th>选择</th>
+                            <th>学生姓名</th>
+                            <th>学生年龄</th>
+                            <th>学生手机号</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="c in studentsList">
+                            <td>
+                                <input :id="c.id" v-model="checkitemIds" type="checkbox" :value="c.id">
+                            </td>
+                            <td><label :for="c.id">{{c.name}}</label></td>
+                            <td><label :for="c.id">{{c.age}}</label></td>
+                            <td><label :for="c.id">{{c.phone}}</label></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="reset()">取消</el-button>
+            <el-button type="primary" @click="handleEdit()">确定</el-button>
+        </div>
+    </el-dialog>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        watch: {
+            filterText(val) {
+                this.$refs.tree.filter(val);
+            }
+        },
+        data: {
+            size: '',
+            activeName: 'first',
+            username: '',
+            countC: 0,
+            teacherName: '',
+            data: [],
+            tableData:[],
+            studentsList:[],
+            checkitemIds:[],
+            formData:{},
+            filterText:'',
+            dialogFormVisible:false,
+            defaultProps: {
+                children: 'children',
+                label: 'label'
+            },
+        },
+        computed: {
+            tableDataBll() {
+                return [
+                    {
+                        total: '班级基本信息',
+                        countC: '班级人数:' + ' ' + this.countC,
+                        teacherName: '老师姓名:' + ' ' + this.teacherName
+                    }
+                ]
+            }
+        },
+        created() {
+            this.findTree();
+            axios.get('/login/getUserName').then((response)=>{
+                this.username = response.data;
+            });
+        },
+        methods: {
+            sheet2Workbook(sheets){
+                if (!Array.isArray(sheets)){
+                    sheets = [sheets];
+                }
+                var workbook = {
+                    SheetNames: [],
+                    Sheets: {}
+                }
+                for (sheet of sheets){
+                    sheet.sheetName = sheet.sheetName || 'sheet'+(workbook.SheetNames.length+1);
+                    workbook.SheetNames.push(sheet.sheetName);
+                    workbook.Sheets[sheet.sheetName] = sheet.sheetData;
+                }
+                return workbook;
+            },
+            Workbook2Blob(workbook){
+                var wopts = {
+                    bookType: 'xlsx', // 要生成的文件类型
+                    bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+                    type: 'binary'
+                };
+                // 原本是XLSX.write, 需要样式则用xlsxStyle
+                var wbout = xlsxStyle.write(workbook, wopts);
+                var blob = new Blob([s2ab(wbout)], {type:"application/octet-stream"});
+                // 字符串转ArrayBuffer
+                function s2ab(s) {
+                    var buf = new ArrayBuffer(s.length);
+                    var view = new Uint8Array(buf);
+                    for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+                    return buf;
+                }
+                return blob;
+            },
+            findpage(id){
+                this.studentsList = [];
+                axios.get("/class/query/"+id+"").then((response)=>{
+                    this.tableData = response.data;
+                    this.countC = response.data.countC;
+                    this.teacherName = response.data.teacherName;
+                    var students = response.data.students;
+                    for (let i = 0; i < students.length; i++) {
+                        this.studentsList.push(students[i]);
+                    }
+                })
+            },
+            edit(){
+                this.dialogFormVisible = true;
+                this.findStudentByClassName();
+            },
+            findStudentByClassName(){
+                this.formData.name = this.tableData.name;
+                this.formData.teacherName = this.tableData.teacherName;
+                axios.get("/class/findStudentChange/"+this.formData.name+"").then((response)=>{
+                    this.Export(response.data.data);
+                })
+
+            },
+            findTree(){
+                axios.get("/menu/queryClass").then((response)=>{
+                    this.data = response.data.data;
+                })
+            },
+            handleTreeNodeClick(node){
+                //alert(node.id);
+                this.findpage(node.id);
+            },
+            handleCheckChange(data, checked, indeterminate) {
+                console.log(data, checked, indeterminate);
+            },
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
+            },
+            handleEdit(){
+
+            },
+            reset(){
+                this.dialogFormVisible = false;
+            },
+            Export(data){
+                var sheet1 = XLSX.utils.aoa_to_sheet(data);
+                var Workbook = this.sheet2Workbook([{
+                    sheetName: 'sheet1',
+                    sheetData: sheet1,
+                }]);
+                saveAs(this.Workbook2Blob(Workbook), '导出.xlsx');
+            },
+            handleAvatarSuccess(){
+
+            },
+            handleBeforeUpload(){
+                alert();
+            },
+            onChange(){
+
+            },
+        }
+    })
+</script>
+</html>

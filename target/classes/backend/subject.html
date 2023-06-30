@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- import Vue before Element -->
+  <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+  <!-- import JavaScript -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="plugins/axios/axios.min.js"></script>
+  <link href="img/favicon.ico" rel="shortcut icon">
+  <title>学生后台管理系统</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    height: 100%;
+  }
+  .el-header {
+    background-color: #B3C0D1;
+    color: #333;
+    line-height: 60px;
+  }
+  .course-table{
+    border-radius: 12px;
+  }
+</style>
+<body>
+<div id="app">
+  <div class="course-table" >
+    <el-container style="border: 1px solid #eee">
+      <el-header style="text-align: right; font-size: 12px">
+        <el-form :inline="true" class="demo-form-inline" style="margin-top: 10px;">
+          <span>{{username}}</span>
+          <el-form-item label="模糊查询:">
+            <el-input v-model="queryString" ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="query()">查询</el-button>
+            <el-button type="primary" @click="addMemberHandle()">新增</el-button>
+            <el-button type="danger" @click="deleteIds()">批量删除</el-button>
+          </el-form-item>
+        </el-form>
+      </el-header>
+      <el-main>
+        <el-table id="LAY-EXPORT-TEST" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="50">
+          </el-table-column>
+          <el-table-column type="index" align="center" label="序号">
+          </el-table-column>
+          <el-table-column prop="id" label="课程号" width="auto">
+          </el-table-column>
+          <el-table-column prop="name" label="课程名称" width="auto">
+          </el-table-column>
+          <el-table-column prop="gradeBetween" label="所属年级区间" width="auto">
+          </el-table-column>
+          <el-table-column prop="teacherName" label="任课教师" width="auto">
+          </el-table-column>
+          <el-table-column
+                  label="操作"
+                  width="160"
+                  align="center"
+          >
+            <template slot-scope="scope">
+              <el-button
+                      type="text"
+                      size="small"
+                      class="blueBug"
+                      @click="editMemberHandle(scope.row.id)">
+                <!--                      :class="{notAdmin:user !== 'admin'}"-->
+
+                编辑
+              </el-button>
+              <el-button
+                      type="text"
+                      size="small"
+                      class="greenBug"
+                      @click="deleteMemberHandle(scope.row)">
+                <!--                      :class="{notAdmin:user !== 'admin'}"-->
+
+                删除
+              </el-button>
+              <el-button
+                      type="text"
+                      size="small"
+                      class="delBut non"
+                      @click="statusHandle(scope.row)">
+                <!--                      v-if="user === 'admin'"-->
+
+                {{ scope.row.station == '1' ? '启用' : '禁用' }}
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageBean.page"
+                :page-sizes="[5,10,20,50,100]"
+                :page-size="pageBean.size"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+        </el-pagination>
+      </el-main>
+
+    </el-container>
+
+  </div>
+</div>
+</body>
+<!--<script src="layui_exts/excel.js"></script>-->
+<!--<script>-->
+<!--  function exportTable() {-->
+<!--    // 获取头部和body-->
+<!--    var data = LAY_EXCEL.tableToJson(document.getElementById('LAY-EXPORT-TEST')) // 或者 $('#LAY-EXPORT-TEST')-->
+<!--    // console.log(data)-->
+<!--    var exportData = []-->
+<!--    exportData.push.apply(exportData, data.head)-->
+<!--    exportData.push.apply(exportData, data.body)-->
+<!--    // console.log(exportData)-->
+
+<!--    LAY_EXCEL.exportExcel(exportData, '表格导出.xlsx', 'xlsx')-->
+<!--  }-->
+<!--</script>-->
+<script>
+  new Vue({
+    el: '#app',
+    data(){
+      return {
+        tableData:[],
+        multipleSelection: [],
+        username:'',
+        queryString:'',
+        pageBean:{
+          page:1,
+          size:10
+        },
+        total:0,
+      }
+    },
+    created() {
+        this.findpage();
+    },
+    methods:{
+      findpage(){
+        var pageBean = this.pageBean;
+        axios.post("/subject/All",pageBean).then((response)=> {
+          //为模型数据赋值，基于VUE的双向绑定展示到页面
+          this.tableData = response.data.data;
+          this.total = response.data.total;
+        });
+      },
+      handleSizeChange(){
+
+      },
+      handleSelectionChange(){
+
+      },
+      handleCurrentChange(){
+
+      },
+      statusHandle(){
+
+      },
+      deleteMemberHandle(){
+
+      },
+      editMemberHandle(){
+
+      },
+      deleteIds(){
+
+      },
+      addMemberHandle(){
+
+      },
+      query(){
+
+      },
+    }
+  })
+</script>
+</html>

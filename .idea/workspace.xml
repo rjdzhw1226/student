@@ -4,29 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="课程搭建中。。。 班">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/config/MyBatisMapperScannerConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/config/StudentConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/subjectLabelVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CallQueryThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/SpringContextUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/file/CreatBean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/student/util/file/writeFile.java" afterDir="false" />
+    <list default="true" id="f107121a-8197-413f-86ee-ca74516b283e" name="Changes" comment="自动建表集成失败 待修改 班">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/controller/SubjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/controller/SubjectController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/filter/loginFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/filter/loginFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/MenuMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/mapper/SubjectMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/mapper/SubjectMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/page.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/page.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/subjectVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/pojo/vo/subjectVo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/ExcelService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/ExcelService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/service/SubjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/service/SubjectService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/util/CheckCodeUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CheckCodeUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/util/CommonUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/util/CommonUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/student/util/PoiUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/student/util/PoiUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,9 +39,9 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="localRepository" value="F:\DOWNLOADS\apache-maven-3.6.3-bin\repository" />
+        <option name="localRepository" value="D:\DOWNLOAD\maven3.6.3\repository" />
         <option name="mavenHome" value="$PROJECT_DIR$/../../maven3.6.3/apache-maven-3.6.3" />
-        <option name="userSettingsFile" value="F:\DOWNLOADS\apache-maven-3.6.3-bin\apache-maven-3.6.3\conf\settings.xml" />
+        <option name="userSettingsFile" value="D:\DOWNLOAD\maven3.6.3\apache-maven-3.6.3\conf\settings.xml" />
       </MavenGeneralSettings>
     </option>
   </component>
@@ -210,6 +189,7 @@
       <workItem from="1687591220949" duration="3540000" />
       <workItem from="1687705262019" duration="1532000" />
       <workItem from="1687828111478" duration="23534000" />
+      <workItem from="1688117210340" duration="332000" />
     </task>
     <task id="LOCAL-00001" summary="完善功能 班">
       <created>1687332962216</created>
@@ -358,7 +338,14 @@
       <option name="project" value="LOCAL" />
       <updated>1688008342075</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="自动建表集成失败 待修改 班">
+      <created>1688117385204</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1688117385204</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -394,7 +381,8 @@
     <MESSAGE value="过滤器添加 登录验证码功能开发 班" />
     <MESSAGE value="修改logout 以及部分样式 班" />
     <MESSAGE value="班级导出功能调试 班" />
-    <option name="LAST_COMMIT_MESSAGE" value="班级导出功能调试 班" />
+    <MESSAGE value="自动建表集成失败 待修改 班" />
+    <option name="LAST_COMMIT_MESSAGE" value="自动建表集成失败 待修改 班" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
