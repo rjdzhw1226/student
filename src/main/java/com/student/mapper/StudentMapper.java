@@ -45,7 +45,15 @@ public interface StudentMapper {
     @Select("select  * from student where grade = #{grade}")
     public List<student> queryStudentBetweenGrade(String grade);
 
-    public void insertArticleTag(List<student> list);
 
+    @Insert("<script>"+"INSERT INTO student(id, name, grade, grade_class, phone, age, gender, station,url)\n" +
+            "        VALUES\n" +
+            "        <foreach collection=\"list\"  item=\"tag\" separator=\",\" index=\"index\">\n" +
+            "            (#{tag.id},#{tag.name},#{tag.grade},#{tag.grade_class},#{tag.phone},#{tag.age},#{tag.gender},#{tag.station},#{tag.url})\n" +
+            "        </foreach>"+"</script>")
+    public void insertArticleTag(List<student> list);
+    @Insert("<script>"+"LOAD DATA LOCAL INFILE #{path,jdbcType=VARCHAR} INTO TABLE student CHARACTER SET utf8\n" +
+            "        FIELDS TERMINATED BY ','\n" +
+            "        LINES TERMINATED BY '\\n'"+"</script>")
     public void load_file(@Param("path") String path);
 }

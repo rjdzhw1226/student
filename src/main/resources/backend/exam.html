@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="plugins/element-ui/index.css">
+  <script src="plugins/vue/vue.js"></script>
+  <script src="plugins/element-ui/index.js"></script>
+  <script src="plugins/axios/axios.min.js"></script>
+  <link href="img/favicon.ico" rel="shortcut icon">
+  <title>学生后台管理系统</title>
+</head>
+<body>
+<div id="app">
+  <div class="container">
+    <el-form ref="form" :model="form" label-width="80px">
+      <el-form-item label="标题">
+        <el-input v-model="form.name"></el-input>
+      </el-form-item>
+      <el-form-item label="时间">
+        <el-col :span="11">
+          <el-time-picker placeholder="选择时间" v-model="form.date" style="width: 100%;"></el-time-picker>
+        </el-col>
+      </el-form-item>
+
+      <!-- 遍历已创建的选项渲染 -->
+      <div class="item" v-for="(item, index) in form.itemList" :key="index">
+        <el-form-item :label="(index+1)+''">
+          <div class="item_title">
+            <span>、{{typeMap[item.type]}}: </span>
+            <span v-text="item.title"></span>
+          </div>
+          <!-- 单项填空 -->
+          <div v-if="item.type==='input'">
+            <el-input class="disabled" placeholder="禁止输入" disabled></el-input>
+          </div>
+          <!-- 单选 -->
+          <div v-else-if="item.type==='radio'">
+            <div class="warp" v-for="(elm, i) in item.textList" :key="i">
+              <el-radio :label="(i+1)+'、'"></el-radio>
+              <el-input v-model="item.textList[i]"></el-input>
+            </div>
+          </div>
+
+          <!-- 多选 -->
+          <div v-else-if="item.type==='checkbox'">
+            <div class="warp" v-for="(elm, i) in item.textList" :key="i">
+              <el-checkbox :label="(i+1)+'、'"></el-checkbox>
+              <el-input v-model="item.textList[i]"></el-input>
+            </div>
+          </div>
+
+          <!-- 选择填空 -->
+          <div v-else-if="item.type === 'select'">
+            <el-select v-model="value" placeholder="请选择">
+              <el-option
+                      v-for="(elm, i) in item.textList" :key="i"
+                      :label="item.textList[i]"
+                      :value="i+''">
+              </el-option>
+            </el-select>
+          </div>
+
+          <!-- 矩阵填空 -->
+          <div v-else-if="item.type==='matrix'">
+            <div class="warp" v-for="(elm, i) in item.textList" :key="i">
+              <span> {{item.textList[i]}}：</span>
+              <el-input class="disabled" placeholder="禁止输入" disabled></el-input>
+            </div>
+          </div>
+          <!-- 上移、下移、删除 -->
+          <div style="margin-top: 10px">
+            <el-button @click="handleItem('up', item)" v-if="index!=0">上移</el-button>
+            <el-button @click="handleItem('down', item)" v-if="index!=form.itemList.length-1">下移</el-button>
+            <el-button @click="handleItem('del', item)">删除</el-button>
+            <el-button @click="edit(item, index)">编辑</el-button>
+          </div>
+        </el-form-item>
+      </div>
+
+      <!-- 添加选项 -->
+      <el-form-item>
+        <el-button @click="add('radio')">单选</el-button>
+        <el-button @click="add('checkbox')">多选</el-button>
+        <el-button @click="add('input')">单项填空</el-button>
+        <el-button @click="add('select')">选择填空</el-button>
+        <el-button @click="add('matrix')">矩阵填空</el-button>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit">立即创建</el-button>
+      </el-form-item>
+
+      <!-- 添加选项弹出框 -->
+      <div class="additem">
+        <el-dialog
+                :title="typeMap[questItem.type]"
+                :visible.sync="showItem"
+                width="50%">
+          <el-form-item label="标题">
+            <el-input v-model="itemTitle"></el-input>
+          </el-form-item>
+          <el-form-item label="添加选项" v-show="questItem.type != 'input'">
+            <el-input-number v-model="num" @change="handleChange" :min="1" :max="10"></el-input-number>
+          </el-form-item>
+          <el-form-item label="选项" v-for="(text, i) in itemText" :key="i" v-show="questItem.type != 'input'">
+            <el-input v-model="itemText[i]"></el-input>
+          </el-form-item>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="clearItem">取 消</el-button>
+            <el-button type="primary" @click="determine">确 定</el-button>
+          </span>
+        </el-dialog>
+      </div>
+    </el-form>
+  </div>
+</div>
+
+
+</body>
+
+<script>
+  new Vue({
+    el: '#app',
+    data(){
+      return{
+        value: '',
+        matrixsNum: 1,
+        num: 1,
+        form: {
+          itemList: [],
+          name: '',
+          date: ''
+        },
+        itemTitle: '',
+        itemText: new Array(1),
+        questItem: {},
+        showItem: false,
+        typeMap: {
+          radio: '单选',
+          checkbox: '多选',
+          input: '问答',
+          matrix: '矩阵问答',
+          select: '选择'
+        },
+        editIndex: ''
+      }
+    },
+    watch: {
+      showItem() {
+        if(!this.showItem){
+          this.clearItem()
+        }
+      }
+    },
+    created(){
+
+    },
+    methods: {
+      // 创建选项
+      add(type){
+        this.questItem.type = type
+        this.showItem = true
+      },
+      // 增加/减少 子选项
+      handleChange(val){
+        this.itemText.length = val
+      },
+      // 确定将选项添加进列表中进行渲染
+      determine(){
+        if(this.questItem.type=='input'){
+          // 填空
+          if(this.itemTitle == ''){
+            this.$message('请输入选项的标题内容');
+            return
+          }
+          if(this.editIndex !== '') {
+            this.questItem.title = this.itemTitle
+            this.form.itemList.splice(this.editIndex, 1, this.questItem)
+            this.editIndex = ''
+          }else{
+            this.questItem.title = this.itemTitle;
+            this.form.itemList.push(this.questItem);
+          }
+          this.clearItem()
+        }else if(this.questItem.type == 'radio' || this.questItem.type == 'checkbox' || this.questItem.type == 'matrix' || this.questItem.type == 'select'){
+          // 单选、多选、矩阵
+          if(this.itemTitle == ''){
+            this.$message('请输入选项的标题内容');
+            return
+          }
+          for (var i = 0; i < this.itemText.length; i++){
+            if(this.itemText[i] == '' || this.itemText[i] == undefined){
+              this.$message('请完整输入每个选项内容');
+              return
+            }
+          }
+          if(this.editIndex !== '') {
+            this.questItem.title = this.itemTitle;
+            this.questItem.textList = this.itemText;
+            this.form.itemList.splice(this.editIndex, 1, this.questItem)
+            this.editIndex = ''
+          }else{
+            this.questItem.title = this.itemTitle;
+            this.questItem.textList = this.itemText;
+            this.form.itemList.push(this.questItem);
+          }
+          this.clearItem()
+        }
+      },
+      // 编辑
+      edit(item, editIndex){
+        this.editIndex = editIndex
+        if(item.type !== 'input'){
+          this.num = item.textList.length
+          this.showItem = true
+          this.questItem = item
+          this.itemTitle = item.title
+          this.itemText = []
+          this.itemText.push(...item.textList)
+        }else{
+          this.showItem = true
+          this.questItem = item
+          this.itemTitle = item.title
+        }
+      },
+      // 关闭弹窗，清空数据
+      clearItem(){
+        this.num = 1
+        this.itemTitle = ''
+        this.itemText = ['']
+        this.questItem = {}
+        this.showItem = false
+      },
+      // 判断上移、下移、删除
+      handleItem(val, item){
+        switch(val){
+          case 'up':
+            this.moveUp(item);
+            break;
+          case 'down':
+            this.moveDown(item);
+            break;
+          case 'del':
+            this.delItem(item);
+            break;
+          default:
+            throw new Error("该操作不存在！")
+        }
+      },
+      // 上移
+      moveUp(item){
+        let index = this.form.itemList.indexOf(item)
+        this.form.itemList.splice(index, 1)
+        this.form.itemList.splice(index-1, 0, item)
+      },
+      // 下移
+      moveDown(item){
+        let index = this.form.itemList.indexOf(item)
+        this.moveUp(this.form.itemList[index+1])
+      },
+      // 删除
+      delItem(item){
+        let index = this.form.itemList.indexOf(item)
+        this.form.itemList.splice(index, 1)
+      },
+      // 提交
+      onSubmit() {
+        if(this.form.name == ''){
+          this.$message('请输入标题内容');
+          return
+        }
+        if(this.form.date == ''){
+          this.$message('请选择时间');
+          return
+        }
+        if(this.form.itemList.length == 0){
+          this.$message('至少添加一个选项');
+          return
+        }
+        console.log(this.form);
+      }
+    }
+  })
+</script>
+</html>

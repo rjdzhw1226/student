@@ -25,11 +25,11 @@ public class writeFile {
     static String rt = "\r\n";
 
     //TODO 文件输出重做
-    public static void Compiler(List<Map<String, String>> list) {
+    public static void Compiler(List<Map<String, String>> list, List<Map<String, String>> listName) {
         StringBuilder str = new StringBuilder();
         long i = System.currentTimeMillis();
         //写文件，目录可以自己定义
-        String filename = "D:/day01/ExcelNewDemo/src/main/java/com/rjd/pojo/"+"Class"+i+".java";
+        String filename = "F:/工作项目/student/studentWork/student/src/main/java/com/student/pojo/"+"Class"+i+".java";
         for (int j = 0; j < list.get(0).size(); j++) {
             String cellValue = list.get(0).get("COLUM" + (j + 1));
             str.append("@ExcelImport(\""+cellValue+"\")");
@@ -84,6 +84,7 @@ public class writeFile {
         if(numberOfSheets == 1){
             //创建集合存储
             List<Map<String,String>> list = new ArrayList<>();
+            List<Map<String,String>> listName = new ArrayList<>();
             Map<String,String> map = new HashMap<>();
             //获得当前sheet工作表
             Sheet sheet = workbook.getSheetAt(0);
@@ -112,13 +113,14 @@ public class writeFile {
                 }
             }
             list.add(map);
-            Compiler(list);
+            Compiler(list,listName);
         }
         else{
             //遍历sheet
             for(int sheetNum = 0;sheetNum < numberOfSheets;sheetNum++){
                 //创建集合存储
                 List<Map<String,String>> list = new ArrayList<>();
+                List<Map<String,String>> listName = new ArrayList<>();
                 Map<String,String> map = new HashMap<>();
                 //获得当前sheet工作表
                 Sheet sheet = workbook.getSheetAt(sheetNum);
@@ -147,7 +149,7 @@ public class writeFile {
                     }
                 }
                 list.add(map);
-                Compiler(list);
+                Compiler(list,listName);
             }
         }
     }

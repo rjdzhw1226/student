@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CreatBean {
+    public static void main(String[] args) {
 
-    public static <T> List<T> creatBean(Class<T> classzz, Workbook workbook) {
+    }
+
+    public static <T> List<T> creatBean(Class<T> clazz, Workbook workbook) {
         Sheet sheet = workbook.getSheetAt(0);
 
         //获取最后一行
@@ -17,7 +20,7 @@ public class CreatBean {
         //获取最后一列
         int lastCellNum = sheet.getRow(0).getLastCellNum();
         //获取实体类字段
-        Field[] fields = classzz.getDeclaredFields();
+        Field[] fields = clazz.getDeclaredFields();
 
         Row row = null;
 
@@ -40,7 +43,7 @@ public class CreatBean {
             for (int i=1;i<lastRowNum;i++){
 
                 //通过class创建实体对象
-                T instance = classzz.newInstance();
+                T instance = clazz.newInstance();
                 for (int j=0;j<lastCellNum;j++){
 
                     row = sheet.getRow(i);
@@ -55,7 +58,7 @@ public class CreatBean {
                         if (headName.equalsIgnoreCase(field.getName())){
 
                             String methodName = MethodUtils.setMethodName(field.getName());
-                            Method method = classzz.getMethod(methodName,field.getType());
+                            Method method = clazz.getMethod(methodName,field.getType());
                             //注入值
                             method.invoke(instance,value);
                         }
