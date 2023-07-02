@@ -25,33 +25,28 @@ public class writeFile {
     static String rt = "\r\n";
 
     //TODO 文件输出重做
-    public static void Compiler(List<Map<String, String>> list, List<Map<String, String>> listName) {
+    public static void Compiler(List<Map<String, String>> list, List<Map<String, String>> listName,String name) {
         StringBuilder str = new StringBuilder();
         long i = System.currentTimeMillis();
         //写文件，目录可以自己定义
-        String filename = "F:/工作项目/student/studentWork/student/src/main/java/com/student/pojo/"+"Class"+i+".java";
+        String filename = "F:/工作项目/student/studentWork/student/src/main/java/com/student/pojo/"+name+".java";
         for (int j = 0; j < list.get(0).size(); j++) {
             String cellValue = list.get(0).get("COLUM" + (j + 1));
+            String nameValue = listName.get(0).get(cellValue);
             str.append("@ExcelImport(\""+cellValue+"\")");
             str.append("\r\n");
-            if("日期".equals(cellValue)){
-                str.append("@Column(name = \""+"COLUM" + (j + 1)+"\",type = MySqlTypeConstant.DATETIME)");
-                str.append("\r\n");
-                str.append("private Date "+"COLUM"+(j+1)+";");
-                str.append("\r\n");
-            }else {
-                str.append("@Column(name = \""+"COLUM" + (j + 1)+"\",type = MySqlTypeConstant.VARCHAR,length = 111)");
-                str.append("\r\n");
-                str.append("private String "+"COLUM"+(j+1)+";");
-                str.append("\r\n");
-            }
+            str.append("@Column(name = \""+ nameValue +"\",type = MySqlTypeConstant.VARCHAR,length = 128)");
+            str.append("\r\n");
+            str.append("private String "+ nameValue +";");
+            str.append("\r\n");
+
         }
         String src =
                 "package com.student.pojo;"+ rt +
                         "import com.gitee.sunchenbin.mybatis.actable.annotation.Column;"+ rt +
                         "import com.gitee.sunchenbin.mybatis.actable.annotation.Table;"+ rt +
                         "import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;"+ rt +
-                        "import com.rjd.Utils.ExcelImport;"  + rt +
+                        "import com.student.util.excel.ExcelImport;"  + rt +
                         "import lombok.AllArgsConstructor;"  + rt +
                         "import lombok.NoArgsConstructor;"  + rt +
                         "import lombok.Builder;"  + rt +
@@ -61,8 +56,8 @@ public class writeFile {
                         "@Builder" + rt +
                         "@AllArgsConstructor" + rt +
                         "@NoArgsConstructor" + rt +
-                        "@Table(name = \""+"Class"+i+"\")" + rt +
-                        "public class Class"+ i +"{" + rt +
+                        "@Table(name = \""+name+"\")" + rt +
+                        "public class "+ name +"{" + rt +
                         str.toString() + rt +
                         "}";
         File file = new File (filename);
@@ -78,79 +73,75 @@ public class writeFile {
     }
 
 
-    public void ExcelMap(Workbook workbook){
+    public void ExcelMap(Workbook workbook,List<String> name){
         //sheet个数
         int numberOfSheets = workbook.getNumberOfSheets();
         if(numberOfSheets == 1){
-            //创建集合存储
-            List<Map<String,String>> list = new ArrayList<>();
-            List<Map<String,String>> listName = new ArrayList<>();
-            Map<String,String> map = new HashMap<>();
-            //获得当前sheet工作表
-            Sheet sheet = workbook.getSheetAt(0);
-            if(sheet == null){
-                return;
-            }
-            //获得当前sheet的开始行
-            int firstRowNum  = sheet.getFirstRowNum();
-            //获得当前行
-            Row row = sheet.getRow(firstRowNum);
-            if(row == null){
-                return;
-            }
-            //获得当前行的开始列
-            int firstCellNum = row.getFirstCellNum();
-            //获得当前行的列数
-            int lastCellNum = row.getLastCellNum();
-            //循环当前行
-            int i = 1;
-            for(int cellNum = firstCellNum; cellNum < lastCellNum;cellNum++){
-                Cell cell = row.getCell(cellNum);
-                String cellValue = getCellValue(cell);
-                if (!"null".equals(cellValue)){
-                    map.put(COLUM_FORMAT+i, cellValue);
-                    i++;
-                }
-            }
-            list.add(map);
-            Compiler(list,listName);
+            String nameOne = name.get(0);
+            Result result = getResult(workbook);
+            if (result == null) return;
+            Compiler(result.list, result.listName,nameOne);
         }
         else{
             //遍历sheet
             for(int sheetNum = 0;sheetNum < numberOfSheets;sheetNum++){
-                //创建集合存储
-                List<Map<String,String>> list = new ArrayList<>();
-                List<Map<String,String>> listName = new ArrayList<>();
-                Map<String,String> map = new HashMap<>();
-                //获得当前sheet工作表
-                Sheet sheet = workbook.getSheetAt(sheetNum);
-                if(sheet == null){
-                    continue;
-                }
-                //获得当前sheet的开始行
-                int firstRowNum  = sheet.getFirstRowNum();
-                //获得当前行
-                Row row = sheet.getRow(firstRowNum);
-                if(row == null){
-                    continue;
-                }
-                //获得当前行的开始列
-                int firstCellNum = row.getFirstCellNum();
-                //获得当前行的列数
-                int lastCellNum = row.getLastCellNum();
-                //循环当前行
-                int i = 1;
-                for(int cellNum = firstCellNum; cellNum < lastCellNum;cellNum++){
-                    Cell cell = row.getCell(cellNum);
-                    String cellValue = getCellValue(cell);
-                    if (!"null".equals(cellValue)){
-                        map.put(COLUM_FORMAT+i, cellValue);
-                        i++;
-                    }
-                }
-                list.add(map);
-                Compiler(list,listName);
+                Result result = getResult(workbook);
+                if (result == null) return;
+                Compiler(result.list, result.listName,name.get(sheetNum));
             }
+        }
+    }
+
+    private static Result getResult(Workbook workbook) {
+        //创建集合存储
+        List<Map<String,String>> list = new ArrayList<>();
+        List<Map<String,String>> listName = new ArrayList<>();
+        Map<String,String> map = new HashMap<>();
+        Map<String,String> mapName = new HashMap<>();
+        //获得当前sheet工作表
+        Sheet sheet = workbook.getSheetAt(0);
+        if(sheet == null){
+            return null;
+        }
+        //获得当前sheet的开始行
+        int firstRowNum  = sheet.getFirstRowNum();
+        int NextCellNum  = firstRowNum + 1;
+        //获得当前行
+        Row row = sheet.getRow(firstRowNum);
+        Row rowNext = sheet.getRow(NextCellNum);
+        if(row == null || rowNext == null){
+            return null;
+        }
+        //获得当前行的开始列
+        int firstCellNum = row.getFirstCellNum();
+        //获得当前行的列数
+        int lastCellNum = row.getLastCellNum();
+        //循环当前行
+        int i = 1;
+        for(int cellNum = firstCellNum; cellNum < lastCellNum;cellNum++){
+            Cell cell = row.getCell(cellNum);
+            Cell cellName = rowNext.getCell(cellNum);
+            String cellValue = getCellValue(cell);
+            String cellValueName = getCellValue(cellName);
+            if (!"null".equals(cellValue)){
+                map.put(COLUM_FORMAT+i, cellValue);
+                mapName.put(cellValue,cellValueName);
+                i++;
+            }
+        }
+        list.add(map);
+        listName.add(mapName);
+        Result result = new Result(list, listName);
+        return result;
+    }
+
+    private static class Result {
+        public final List<Map<String, String>> list;
+        public final List<Map<String, String>> listName;
+
+        public Result(List<Map<String, String>> list, List<Map<String, String>> listName) {
+            this.list = list;
+            this.listName = listName;
         }
     }
 

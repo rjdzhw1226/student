@@ -3,11 +3,13 @@ package com.student.service;
 import com.student.mapper.StudentMapper;
 import com.student.mapper.SubjectMapper;
 import com.student.pojo.student;
+import com.student.pojo.studentTest;
 import com.student.pojo.subject;
 import com.student.pojo.vo.subjectLabelVo;
 import com.student.pojo.vo.subjectVo;
 import com.student.util.CallQueryThread;
 import com.student.util.CommonUtil;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,17 @@ public class ExcelService {
 
     @Autowired
     private SubjectMapper subjectMapper;
+
+    public void ExcelUpDoneAuto(Sheet sheet, int sta, int size){
+        try{
+            //这里泛型list
+            List<T> list = new ArrayList<>();
+            int rowStart = sheet.getFirstRowNum();
+
+        }catch(Exception e){
+
+        }
+    }
 
     @Transactional
     public void ExcelUpDone(Sheet sheet, int sta, int size) {

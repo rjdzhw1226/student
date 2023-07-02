@@ -86,6 +86,19 @@
                                 multiple>
                             <el-button v-if="tableData.name" type="primary">点击上传</el-button>
                         </el-upload>
+                        <el-upload
+                                v-if="tableData.name"
+                                class="upload-demo"
+                                style="margin-top: 10px"
+                                action="/class/postsTableAuto"
+                                accept=".xlsx"
+                                :limit="1"
+                                :before-upload="handleBeforeUpload"
+                                :on-success="handleAvatarSuccess"
+                                :on-change="onChange"
+                                multiple>
+                            <el-button v-if="tableData.name" type="primary">点击上传</el-button>
+                        </el-upload>
                     </el-col>
                     <el-col :span="6" :push="2" style="margin-top: 10px">
                         <el-button v-if="tableData.name" type="primary" @click="edit">编辑</el-button>
