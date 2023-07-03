@@ -6,6 +6,7 @@ import com.student.pojo.dto.classDto;
 import com.student.pojo.vo.FileVo;
 import com.student.pojo.vo.classVo;
 import com.student.util.BatchInsertThread;
+import com.student.util.BatchInsertThreadAuto;
 import com.student.util.CommonUtil;
 import com.student.util.PoiUtil;
 import com.student.util.file.writeFile;
@@ -17,6 +18,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -24,8 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +66,9 @@ public class ClassService {
 
     @Value("${file.readPath}")
     private String path;
+
+    @Value("${file.loadPath}")
+    private String LoadPath;
 
     private static final String XLSX = ".xlsx";
     private static final String XLS = ".xls";
@@ -187,59 +197,64 @@ public class ClassService {
         writeFile wf = new writeFile();
         Workbook workbook = wf.getWorkBook(file);
         wf.ExcelMap(workbook,nameList);
-        try{
-            // 解析表格数据
-            InputStream in = null;
-            String fileName = "";
-            if (file != null) {
-                // 上传文件解析
-                in = file.getInputStream();
-                fileName = CommonUtil.getString(file.getOriginalFilename()).toLowerCase();
-            }
-            Workbook book = null;
-            if (fileName.endsWith(XLSX)) {
-                book = new XSSFWorkbook(in);
-            } else if (fileName.endsWith(XLS)) {
-                POIFSFileSystem poifsFileSystem = new POIFSFileSystem(in);
-                book = new HSSFWorkbook(poifsFileSystem);
-            } else {
-                throw new RuntimeException("文件上传格式不正确");
-            }
-            Sheet sheet = book.getSheetAt(0);
-            //excel数据总量
-            int rowSize = sheet.getLastRowNum() + 1;
-            //每个线程处理的数量
-            int count=1000;
-            //开启的线程数
-            int runSize=(rowSize/count)+1;
-            //时间统计
-            long time1 = System.currentTimeMillis();
-            // 创建两个个计数器
-            CountDownLatch begin = new CountDownLatch(1);
-            CountDownLatch end = new CountDownLatch(runSize);
-            for(int i=0;i<runSize;i++){
-                int startIdx=0;
-                int endIdx=0;
-                if((i+1)==runSize){
-                    startIdx = (i * count);
-                    endIdx = rowSize;
-                }else{
-                    startIdx = (i * count);
-                    endIdx = (i + 1) * count;
+        for (int j = 0; j < nameList.size(); j++) {
+            ClassService sc = new ClassService();
+            Class aClass = sc.complierAndRun(nameList.get(j));
+            try{
+                // 解析表格数据
+                InputStream in = null;
+                String fileName = "";
+                if (file != null) {
+                    // 上传文件解析
+                    in = file.getInputStream();
+                    fileName = CommonUtil.getString(file.getOriginalFilename()).toLowerCase();
                 }
-                BatchInsertThread thread = new BatchInsertThread(sheet, begin, end, excelService,startIdx,endIdx);
-                threadPoolTaskExecutor.execute(thread);
+                Workbook book = null;
+                if (fileName.endsWith(XLSX)) {
+                    book = new XSSFWorkbook(in);
+                } else if (fileName.endsWith(XLS)) {
+                    POIFSFileSystem poifsFileSystem = new POIFSFileSystem(in);
+                    book = new HSSFWorkbook(poifsFileSystem);
+                } else {
+                    throw new RuntimeException("文件上传格式不正确");
+                }
+                Sheet sheet = book.getSheetAt(0);
+                //excel数据总量
+                int rowSize = sheet.getLastRowNum() + 1;
+                //每个线程处理的数量
+                int count=1000;
+                //开启的线程数
+                int runSize=(rowSize/count)+1;
+                //时间统计
+                long time1 = System.currentTimeMillis();
+                // 创建两个个计数器
+                CountDownLatch begin = new CountDownLatch(1);
+                CountDownLatch end = new CountDownLatch(runSize);
+                for(int i=0;i<runSize;i++){
+                    int startIdx=0;
+                    int endIdx=0;
+                    if((i+1)==runSize){
+                        startIdx = (i * count);
+                        endIdx = rowSize;
+                    }else{
+                        startIdx = (i * count);
+                        endIdx = (i + 1) * count;
+                    }
+                    BatchInsertThreadAuto thread = new BatchInsertThreadAuto(sheet, begin, end, excelService,startIdx,endIdx,aClass);
+                    threadPoolTaskExecutor.execute(thread);
+                }
+                begin.countDown();
+                end.await();
+                threadPoolTaskExecutor.shutdown();
+                //时间统计
+                long time2 = System.currentTimeMillis();
+                log.info("学生文件数据入库总耗时："+(time2-time1));
+                in.close();
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            begin.countDown();
-            end.await();
-            threadPoolTaskExecutor.shutdown();
-            //时间统计
-            long time2 = System.currentTimeMillis();
-            log.info("学生文件数据入库总耗时："+(time2-time1));
-            in.close();
-        }catch (Exception e){
-            e.printStackTrace();
         }
+
 
     }
     public void upData(MultipartFile file){
@@ -309,5 +324,54 @@ public class ClassService {
             log.info("i:{}"+add);
         }
         log.info("请求处理完成");
+    }
+
+    private Class complierAndRun(String name){
+        try {
+
+            System.out.println(System.getProperty("user.dir"));
+            //动态编译
+            JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+            String filename = "D:/DOWNLOAD/"+name+".java";
+            int status = javac.run(null, null, null, "-d", System.getProperty("user.dir")+"/target/classes/com/student/pojo",filename);
+            if(status!=0){
+                System.out.println("没有编译成功！");
+            }
+
+            //动态执行
+            Class clz = Class.forName(name);//返回与带有给定字符串名的类 或接口相关联的 Class 对象。
+            Class aClass = DyBeanRegister(clz, name.toLowerCase());
+            return aClass;
+        } catch (Exception e) {
+            log.error("error", e);
+            return null;
+        }
+    }
+
+    private static <T> Class<?> DyBeanRegister(Class<T> clazz,String name) {
+        // 创建ApplicationContext
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+        // 获取Bean定义注册器
+        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) context.getBeanFactory();
+
+        // 创建Bean定义
+        GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+        beanDefinition.setBeanClass(clazz);
+
+        // 注册Bean定义
+        registry.registerBeanDefinition(name, beanDefinition);
+
+        // 启动应用上下文
+        context.refresh();
+
+        // 获取动态注册的Bean实例
+        T bean = context.getBean(clazz);
+        Class<?> aClass = bean.getClass();
+
+        // 关闭应用上下文
+        context.close();
+
+        return aClass;
     }
 }

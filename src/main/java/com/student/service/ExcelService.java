@@ -9,13 +9,14 @@ import com.student.pojo.vo.subjectLabelVo;
 import com.student.pojo.vo.subjectVo;
 import com.student.util.CallQueryThread;
 import com.student.util.CommonUtil;
-import org.apache.poi.ss.formula.functions.T;
+import com.student.util.ObjectUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,12 +37,43 @@ public class ExcelService {
     @Autowired
     private SubjectMapper subjectMapper;
 
-    public void ExcelUpDoneAuto(Sheet sheet, int sta, int size){
+    public static void main(String[] args) {
+        Class<student> studentClass = student.class;
+        Field[] declaredFields = studentClass.getDeclaredFields();
+        for (int i = 0; i < declaredFields.length; i++) {
+            declaredFields[i].setAccessible(true);//设置访问权限
+            try {
+                declaredFields[i].set(declaredFields[i].getName(),""+i+"");//赋值
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public <T> void ExcelUpDoneAuto(Sheet sheet, int sta, int size, Class aClass){
         try{
             //这里泛型list
             List<T> list = new ArrayList<>();
+            //开始行读取
             int rowStart = sheet.getFirstRowNum();
+            if(sta == rowStart){
+                sta = sta + 2;
+            }
+            for (int i = sta; i < size; i++) {
+                Row row = sheet.getRow(i);
+                //获得当前行的开始列
+                int firstCellNum = row.getFirstCellNum();
+                //获得当前行的列数
+                int lastCellNum = row.getLastCellNum();
+                for (int j = firstCellNum; j < lastCellNum; j++) {
+                    String cellValue = CommonUtil.getCellValue(row.getCell(j));
+                    Field[] aFields = aClass.getDeclaredFields();//获取实体类的所有属性
+                    for (Field f:aFields) {
+                        f.setAccessible(true);//设置访问权限
+                        f.set(f.getName(),cellValue);//赋值
+                    }
+                }
 
+            }
         }catch(Exception e){
 
         }

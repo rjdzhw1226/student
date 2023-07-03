@@ -6,12 +6,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,17 +21,21 @@ import java.util.List;
 import java.util.Map;
 
 public class writeFile {
+
+    @Value("${file.loadPath}")
+    private static String path;
+
     private final static String DATE_FORMAT = "yyyy/MM/dd";
     private final static String COLUM_FORMAT = "COLUM";
     //回车加换行符
     static String rt = "\r\n";
 
-    //TODO 文件输出重做
     public static void Compiler(List<Map<String, String>> list, List<Map<String, String>> listName,String name) {
         StringBuilder str = new StringBuilder();
-        long i = System.currentTimeMillis();
+        //long i = System.currentTimeMillis();
         //写文件，目录可以自己定义
-        String filename = "F:/工作项目/student/studentWork/student/src/main/java/com/student/pojo/"+name+".java";
+        //String filename = "F:/工作项目/student/studentWork/student/src/main/java/com/student/pojo/"+name+".java";
+        String filename = path + name+".java";
         for (int j = 0; j < list.get(0).size(); j++) {
             String cellValue = list.get(0).get("COLUM" + (j + 1));
             String nameValue = listName.get(0).get(cellValue);
