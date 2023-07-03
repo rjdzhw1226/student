@@ -1,5 +1,8 @@
 package com.student.service;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.student.mapper.StudentMapper;
 import com.student.mapper.SubjectMapper;
 import com.student.pojo.student;
@@ -17,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,6 +55,15 @@ public class ExcelService {
             List<T> list = new ArrayList<>();
             //开始行读取
             int rowStart = sheet.getFirstRowNum();
+            List<String> name = new LinkedList<>();
+            Row rowI = sheet.getRow(rowStart+1);
+            //获得当前行的开始列
+            int firstCellNumI = rowI.getFirstCellNum();
+            //获得当前行的列数
+            int lastCellNumI = rowI.getLastCellNum();
+            for (int j = firstCellNumI; j < lastCellNumI; j++) {
+                name.add(CommonUtil.getCellValue(rowI.getCell(j)));
+            }
             if(sta == rowStart){
                 sta = sta + 2;
             }
@@ -64,14 +73,12 @@ public class ExcelService {
                 int firstCellNum = row.getFirstCellNum();
                 //获得当前行的列数
                 int lastCellNum = row.getLastCellNum();
+                List<String> listSave = new LinkedList<>();
                 for (int j = firstCellNum; j < lastCellNum; j++) {
                     String cellValue = CommonUtil.getCellValue(row.getCell(j));
-                    Field[] aFields = aClass.getDeclaredFields();//获取实体类的所有属性
-                    for (Field f:aFields) {
-                        f.setAccessible(true);//设置访问权限
-                        f.set(f.getName(),cellValue);//赋值
-                    }
+                    listSave.add(cellValue);
                 }
+
 
             }
         }catch(Exception e){
@@ -186,4 +193,52 @@ public class ExcelService {
         return map;
     }
 
+    public static <T> List<T> toListClass(String strName ,Map<String , Object> params ,Class<T> clazz){
+        String returnValue = "";
+        List<T> list01 = new ArrayList<>();
+
+        if (!"".equals(returnValue)) {
+            cn.hutool.json.JSONObject resJson = JSONUtil.parseObj(returnValue);
+            if("0".equals(resJson.getJSONObject("__sys__").getStr("status"))){ //查询成功
+                cn.hutool.json.JSONObject dataJson = resJson.getJSONObject("data"); //数据
+                if(dataJson.get("data")!=null && dataJson.get("data").toString().startsWith("[")){
+                    JSONArray arrays = dataJson.getJSONArray("data");
+                    if(dataJson.containsKey("success")){
+                        String successJson = dataJson.getStr("success");
+                        if("true".equals(successJson)){
+                            list01 = JSON.parseArray(arrays.toString(), clazz);
+                        }else{
+                            list01 = JSON.parseArray(arrays.toString(), clazz);
+                            //list01 = JSON.parseArray(new JSONArray().toString(), clazz);
+                        }
+                    }else{
+                        //没有success这个字段
+                        list01 = JSON.parseArray(arrays.toString(), clazz);
+                    }
+                }
+            }
+        }
+        return list01;
+    }
+
+    public static Map<String,Object> toMapOnly(String strName ,Map<String , Object> params){
+        String returnValue = "";
+        Map<String,Object> result = new HashMap<>();
+        if (!"".equals(returnValue)) {
+            cn.hutool.json.JSONObject resJson = JSONUtil.parseObj(returnValue);
+            if("0".equals(resJson.getJSONObject("__sys__").getStr("status"))){
+                cn.hutool.json.JSONObject dataJson = resJson.getJSONObject("data");
+                if(dataJson.containsKey("success")){
+                    String successJson = dataJson.getStr("success");
+                    if("true".equals(successJson)){
+                        result = (Map<String,Object>)JSON.parseObject(dataJson.getJSONObject("data").toString(), Map.class);
+                    }
+                }else {
+                    //没有success这个字段
+                    result = (Map<String,Object>)JSON.parseObject(dataJson.getJSONObject("data").toString(), Map.class);
+                }
+            }
+        }
+        return result;
+    }
 }
