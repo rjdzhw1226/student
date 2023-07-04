@@ -23,7 +23,18 @@
           <el-time-picker placeholder="选择时间" v-model="form.date" style="width: 100%;"></el-time-picker>
         </el-col>
       </el-form-item>
-
+      <el-form-item label="关联学生">
+        <el-col :span="11">
+          <el-select v-model="value" placeholder="请选择">
+            <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-form-item>
       <!-- 遍历已创建的选项渲染 -->
       <div class="item" v-for="(item, index) in form.itemList" :key="index">
         <el-form-item :label="(index+1)+''">

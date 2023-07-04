@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -49,21 +50,21 @@ public class ExcelService {
             }
         }
     }
-    public <T> void ExcelUpDoneAuto(Sheet sheet, int sta, int size, Class aClass){
+    public void ExcelUpDoneAuto(Sheet sheet, int sta, int size, Class aClass){
         try{
             //这里泛型list
-            List<T> list = new ArrayList<>();
+//            List<T> list = new ArrayList<>();
             //开始行读取
             int rowStart = sheet.getFirstRowNum();
-            List<String> name = new LinkedList<>();
-            Row rowI = sheet.getRow(rowStart+1);
-            //获得当前行的开始列
-            int firstCellNumI = rowI.getFirstCellNum();
-            //获得当前行的列数
-            int lastCellNumI = rowI.getLastCellNum();
-            for (int j = firstCellNumI; j < lastCellNumI; j++) {
-                name.add(CommonUtil.getCellValue(rowI.getCell(j)));
-            }
+//            List<String> name = new LinkedList<>();
+//            Row rowI = sheet.getRow(rowStart+1);
+//            //获得当前行的开始列
+//            int firstCellNumI = rowI.getFirstCellNum();
+//            //获得当前行的列数
+//            int lastCellNumI = rowI.getLastCellNum();
+//            for (int j = firstCellNumI; j < lastCellNumI; j++) {
+//                name.add(CommonUtil.getCellValue(rowI.getCell(j)));
+//            }
             if(sta == rowStart){
                 sta = sta + 2;
             }
@@ -78,11 +79,15 @@ public class ExcelService {
                     String cellValue = CommonUtil.getCellValue(row.getCell(j));
                     listSave.add(cellValue);
                 }
-
-
+                String str = ObjectUtils.twoString(listSave);
+                FileOutputStream fos = new FileOutputStream("D:/log.txt",true);
+                byte bytes[]=new byte[512];
+                bytes=str.getBytes();
+                fos.write(bytes);
+                fos.close();
             }
         }catch(Exception e){
-
+            e.printStackTrace();
         }
     }
 

@@ -3,40 +3,36 @@ package com.student.util;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class DynamicCompilationExample {
+    public void complierAndRun(){
+        try {
+
+            System.out.println(System.getProperty("user.dir"));
+            //动态编译
+            JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+            String filename = "D:/DOWNLOAD/项目/student/studentDemo/student/src/main/java/com/student/pojo/a.java";
+            int status = javac.run(null, null, null, "-d", System.getProperty("user.dir")+"/target/classes",filename);
+            if(status!=0){
+                System.out.println("没有编译成功！");
+            }
+
+            //动态执行
+            Class clz = Class.forName("a");//返回与带有给定字符串名的类 或接口相关联的 Class 对象。
+            Object o = clz.newInstance();
+            Method method = clz.getDeclaredMethod("sayHello");//返回一个 Method 对象，该对象反映此 Class 对象所表示的类或接口的指定已声明方法
+            String result= (String)method.invoke(o);//静态方法第一个参数可为null,第二个参数为实际传参
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws Exception {
-        // 源代码
-        String sourceCode = "public class HelloWorld { "
-                + "    public static void main(String[] args) { "
-                + "        System.out.println(\"Hello, dynamic compilation!\");"
-                + "    } "
-                + "} ";
-
-        // 创建编译器对象
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
-        // 创建内存中的源代码文件
-        File sourceFile = new File("HelloWorld.java");
-        java.nio.file.Files.write(sourceFile.toPath(), sourceCode.getBytes());
-
-        // 执行编译，将源代码编译为字节码文件
-        int compilationResult = compiler.run(null, null, null, sourceFile.getPath());
-
-        if (compilationResult == 0) {
-            // 创建URLClassLoader用于加载编译后的类
-            URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{sourceFile.getParentFile().toURI().toURL()});
-
-            // 加载动态编译后的类
-            Class<?> compiledClass = Class.forName("HelloWorld", true, classLoader);
-
-            // 调用动态编译后的类的main方法
-            compiledClass.getMethod("main", String[].class).invoke(null, (Object) null);
-        } else {
-            System.out.println("Compilation Failed");
-        }
+        DynamicCompilationExample dy =new DynamicCompilationExample();
+        dy.complierAndRun();
     }
 }

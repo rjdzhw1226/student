@@ -179,5 +179,27 @@ public class ObjectUtils {
         return result;
     }
 
+    public static String twoJson(List<String> key, List<String> value){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{");
+        //{"1":"aaa","2":"bbb","3":"ccc"}
+        //{"1":"aaa","2":"bbb","3":"ccc","4":"ddd"}
+        for (int j = 0; j < key.size(); j++) {
+            if (j == key.size() - 1) {
+                stringBuilder.append("\"").append(key.get(j)).append("\"").append(":").append("\"").append(value.get(j)).append("\"");
+            } else {
+                stringBuilder.append("\"").append(key.get(j)).append("\"").append(":").append("\"").append(value.get(j)).append("\"").append(",");
+            }
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+    public static String twoString(List<String> value){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : value) {
+            stringBuilder.append(s).append(",");
+        }
+        return stringBuilder.toString().substring(stringBuilder.lastIndexOf(","));
+    }
 }
 
