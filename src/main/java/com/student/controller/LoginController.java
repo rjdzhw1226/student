@@ -4,33 +4,42 @@ import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.service.LoginService;
 import com.student.util.CheckCodeUtil;
+import com.student.util.jwt.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/login")
 public class LoginController {
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private LoginService loginService;
 
     @RequestMapping("/user")
-    public Map<String,Object> login(@RequestBody userDto user, HttpServletRequest req){
+    public Map<String,Object> login(@RequestBody userDto user, HttpServletRequest req, HttpServletResponse res){
         Map<String,Object> map = new HashMap<>();
         if (loginService.login(user,req)) {
             req.getSession().setAttribute("user",user);
             map.put("flag",true);
             map.put("message","登录成功");
+            map.put("token",JWTUtils.createToken(user.getUsername().toString()));
             map.put("data",user.getUsername());
+            stringRedisTemplate.opsForValue().set(JWTUtils.USER_LOGIN_TOKEN,(String) map.get("token"),60, TimeUnit.MINUTES);
+            //res.setHeader(JWTUtils.USER_LOGIN_TOKEN, (String) map.get("token"));
             return map;
         }else {
             map.put("flag",false);
