@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="plugins/element-ui/index.css">
+  <script src="plugins/vue/vue.js"></script>
+  <script src="plugins/element-ui/index.js"></script>
+  <script src="plugins/axios/axios.min.js"></script>
+  <link href="img/favicon.ico" rel="shortcut icon">
+  <title>高德地图</title>
+  <style>
+    #map{
+      width: 2500px;
+      height: 2500px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+<el-container>
+  <el-main>
+    <div id="map">
+
+    </div>
+  </el-main>
+  <el-footer>
+
+  </el-footer>
+</el-container>
+</div>
+</body>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.8&key=72b6fec36a8632a9ed173ff2e8f6ef73"></script>
+<script type="text/javascript">
+  window._AMapSecurityConfig = {
+    securityJsCode:'45dfb5e526830e343802922f2d70bf2c',
+  }
+</script>
+<script>
+  var x = 0;
+  var y = 0;
+  //初始化地图插件
+  //初始化地图插件
+  window.onload = function(){
+    var map = new AMap.Map("map");
+
+    // 创建一个 Marker 实例：（标记点）
+    var marker = new AMap.Marker({
+      position: new AMap.LngLat(x, y), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+      title: "位置标题"
+    });
+
+    // 将创建的点标记添加到已有的地图实例：
+    map.add(marker);
+  }
+
+  new Vue({
+    el: '#app',
+    data: {
+
+    },
+    created() {
+      x=116.44927;
+      y=39.9584;
+    },
+    methods: {
+
+    }
+  })
+</script>
+
+</html>

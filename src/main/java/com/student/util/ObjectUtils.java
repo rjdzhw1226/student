@@ -3,15 +3,30 @@ package com.student.util;
 import com.student.pojo.student;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
- * @author haoyan.shi
+ * @author rjd
  * 想设计一个能够解析一个bean的全部属性并按照顺序进行遍历
  */
 public class ObjectUtils {
-
+    public static void main(String[] args) {
+        arrange(new Integer[]{1,2,3},new Stack<>());
+    }
+    public static void arrange(Integer[] array, Stack<Integer> stack){
+        if(array.length == 0){
+            System.out.println(stack);
+        }else{
+            for (int i = 0; i < array.length; i++) {
+                Integer[] temp = new Integer[array.length - 1];
+                System.arraycopy(array,0,temp,0,i);
+                System.arraycopy(array,i+1,temp,i,array.length-i-1);
+                stack.push(array[i]);
+                arrange(temp,stack);
+                stack.pop();
+            }
+        }
+    }
     /**
      * 按照属性的顺序赋值。可接受null，但是不能跳过某个属性进行赋值。就是说就算
      * 有一个值为空，那你也要传递进行null
