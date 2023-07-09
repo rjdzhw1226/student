@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -204,6 +205,23 @@ public class CommonUtil {
             System.out.println("删除文件操作出错");
             e.printStackTrace();
         }
+    }
+
+    public static String generateRandomString(int length) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            // 生成随机数字（ASCII码范围：48-57）或者随机大写字母（ASCII码范围：65-90）
+            boolean isDigit = random.nextBoolean();
+            if (isDigit) {
+                sb.append((char)(48 + random.nextInt(10)));
+            } else {
+                sb.append((char)(65 + random.nextInt(26)));
+            }
+        }
+
+        return sb.toString();
     }
 
     }

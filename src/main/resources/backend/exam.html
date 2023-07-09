@@ -151,7 +151,9 @@
           <!-- 单选 -->
           <div v-else-if="item.type==='radio'">
             <div class="warp" v-for="(elm, i) in item.textList" :key="i">
-              <el-radio :label="(i+1)+'、'"></el-radio>
+              <el-radio-group v-model="choose" @change="agreeChange">
+                <el-radio :label="(i+1)+'、'"></el-radio>
+              </el-radio-group>
               <el-input v-model="item.textList[i]"></el-input>
             </div>
           </div>
@@ -188,17 +190,18 @@
             <el-button @click="handleItem('down', item)" v-if="index!=form.itemList.length-1">下移</el-button>
             <el-button @click="handleItem('del', item)">删除</el-button>
             <el-button @click="edit(item, index)">编辑</el-button>
+            <el-button @click="child(item, index)">子项题</el-button>
           </div>
         </el-form-item>
       </div>
 
       <!-- 添加选项 -->
       <el-form-item>
-        <el-button @click="add('radio')">单选</el-button>
-        <el-button @click="add('checkbox')">多选</el-button>
-        <el-button @click="add('input')">单项填空</el-button>
-        <el-button @click="add('select')">选择填空</el-button>
-        <el-button @click="add('matrix')">矩阵填空</el-button>
+        <el-button @click="add('radio','father')">单选</el-button>
+        <el-button @click="add('checkbox','father')">多选</el-button>
+        <el-button @click="add('input','father')">单项填空</el-button>
+        <el-button @click="add('select','father')">选择填空</el-button>
+        <el-button @click="add('matrix','father')">矩阵填空</el-button>
       </el-form-item>
 
       <el-form-item>
@@ -228,6 +231,23 @@
       </div>
     </el-form>
   </div>
+  <el-dialog
+          title="子项题"
+          :visible.sync="dialogVisible"
+          width="30%">
+    <el-select v-model="valueItem" placeholder="请选择">
+      <el-option
+              v-for="item in typeItem"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+      </el-option>
+    </el-select>
+    <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="open">确 定</el-button>
+  </span>
+  </el-dialog>
 </div>
 </body>
 
@@ -395,7 +415,10 @@
     el: '#app',
     data(){
       return{
+        dialogVisible:false,
+        choose:'1',
         value: '',
+        valueItem: '',
         matrixsNum: 1,
         num: 1,
         form: {
@@ -404,6 +427,22 @@
           name: '',
           date: ''
         },
+        typeItem:[{
+          value: '1',
+          label: '单选'
+        },{
+          value: '2',
+          label: '多选'
+        },{
+          value: '3',
+          label: '问答'
+        },{
+          value: '4',
+          label: '矩阵问答'
+        },{
+          value: '5',
+          label: '选择'
+        },],
         itemTitle: '',
         itemText: new Array(1),
         questItem: {},
@@ -430,13 +469,39 @@
     },
     methods: {
       // 创建选项
-      add(type){
+      add(type,from){
+        if(from === 'child'){
+
+        }else if(from === 'father'){
+
+        }
         this.questItem.type = type
         this.showItem = true
       },
       // 增加/减少 子选项
       handleChange(val){
         this.itemText.length = val
+      },
+      agreeChange(val){
+        alert(val);
+      },
+      child(item, index){
+        this.dialogVisible = true;
+      },
+      open() {
+        var type = this.valueItem;
+        if(type === '1'){
+          this.add('radio','child');
+        }else if(type === '2'){
+          this.add('checkbox','child');
+        }else if(type === '3'){
+          this.add('input','child');
+        }else if(type === '4'){
+          this.add('matrix','child');
+        }else if(type === '5'){
+          this.add('select','child');
+        }
+        this.dialogVisible = false;
       },
       // 确定将选项添加进列表中进行渲染
       determine(){
@@ -551,7 +616,10 @@
           return
         }
         console.log(this.form);
-        let form = this.form;
+        let form = {
+          name: this.value,
+          form: this.form
+        };
         axios.post("/exam/save",form).then(()=>{
 
         })

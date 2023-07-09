@@ -64,4 +64,7 @@ public interface StudentMapper {
             "        FIELDS TERMINATED BY ','\n" +
             "        LINES TERMINATED BY '\\n'"+"</script>")
     public void load_file(@Param("path") String path);
+
+    @Select("select * from student where name = #{name}")
+    public student queryByName(String name);
 }
