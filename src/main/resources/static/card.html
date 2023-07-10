@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../backend/card.css">
+    <link rel="stylesheet" href="../backend/broot.css">
+    <script src="../backend/plugins/vue/vue.js"></script>
+    <script src="../backend/plugins/axios/axios.min.js"></script>
+    <style>
+        html,body {
+            height: 100%;
+            font-family: Microsoft yahei;
+            font-size: 16px
+        }
+
+        .imgCalc {
+
+        }
+        .wrap {
+            min-height: 100%;
+            height: auto;
+            margin: 0 auto -60px;
+            padding: 0 0 60px;
+            overflow: hidden
+        }
+
+        .wrap>.container {
+            padding: 0 5px 20px
+        }
+
+        .container {
+        }
+
+        [v-cloak] {
+            display: none
+        }
+
+        .title {
+            font-size: 1.4em;
+            line-height: 2em
+        }
+
+        .footer {
+            height: 60px;
+            border-top: 1px solid #888;
+            padding-top: 20px;
+            padding-bottom: 60px
+        }
+
+        @media(max-width: 600px) {
+            .fullwidth {
+                margin-left:-8px!important;
+                margin-right: -8px!important
+            }
+
+            .wrap>.container {
+                padding: 0 0 20px
+            }
+
+            .menu i {
+                display: none
+            }
+        }
+
+        .bottom-10 {
+            margin-bottom: 10px!important
+        }
+
+        .bottom-5 {
+            margin-bottom: 5px!important
+        }
+
+        a:hover {
+            text-decoration: none!important
+        }
+
+        .block {
+            border-bottom: 0;
+            margin-bottom: 10px;
+            border: 0 solid #000
+        }
+
+        .block-title {
+            margin: 3px 0;
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            height: 4.5em;
+            line-height: 1.5em
+        }
+
+        .media-image {
+            position: relative;
+            border: 0 solid #888
+        }
+
+        .imagelabel {
+            padding: 2px;
+            font-size: 80%;
+            position: absolute
+        }
+
+        .imagelabel-bottom-left {
+            bottom: 0
+        }
+
+        .imagelabel-bottom-right {
+            right: 0;
+            bottom: 0
+        }
+
+        .tag {
+            margin: 3px
+        }
+
+        .menu {
+        }
+
+        #content img {
+            max-width: 100%
+        }
+
+        .lines {
+            display: block;
+            overflow: hidden;
+            line-height: 1.5em;
+            font-size: 14px
+        }
+
+        .lines-1 {
+            height: 1.5em
+        }
+
+        .lines-2 {
+            height: 3em
+        }
+
+        .lines-3 {
+            height: 4.5em
+        }
+
+        .menu>li {
+            display: inline-block!important
+        }
+
+        .menu>li>a {
+            padding-left: 12px!important;
+            padding-right: 13px!important
+        }
+
+        .embed-responsive {
+            position: relative;
+            background: #000
+        }
+
+        .embed-responsive img {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto
+        }
+
+        .bumpable-ima-ad-container {
+            margin-top: 0!important
+        }
+
+        .embed-responsive-16by9-rotating {
+            padding-bottom: 133.25%
+        }
+        @media(min-width: 576px) {
+            .card-columns {
+                column-count:2;
+                column-gap: .5rem
+            }
+        }
+
+        @media(min-width: 992px) {
+            .card-columns {
+                column-count:2
+            }
+        }
+
+        @media(min-width: 1300px) {
+            .card-columns {
+                column-count:3
+            }
+        }
+
+        @media(min-width: 1600px) {
+            .card-columns {
+                column-count:4
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="btn-group bottom-10">
+        <div class="card-columns" id="videos">
+            <div class="card" v-for="(item, index) in itemList" :key="index">
+                <div :class="generateClassName(index)" style="position: relative; overflow: hidden;">
+                    <a class="visited" href="javascript:void(0)" style="position:absolute;top:0;left:0;width:100%;height:100%">
+                        <img :id="generateClassNameImg(index)" class="card-img-top" :src="item.img" alt data-src=""></a> </div>
+                <div class="card-body p-2">
+                    <a href="javascript:void(0)">{{item.title}}</a> <div>
+                    <label class="badge badge-primary">歐美寫真</label>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+<script>
+
+    new Vue({
+        el: '#app',
+        data: {
+            itemList:[],
+
+        },
+        created() {
+            // axios.get("/card/porn").then((response)=>{
+            //     this.itemList = response.data;
+            // });
+        },
+        mounted(){
+            this.flush();
+        },
+        methods: {
+            generateClassName(index){
+                return `imgCalc-${index}`
+            },
+            generateClassNameImg(index){
+                return `cardImg-${index}`
+            },
+            flush(){
+                var p = '.imgCalc-';
+                var c = '#cardImg-';
+                for (let i = 0; i < this.itemList.length; i++) {
+                    let first = p + i + '';
+                    let second = c + i + '';
+                    var parentDiv = document.querySelector(first);
+                    var childImg = document.querySelector(second);
+
+                    var childWidth = childImg.naturalWidth;
+                    var childHeight = childImg.naturalHeight;
+
+                    // 假设需要将子元素的宽度和高度作为填充值
+                    parentDiv.style.paddingTop =  (childHeight / childWidth) *  100 + '%';
+                }
+            },
+        }
+    })
+</script>
+</html>

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RedisConfig {
 
-    @Bean
+/*    @Bean
     public RedissonClient redissonClient(){
 
         //配置
@@ -21,7 +21,7 @@ public class RedisConfig {
         return Redisson.create(config);
 
 
-    }
+    }*/
 
 
 }

@@ -14,8 +14,8 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
+//    @Resource
+//    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 设置静态资源映射
@@ -32,7 +32,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //注册拦截器
-        registry.addInterceptor(new MyIntercepter(stringRedisTemplate))
+        registry.addInterceptor(new MyIntercepter())
                 //拦截路径
                 .addPathPatterns("/**")
                 //放行路径
@@ -45,8 +45,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                         "/**/*.tff",
                         "/**/*.woff"
                 );
-
-
     }
+
 
 }

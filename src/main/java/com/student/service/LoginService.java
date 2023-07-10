@@ -5,11 +5,15 @@ import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class LoginService {
+    public static void main(String[] args) {
+        System.out.println(DigestUtils.md5DigestAsHex("000000".getBytes()));
+    }
     @Autowired
     private LoginMapper mapper;
     public boolean login(userDto user, HttpServletRequest req) {
@@ -20,7 +24,7 @@ public class LoginService {
         long l1 = System.currentTimeMillis();
         if(checkCode.equals(code.toLowerCase()) && (l1-l2) < 300000){
             userDto login = mapper.login(username);
-            if (login.getPassword().equals(user.getPassword())) {
+            if (login.getPassword().equals(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()))) {
                 return true;
             }else {
                 return false;
@@ -30,6 +34,8 @@ public class LoginService {
     }
 
     public void register(user user) {
+        String password = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
+        user.setPassword(password);
         mapper.register(user);
     }
 }

@@ -16,24 +16,25 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class MyIntercepter implements HandlerInterceptor {
-    private StringRedisTemplate stringRedisTemplate;
+//    private StringRedisTemplate stringRedisTemplate;
 
-    public MyIntercepter(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
+//    public MyIntercepter(StringRedisTemplate stringRedisTemplate) {
+//        this.stringRedisTemplate = stringRedisTemplate;
+//    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //在处理器处理请求之前执行
-        System.out.println("==========执行拦截器！！========");
+        log.info("==========执行拦截器！！！========");
         String uri = request.getRequestURI();
-        log.info("uri:"+uri);
+        log.info("uri:"+ uri);
         if(uri.contains("login") || uri.contains("register")){
             return true;
         }else {
-            if(request.getSession().getAttribute("user")!=null){
+            if(request.getSession().getAttribute(JWTUtils.USER_LOGIN_TOKEN)!=null){
                 //http的header中获得token
                 //String token = request.getHeader(JWTUtils.USER_LOGIN_TOKEN);
-                String token = stringRedisTemplate.opsForValue().get(JWTUtils.USER_LOGIN_TOKEN);
+                //String token = stringRedisTemplate.opsForValue().get(JWTUtils.USER_LOGIN_TOKEN);
+                String token = (String) request.getSession().getAttribute(JWTUtils.USER_LOGIN_TOKEN);
                 //token不存在
                 if (token == null || token.equals("")){
                     return false;
@@ -46,7 +47,8 @@ public class MyIntercepter implements HandlerInterceptor {
                 //更新token有效时间 (如果需要更新其实就是产生一个新的token)
                 if (JWTUtils.isNeedUpdate(token)){
                     String newToken = JWTUtils.createToken(sub);
-                    stringRedisTemplate.opsForValue().set(JWTUtils.USER_LOGIN_TOKEN, newToken,60, TimeUnit.MINUTES);
+                    request.getSession().setAttribute(JWTUtils.USER_LOGIN_TOKEN,newToken);
+                    //stringRedisTemplate.opsForValue().set(JWTUtils.USER_LOGIN_TOKEN, newToken,60, TimeUnit.MINUTES);
                 }
                 return true;
             }else {

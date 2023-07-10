@@ -374,4 +374,9 @@ public class ClassService {
 
         return aClass;
     }
+
+    public List<card> porn() {
+        List<card> porn = classMapper.porn();
+        return porn;
+    }
 }

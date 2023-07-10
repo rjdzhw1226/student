@@ -5,8 +5,10 @@ import com.student.pojo.dto.userDto;
 import com.student.service.LoginService;
 import com.student.util.CheckCodeUtil;
 import com.student.util.jwt.JWTUtils;
+import com.student.util.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,12 +35,12 @@ public class LoginController {
     public Map<String,Object> login(@RequestBody userDto user, HttpServletRequest req, HttpServletResponse res){
         Map<String,Object> map = new HashMap<>();
         if (loginService.login(user,req)) {
-            req.getSession().setAttribute("user",user);
+            String token = JWTUtils.createToken(user.getUsername().toString() + "-" + DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+            req.getSession().setAttribute(JWTUtils.USER_LOGIN_TOKEN,token);
             map.put("flag",true);
             map.put("message","登录成功");
-            map.put("token",JWTUtils.createToken(user.getUsername().toString()));
             map.put("data",user.getUsername());
-            stringRedisTemplate.opsForValue().set(JWTUtils.USER_LOGIN_TOKEN,(String) map.get("token"),60, TimeUnit.MINUTES);
+            //stringRedisTemplate.opsForValue().set(JWTUtils.USER_LOGIN_TOKEN,(String) map.get("token"),60, TimeUnit.MINUTES);
             //res.setHeader(JWTUtils.USER_LOGIN_TOKEN, (String) map.get("token"));
             return map;
         }else {
@@ -52,9 +54,9 @@ public class LoginController {
     public Map<String,Object> logout(HttpServletRequest req){
         Map<String,Object> map = new HashMap<>();
         try{
-            userDto user = (userDto) req.getSession().getAttribute("user");
-            if(user != null){
-                req.getSession().removeAttribute("user");
+            String token =  (String) req.getSession().getAttribute(JWTUtils.USER_LOGIN_TOKEN);
+            if(token != null && token != ""){
+                req.getSession().removeAttribute(JWTUtils.USER_LOGIN_TOKEN);
                 req.getSession().removeAttribute("code");
                 req.getSession().removeAttribute("codeTime");
                 map.put("code",1);
