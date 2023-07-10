@@ -197,11 +197,11 @@
 
       <!-- 添加选项 -->
       <el-form-item>
-        <el-button @click="add('radio','father')">单选</el-button>
-        <el-button @click="add('checkbox','father')">多选</el-button>
-        <el-button @click="add('input','father')">单项填空</el-button>
-        <el-button @click="add('select','father')">选择填空</el-button>
-        <el-button @click="add('matrix','father')">矩阵填空</el-button>
+        <el-button @click="add('radio')">单选</el-button>
+        <el-button @click="add('checkbox')">多选</el-button>
+        <el-button @click="add('input')">单项填空</el-button>
+        <el-button @click="add('select')">选择填空</el-button>
+        <el-button @click="add('matrix')">矩阵填空</el-button>
       </el-form-item>
 
       <el-form-item>
@@ -226,6 +226,26 @@
           <span slot="footer" class="dialog-footer">
             <el-button @click="clearItem">取 消</el-button>
             <el-button type="primary" @click="determine">确 定</el-button>
+          </span>
+        </el-dialog>
+      </div>
+      <div class="additem">
+        <el-dialog
+                :title="typeMap[questItem.type]"
+                :visible.sync="showItemChild"
+                width="50%">
+          <el-form-item label="标题">
+            <el-input v-model="itemTitle"></el-input>
+          </el-form-item>
+          <el-form-item label="添加选项" v-show="questItem.type != 'input'">
+            <el-input-number v-model="num" @change="handleChange" :min="1" :max="10"></el-input-number>
+          </el-form-item>
+          <el-form-item label="选项" v-for="(text, i) in itemText" :key="i" v-show="questItem.type != 'input'">
+            <el-input v-model="itemText[i]"></el-input>
+          </el-form-item>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="clearItemChild">取 消</el-button>
+            <el-button type="primary" @click="determineChild">确 定</el-button>
           </span>
         </el-dialog>
       </div>
@@ -418,6 +438,7 @@
         dialogVisible:false,
         choose:'1',
         value: '',
+        childItemTitle: '',
         valueItem: '',
         matrixsNum: 1,
         num: 1,
@@ -447,6 +468,7 @@
         itemText: new Array(1),
         questItem: {},
         showItem: false,
+        showItemChild: false,
         typeMap: {
           radio: '单选',
           checkbox: '多选',
@@ -462,6 +484,11 @@
         if(!this.showItem){
           this.clearItem()
         }
+      },
+      showItemChild() {
+        if(!this.showItemChild){
+          this.clearItemChild()
+        }
       }
     },
     created(){
@@ -469,12 +496,11 @@
     },
     methods: {
       // 创建选项
-      add(type,from){
-        if(from === 'child'){
-
-        }else if(from === 'father'){
-
-        }
+      addChild(type){
+        this.questItem.type = type
+        this.showItemChild = true
+      },
+      add(type){
         this.questItem.type = type
         this.showItem = true
       },
@@ -486,20 +512,21 @@
         alert(val);
       },
       child(item, index){
+        this.childItemTitle = index
         this.dialogVisible = true;
       },
       open() {
         var type = this.valueItem;
         if(type === '1'){
-          this.add('radio','child');
+          this.addChild('radio');
         }else if(type === '2'){
-          this.add('checkbox','child');
+          this.addChild('checkbox');
         }else if(type === '3'){
-          this.add('input','child');
+          this.addChild('input');
         }else if(type === '4'){
-          this.add('matrix','child');
+          this.addChild('matrix');
         }else if(type === '5'){
-          this.add('select','child');
+          this.addChild('select');
         }
         this.dialogVisible = false;
       },
@@ -545,6 +572,47 @@
           this.clearItem()
         }
       },
+      determineChild(){
+        if(this.questItem.type=='input'){
+          // 填空
+          if(this.itemTitle == ''){
+            this.$message('请输入选项的标题内容');
+            return
+          }
+          if(this.editIndex !== '') {
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.form.itemList.splice(this.editIndex, 1, this.questItem)
+            this.editIndex = ''
+          }else{
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.form.itemList.push(this.questItem);
+          }
+          this.clearItem()
+        }else if(this.questItem.type == 'radio' || this.questItem.type == 'checkbox' || this.questItem.type == 'matrix' || this.questItem.type == 'select'){
+          // 单选、多选、矩阵
+          if(this.itemTitle == ''){
+            this.$message('请输入选项的标题内容');
+            return
+          }
+          for (var i = 0; i < this.itemText.length; i++){
+            if(this.itemText[i] == '' || this.itemText[i] == undefined){
+              this.$message('请完整输入每个选项内容');
+              return
+            }
+          }
+          if(this.editIndex !== '') {
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.questItem.textList = this.itemText;
+            this.form.itemList.splice(this.editIndex, 1, this.questItem)
+            this.editIndex = ''
+          }else{
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.questItem.textList = this.itemText;
+            this.form.itemList.push(this.questItem);
+          }
+          this.clearItemChild()
+        }
+      },
       // 编辑
       edit(item, editIndex){
         this.editIndex = editIndex
@@ -568,6 +636,13 @@
         this.itemText = ['']
         this.questItem = {}
         this.showItem = false
+      },
+      clearItemChild(){
+        this.num = 1
+        this.itemTitle = ''
+        this.itemText = ['']
+        this.questItem = {}
+        this.showItemChild = false
       },
       // 判断上移、下移、删除
       handleItem(val, item){
