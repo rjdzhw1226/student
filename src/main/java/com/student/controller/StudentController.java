@@ -12,10 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @RestController
@@ -107,6 +104,12 @@ public class StudentController {
         return map;
     }
 
+    @RequestMapping("/name")
+    @ResponseBody
+    public List<Map<String,Object>> queryAllName(){
+        List<Map<String,Object>> list = service.queryName();
+        return list;
+    }
     @RequestMapping("/deleteId")
     @ResponseBody
     public Map<String, Object> deleteId( @RequestBody Map<String,Object> param){

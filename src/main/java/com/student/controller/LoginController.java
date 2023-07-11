@@ -87,6 +87,7 @@ public class LoginController {
     }
 
     @RequestMapping("/getUserName")
+    //TODO 改了session 拿不到暂时
     public String getUserName(HttpServletRequest req){
         userDto user = (userDto) req.getSession().getAttribute("user");
         return user.getUsername();

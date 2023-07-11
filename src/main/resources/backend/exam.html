@@ -129,10 +129,10 @@
         <el-col :span="11">
           <el-select v-model="value" placeholder="请选择">
             <el-option
-                    v-for="item in form.options"
-                    :key="item.value"
+                    v-for="(item,index) in form.options"
+                    :key="index"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.label">
             </el-option>
           </el-select>
         </el-col>
@@ -431,6 +431,8 @@
       cloudSons.forEach(moveElementRandomly); // 将每一个.cloud-son元素移动到随机方向
     }, 1000);
   });
+</script>
+<script>
   new Vue({
     el: '#app',
     data(){
@@ -467,6 +469,7 @@
         itemTitle: '',
         itemText: new Array(1),
         questItem: {},
+        array: [],
         showItem: false,
         showItemChild: false,
         typeMap: {
@@ -492,7 +495,9 @@
       }
     },
     created(){
-
+        axios.get("/student/name").then((response)=>{
+            this.form.options = response.data;
+        });
     },
     methods: {
       // 创建选项
@@ -512,7 +517,7 @@
         alert(val);
       },
       child(item, index){
-        this.childItemTitle = index
+        this.childItemTitle = index + 1
         this.dialogVisible = true;
       },
       open() {
@@ -580,11 +585,11 @@
             return
           }
           if(this.editIndex !== '') {
-            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'题的子项题'
             this.form.itemList.splice(this.editIndex, 1, this.questItem)
             this.editIndex = ''
           }else{
-            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'题的子项题'
             this.form.itemList.push(this.questItem);
           }
           this.clearItem()
@@ -601,12 +606,12 @@
             }
           }
           if(this.editIndex !== '') {
-            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'题的子项题'
             this.questItem.textList = this.itemText;
             this.form.itemList.splice(this.editIndex, 1, this.questItem)
             this.editIndex = ''
           }else{
-            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'子项题'
+            this.questItem.title = this.itemTitle +"-第"+ this.childItemTitle +'题的子项题'
             this.questItem.textList = this.itemText;
             this.form.itemList.push(this.questItem);
           }
@@ -691,12 +696,26 @@
           return
         }
         console.log(this.form);
-        let form = {
+        let problemVo = {
           name: this.value,
           form: this.form
         };
-        axios.post("/exam/save",form).then(()=>{
-
+        axios.post("/exam/save",problemVo).then((response)=>{
+          if (response.data.code === 1) {
+            this.$confirm('是否继续添加问卷?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'info'
+            }).then(() => {
+              this.form ={};
+              this.value = '';
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '不继续添加问卷'
+              });
+            });
+          }
         })
       }
     }

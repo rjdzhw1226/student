@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class problemVo {
-    private problem problem;
+    private problem form;
     private String name;
 }

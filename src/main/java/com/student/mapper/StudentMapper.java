@@ -67,4 +67,7 @@ public interface StudentMapper {
 
     @Select("select * from student where name = #{name}")
     public student queryByName(String name);
+    @Select("select name from student where 1=1")
+    public List<String> queryName();
+
 }

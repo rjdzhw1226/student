@@ -40,6 +40,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                         "/login.html", //登录页面
                         "/register.html", //注册页面
                         "/login/**",       //登录请求
+                        "/static/**",       //static资源
                         "/**/*.js",     //js静态资源
                         "/**/*.css",     //css静态资源
                         "/**/*.tff",

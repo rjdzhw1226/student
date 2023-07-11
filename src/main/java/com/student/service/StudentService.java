@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,5 +144,16 @@ public class StudentService {
         }
         int i = mapper.deleteId(id);
         return i;
+    }
+
+    public List<Map<String,Object>> queryName() {
+        List<Map<String,Object>> l = new ArrayList<>();
+        List<String> list = mapper.queryName();
+        for (String s : list) {
+            Map<String,Object> map = new HashMap<>();
+            map.put("label",s);
+            l.add(map);
+        }
+        return l;
     }
 }
