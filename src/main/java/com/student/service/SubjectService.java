@@ -1,5 +1,6 @@
 package com.student.service;
 
+import com.student.Constant.RedisKey;
 import com.student.mapper.MenuMapper;
 import com.student.mapper.StudentMapper;
 import com.student.mapper.SubjectMapper;
@@ -8,8 +9,11 @@ import com.student.pojo.page;
 import com.student.pojo.student;
 import com.student.pojo.subject;
 import com.student.pojo.vo.subjectVo;
+import com.student.util.BaseContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +22,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 @Service
 public class SubjectService {
     @Value("${file.readPath}")
     private String readFilePath;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private RedisTemplate<String, List<subject>> listRedisTemplate;
+
+    @Autowired
+    private RedisTemplate<String, String> mapRedisTemplate;
+
     @Resource(name = "taskExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
@@ -44,13 +55,14 @@ public class SubjectService {
 
     @Autowired
     private ExcelService excelService;
+
     /**
      * 同步
      */
-    public void findByMultiThreads(){
+    public void findByMultiThreads() {
         int timeSize = 10;
-        CountDownLatch countDownLatch=new CountDownLatch(timeSize);
-        for(int i = 0; i < timeSize; i++){
+        CountDownLatch countDownLatch = new CountDownLatch(timeSize);
+        for (int i = 0; i < timeSize; i++) {
             threadPoolTaskExecutor.submit(new Runnable() { //线程池
                 @Override
                 public void run() {
@@ -73,8 +85,8 @@ public class SubjectService {
         }
     }
 
-    public page<subject> query(Integer page, Integer size){
-        page<subject> pages =new page<>();
+    public page<subject> query(Integer page, Integer size) {
+        page<subject> pages = new page<>();
         List<subject> multiCombineResult = excelService.getMultiCombineResult();
         int count = subjectMapper.queryCount();
         List<subject> lists = multiCombineResult.subList((page - 1) * size, (page - 1) * size + size);
@@ -98,7 +110,7 @@ public class SubjectService {
             Integer gradeMin = Integer.parseInt(subjectVo.getGrade_min());
             String teacherName = subjectVo.getTeacherName();
             List<String> strings = menuMapper.queryLabelList(gradeMax, gradeMin);
-            sb.setGradeBetween(strings.get(0)+"~"+strings.get(strings.size()-1));
+            sb.setGradeBetween(strings.get(0) + "~" + strings.get(strings.size() - 1));
             sb.setTeacherName(teacherName);
             sb.setName(name);
             sb.setId(id);
@@ -116,17 +128,17 @@ public class SubjectService {
         params.put("page", (page - 1) * size);
         params.put("size", size);
         //查询 用于互不相干并行查询
-        Callable getList = new Callable<List<subjectVo>>(){
+        Callable getList = new Callable<List<subjectVo>>() {
             @Override
-            public List<subjectVo> call() throws Exception  {
+            public List<subjectVo> call() throws Exception {
                 List<subjectVo> subjectVos = subjectMapper.queryAll(params);
                 return subjectVos;
             }
         };
 
-        Callable getListDetail = new Callable<List<String>>(){
+        Callable getListDetail = new Callable<List<String>>() {
             @Override
-            public List<String> call() throws Exception  {
+            public List<String> call() throws Exception {
                 List<String> strings = subjectMapper.queryTeacherName();
                 return strings;
             }
@@ -141,15 +153,38 @@ public class SubjectService {
         return null;
     }
 
-    public Map<String,Object> connectSubject(String subId){
+    public page<subject> chooseSubject(Integer page, Integer size) {
+        page<subject> pages = new page<>();
+        List<subject> subjects = listRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY);
+        int count = subjects.size();
+        if (subjects == null || subjects.size() == 0) {
+            page<subject> query = query(page, size);
+            listRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_KEY, query.getData(), 60, TimeUnit.SECONDS);
+            return query;
+        } else {
+            pages.setData(subjects);
+            pages.setTotal(count);
+            return pages;
+        }
+    }
+
+    public Map<String, Object> connectSubject(String subId) {
         // 进入选课页面时就应该把所有课查出来存入缓存
         // 从BaseContext把用户信息取出来
+        String userName = BaseContext.getCurrentId();
         // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
+        String s = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + subId);
         // 已选这门课 直接返回
+        if(userName.equals(s)){
+            HashMap<String, Object> HashMap = new HashMap<>();
+            HashMap.put("message", -1);
+            return HashMap;
+        }
         // 未选 查询此门课程当前剩余量
+
         // 小于零直接返回
         // 大于零 扣减库存 更新缓存库存量 锁
-        // 将用户信息和subId传入队列存储 做数据库增减
+        // 将用户信息和subId 传入队列存储 后续做数据库增减
         return new HashMap<>();
     }
 }

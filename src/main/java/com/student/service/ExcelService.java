@@ -155,7 +155,7 @@ public class ExcelService {
         //Callable用于产生结果
         List<Callable<List>> tasks = new ArrayList<>();
         for (int i = 0; i < SIZE; i++) {
-            //不同的线程用户处理不同分段的数据量，这样就达到了平均分摊查询数据的压力
+            //不同的线程处理不同分段的数据量，平均分摊查询数据的压力
             String[] nums = splitMap.get(String.valueOf(i * (count / SIZE))).split(":");
             int startNum = Integer.valueOf(String.valueOf(i * (count / SIZE)));
             int endNum = Integer.valueOf(nums[0]);
@@ -164,7 +164,7 @@ public class ExcelService {
             bindex += bindex;
         }
         try{
-            //定义固定长度的线程池  防止线程过多，5就够用了
+            //定义固定长度的线程池  防止线程过多，5
             ExecutorService executorService = Executors.newFixedThreadPool(SIZE);
             //Future用于获取结果
             List<Future<List>> futures=executorService.invokeAll(tasks);
@@ -174,7 +174,7 @@ public class ExcelService {
                     result.addAll(future.get());
                 }
             }
-            //关闭线程池，一定不能忘记
+            //关闭线程池 一定不能忘记 非自定义配置类一定要关闭
             executorService.shutdown();
         }catch (Exception e){
             e.printStackTrace();

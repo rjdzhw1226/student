@@ -1,5 +1,6 @@
 package com.student.config;
 
+import com.student.util.BaseContext;
 import com.student.util.jwt.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,6 +36,9 @@ public class MyIntercepter implements HandlerInterceptor {
                 //String token = request.getHeader(JWTUtils.USER_LOGIN_TOKEN);
                 //String token = stringRedisTemplate.opsForValue().get(JWTUtils.USER_LOGIN_TOKEN);
                 String token = (String) request.getSession().getAttribute(JWTUtils.USER_LOGIN_TOKEN);
+                String userInformation = JWTUtils.validateToken(token);
+                //存入本地线程
+                BaseContext.setCurrentId(userInformation.split("-")[0]);
                 //token不存在
                 if (token == null || token.equals("")){
                     return false;

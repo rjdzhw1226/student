@@ -2,13 +2,13 @@ package com.student.util;
 
 public class BaseContext {
 
-    public static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
+    public static ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
-    public static void setCurrentId(Long id) {
-        threadLocal.set(id);
+    public static void setCurrentId(String name) {
+        threadLocal.set(name);
     }
 
-    public static Long getCurrentId() {
+    public static String getCurrentId() {
         return threadLocal.get();
     }
 
