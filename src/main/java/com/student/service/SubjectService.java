@@ -140,4 +140,16 @@ public class SubjectService {
         threadPoolTaskExecutor.shutdown();
         return null;
     }
+
+    public Map<String,Object> connectSubject(String subId){
+        // 进入选课页面时就应该把所有课查出来存入缓存
+        // 从BaseContext把用户信息取出来
+        // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
+        // 已选这门课 直接返回
+        // 未选 查询此门课程当前剩余量
+        // 小于零直接返回
+        // 大于零 扣减库存 更新缓存库存量 锁
+        // 将用户信息和subId传入队列存储 做数据库增减
+        return new HashMap<>();
+    }
 }

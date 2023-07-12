@@ -15,9 +15,9 @@ import java.util.List;
 public class CardController {
     @Autowired
     private ClassService classService;
-    @RequestMapping("/porn")
-    public List<card> porn(){
-        List<card> porn = classService.porn();
+    @RequestMapping("/All")
+    public List<card> query(){
+        List<card> porn = classService.queryCard();
         return porn;
     }
 }

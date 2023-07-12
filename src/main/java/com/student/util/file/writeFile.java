@@ -1,10 +1,9 @@
 package com.student.util.file;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class writeFile {
     //回车加换行符
     static String rt = "\r\n";
 
-    public static void Compiler(List<Map<String, String>> list, List<Map<String, String>> listName,String name) {
+    public static void Compiler(List<Map<String, String>> list, List<Map<String, String>> listName,List<Map<String, String>> listStyle, String name) {
         StringBuilder str = new StringBuilder();
         //long i = System.currentTimeMillis();
         //写文件，目录可以自己定义
@@ -39,12 +39,32 @@ public class writeFile {
         for (int j = 0; j < list.get(0).size(); j++) {
             String cellValue = list.get(0).get("COLUM" + (j + 1));
             String nameValue = listName.get(0).get(cellValue);
-            str.append("@ExcelImport(\""+cellValue+"\")");
-            str.append("\r\n");
-            str.append("@Column(name = \""+ nameValue +"\",type = MySqlTypeConstant.VARCHAR,length = 128)");
-            str.append("\r\n");
-            str.append("private String "+ nameValue +";");
-            str.append("\r\n");
+            String styleValue = listStyle.get(0).get(cellValue);
+            if(styleValue.equals("string") || styleValue.equals("defaultString") || styleValue.equals("formula")){
+                str.append("@ExcelImport(\""+cellValue+"\")");
+                str.append("\r\n");
+                str.append("@Column(name = \""+ nameValue +"\",type = MySqlTypeConstant.VARCHAR,length = 128)");
+                str.append("\r\n");
+                str.append("private String "+ nameValue +";");
+                str.append("\r\n");
+            }else if (styleValue.equals("dateForm")){
+                str.append("@ExcelImport(\""+cellValue+"\")");
+                str.append("\r\n");
+                str.append("@Column(name = \""+ nameValue +"\",type = MySqlTypeConstant.DATETIME)");
+                str.append("\r\n");
+                str.append("private String "+ nameValue +";");
+                str.append("\r\n");
+            }else if (styleValue.equals("bigInt")){
+                str.append("@ExcelImport(\""+cellValue+"\")");
+                str.append("\r\n");
+                str.append("@Column(name = \""+ nameValue +"\",type = MySqlTypeConstant.BIGINT)");
+                str.append("\r\n");
+                str.append("private String "+ nameValue +";");
+                str.append("\r\n");
+            }else if(styleValue.equals("")){
+                throw new RuntimeException("单元格为空");
+            }
+
 
         }
         String src =
@@ -86,14 +106,14 @@ public class writeFile {
             String nameOne = name.get(0);
             Result result = getResult(workbook);
             if (result == null) return;
-            Compiler(result.list, result.listName,nameOne);
+            Compiler(result.list, result.listName, result.listStyle,nameOne);
         }
         else{
             //遍历sheet
             for(int sheetNum = 0;sheetNum < numberOfSheets;sheetNum++){
                 Result result = getResult(workbook);
                 if (result == null) return;
-                Compiler(result.list, result.listName,name.get(sheetNum));
+                Compiler(result.list, result.listName, result.listStyle, name.get(sheetNum));
             }
         }
     }
@@ -102,8 +122,10 @@ public class writeFile {
         //创建集合存储
         List<Map<String,String>> list = new ArrayList<>();
         List<Map<String,String>> listName = new ArrayList<>();
+        List<Map<String,String>> listStyle = new ArrayList<>();
         Map<String,String> map = new HashMap<>();
         Map<String,String> mapName = new HashMap<>();
+        Map<String,String> mapStyle = new HashMap<>();
         //获得当前sheet工作表
         Sheet sheet = workbook.getSheetAt(0);
         if(sheet == null){
@@ -112,9 +134,12 @@ public class writeFile {
         //获得当前sheet的开始行
         int firstRowNum  = sheet.getFirstRowNum();
         int NextCellNum  = firstRowNum + 1;
+        int StyleCellNum  = NextCellNum + 1;
         //获得当前行
         Row row = sheet.getRow(firstRowNum);
         Row rowNext = sheet.getRow(NextCellNum);
+        Row rowStyle = sheet.getRow(StyleCellNum);
+
         if(row == null || rowNext == null){
             return null;
         }
@@ -127,27 +152,33 @@ public class writeFile {
         for(int cellNum = firstCellNum; cellNum < lastCellNum;cellNum++){
             Cell cell = row.getCell(cellNum);
             Cell cellName = rowNext.getCell(cellNum);
+            Cell cellStyle = rowStyle.getCell(cellNum);
             String cellValue = getCellValue(cell);
             String cellValueName = getCellValue(cellName);
+            String cellValueStyle = getCellStyle(cellStyle);
             if (!"null".equals(cellValue)){
                 map.put(COLUM_FORMAT+i, cellValue);
                 mapName.put(cellValue,cellValueName);
+                mapStyle.put(cellValue,cellValueStyle);
                 i++;
             }
         }
         list.add(map);
         listName.add(mapName);
-        Result result = new Result(list, listName);
+        listStyle.add(mapStyle);
+        Result result = new Result(list, listName, listStyle);
         return result;
     }
 
     private static class Result {
         public final List<Map<String, String>> list;
         public final List<Map<String, String>> listName;
+        public final List<Map<String, String>> listStyle;
 
-        public Result(List<Map<String, String>> list, List<Map<String, String>> listName) {
+        public Result(List<Map<String, String>> list, List<Map<String, String>> listName, List<Map<String, String>> listStyle) {
             this.list = list;
             this.listName = listName;
+            this.listStyle = listStyle;
         }
     }
 
@@ -171,6 +202,9 @@ public class writeFile {
                 break;
             case BLANK:
                 cellValue = "";
+                break;
+            case FORMULA:
+                cellValue = "formula";
                 break;
             default:
                 cellValue = "defaultString";

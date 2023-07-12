@@ -17,5 +17,5 @@ public interface ClassMapper {
     @Update("update class set count = #{count} where id = #{id}")
     public void editCount(Integer count, String id);
     @Select("select * from card where 1 = 1")
-    public List<card> porn();
+    public List<card> queryCard();
 }

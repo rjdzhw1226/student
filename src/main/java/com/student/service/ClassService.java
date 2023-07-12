@@ -37,7 +37,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -95,6 +99,29 @@ public class ClassService {
         return classVo;
     }
 
+    public List<String> AsyncTask() {
+        List<String> result = new ArrayList<>();
+        try {
+            Callable call = new Callable() {
+                @Override
+                public List<String> call() throws Exception {
+                    List<String> list = new ArrayList<>();
+                    List<String> collect = list.stream().collect(Collectors.toList());
+                    return collect;
+                }
+            };
+
+            Future<List<String>> future =  threadPoolTaskExecutor.submit(call);
+            //获取结果
+            result = future.get();
+            return result;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
     @Transactional
     public void findStudentByClass(String name) {
         String grade = name.split("-")[0];
@@ -375,8 +402,8 @@ public class ClassService {
         return aClass;
     }
 
-    public List<card> porn() {
-        List<card> porn = classMapper.porn();
-        return porn;
+    public List<card> queryCard() {
+        List<card> query = classMapper.queryCard();
+        return query;
     }
 }
