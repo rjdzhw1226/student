@@ -203,6 +203,7 @@ public class SubjectService {
             // 大于零 扣减库存 更新缓存库存量 锁
             subjectMapper.update(subId);
             stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + subId,String.valueOf(integer - 1));
+            mapRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_CHOOSE_KEY + subId, userName);
         }
         // 将用户信息和subId 传入队列存储 后续做数据库增减
 
