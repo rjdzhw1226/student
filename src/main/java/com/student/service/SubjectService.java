@@ -32,10 +32,10 @@ public class SubjectService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, List<subject>> listRedisTemplate;
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, String> mapRedisTemplate;
 
     @Resource(name = "taskExecutor")
