@@ -143,13 +143,12 @@ public class ExcelService {
      * 获取多线程结果并进行结果合并
      * @return
      */
-    public List<subject> getMultiCombineResult() {
+    public List<subject> getMultiCombineResult(int count) {
         //开始时间
         long start = System.currentTimeMillis();
         //返回结果
         List<subject> result = new ArrayList<>();
-        //查询数据库总数量
-        int count = subjectMapper.queryCount();
+        //传入总量
         Map<String,String> splitMap = getSplitMap(count,SIZE);
         int bindex = 1;
         //Callable用于产生结果

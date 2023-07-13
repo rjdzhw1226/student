@@ -4,8 +4,10 @@ import com.student.pojo.student;
 import com.student.pojo.subject;
 import com.student.pojo.vo.subjectLabelVo;
 import com.student.pojo.vo.subjectVo;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -28,4 +30,9 @@ public interface SubjectMapper {
     public List<String> queryTeacherName();
 
 
+    @Select("select count from subject where id = #{subId}")
+    public int queryById(String subId);
+
+    @Update("update subject set count = count - 1 where id = #{subId}")
+    public int update(String subId);
 }

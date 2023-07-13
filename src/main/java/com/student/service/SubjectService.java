@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ public class SubjectService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, List<subject>> listRedisTemplate;
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, String> mapRedisTemplate;
 
     @Resource(name = "taskExecutor")
@@ -87,8 +88,8 @@ public class SubjectService {
 
     public page<subject> query(Integer page, Integer size) {
         page<subject> pages = new page<>();
-        List<subject> multiCombineResult = excelService.getMultiCombineResult();
         int count = subjectMapper.queryCount();
+        List<subject> multiCombineResult = excelService.getMultiCombineResult(count);
         List<subject> lists = multiCombineResult.subList((page - 1) * size, (page - 1) * size + size);
         pages.setData(lists);
         pages.setTotal(count);
@@ -159,32 +160,52 @@ public class SubjectService {
         int count = subjects.size();
         if (subjects == null || subjects.size() == 0) {
             page<subject> query = query(page, size);
-            listRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_KEY, query.getData(), 60, TimeUnit.SECONDS);
+            listRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_KEY, query.getData(),60, TimeUnit.SECONDS);
+            for (subject datum : query.getData()) {
+                int countSub = datum.getCount();
+                String id = datum.getId();
+                stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + id, String.valueOf(countSub));
+            }
             return query;
         } else {
+            for (subject datum : subjects) {
+                int countSub = datum.getCount();
+                String id = datum.getId();
+                stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + id, String.valueOf(countSub));
+            }
             pages.setData(subjects);
             pages.setTotal(count);
             return pages;
         }
     }
 
+    @Transactional
     public Map<String, Object> connectSubject(String subId) {
-        // 进入选课页面时就应该把所有课查出来存入缓存
+        // 进入选课页面时就应该把所有课查出来存入缓存 默认选课失败
+        HashMap<String, Object> HashMap = new HashMap<>();
+        HashMap.put("message", -1);
         // 从BaseContext把用户信息取出来
         String userName = BaseContext.getCurrentId();
         // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
         String s = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + subId);
         // 已选这门课 直接返回
         if(userName.equals(s)){
-            HashMap<String, Object> HashMap = new HashMap<>();
-            HashMap.put("message", -1);
             return HashMap;
         }
-        // 未选 查询此门课程当前剩余量
-
-        // 小于零直接返回
-        // 大于零 扣减库存 更新缓存库存量 锁
+        synchronized (userName.intern()){
+            // 未选 查询此门课程当前剩余量
+            String countSub = stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_COUNT_KEY + subId);
+            Integer integer = Integer.valueOf(countSub);
+            // 小于零直接返回
+            if(Integer.valueOf(countSub) <= 0){
+                return HashMap;
+            }
+            // 大于零 扣减库存 更新缓存库存量 锁
+            subjectMapper.update(subId);
+            stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + subId,String.valueOf(integer - 1));
+        }
         // 将用户信息和subId 传入队列存储 后续做数据库增减
+
         return new HashMap<>();
     }
 }
