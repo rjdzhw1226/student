@@ -70,4 +70,6 @@ public interface StudentMapper {
     @Select("select name from student where 1=1")
     public List<String> queryName();
 
+    @Insert("insert into ")
+    public void connectSub(String subId, String stuName);
 }
