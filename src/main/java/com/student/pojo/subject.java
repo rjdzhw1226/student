@@ -8,4 +8,5 @@ public class subject {
     private String name;
     private String gradeBetween;
     private String teacherName;
+    private int count;
 }
