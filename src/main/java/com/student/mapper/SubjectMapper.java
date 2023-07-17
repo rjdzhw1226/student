@@ -20,7 +20,7 @@ public interface SubjectMapper {
     @Select("select s.*, t.name as teacherName from subject s, teacher t where t.id = s.teacher_id limit #{page},#{size}")
     public List<subjectVo> queryAll(Map<String, Object> params);
 
-    @Select("SELECT s.id, s.name, concat(t1.label ,t2.label) AS gradeBetween, t3.name AS teacherName FROM subject s JOIN tree t1 ON s.grade_max = t1.id JOIN tree t2 ON s.grade_min = t2.id JOIN teacher t3 ON s.teacher_id = t3.id limit #{page},#{size}")
+    @Select("SELECT s.id, s.name, concat(t1.label ,t2.label) AS gradeBetween, t3.name AS teacherName, s.count FROM subject s JOIN tree t1 ON s.grade_max = t1.id JOIN tree t2 ON s.grade_min = t2.id JOIN teacher t3 ON s.teacher_id = t3.id limit #{page},#{size}")
     public List<subject> queryAllLabel(Map<String, Object> params);
 
     @Select("select count(1) from subject where 1=1 ")

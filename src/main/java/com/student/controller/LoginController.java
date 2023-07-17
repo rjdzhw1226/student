@@ -109,9 +109,11 @@ public class LoginController {
                 req.getSession().removeAttribute("codeTime");
                 req.getSession().setAttribute("code", checkCode);
                 req.getSession().setAttribute("codeTime", System.currentTimeMillis());
+                System.out.println(checkCode);
             }else {
                 req.getSession().setAttribute("code", checkCode);
                 req.getSession().setAttribute("codeTime", System.currentTimeMillis());
+                System.out.println(checkCode);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -1,5 +1,7 @@
 package com.student.service;
 
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.student.Constant.RedisKey;
 import com.student.mapper.MenuMapper;
 import com.student.mapper.StudentMapper;
@@ -35,7 +37,7 @@ public class SubjectService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    private RedisTemplate<String, List<subject>> listRedisTemplate;
+    private RedisTemplate<Object, Object> listRedisTemplate;
 
     @Resource
     private RedisTemplate<String, String> mapRedisTemplate;
@@ -160,11 +162,10 @@ public class SubjectService {
 
     public page<subject> chooseSubject(Integer page, Integer size) {
         page<subject> pages = new page<>();
-        List<subject> subjects = listRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY);
-        int count = subjects.size();
-        if (subjects == null || subjects.size() == 0) {
+        List<subject> subjects = JSON.parseArray(stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY),subject.class);
+        if (subjects == null) {
             page<subject> query = query(page, size);
-            listRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_KEY, query.getData(),60, TimeUnit.SECONDS);
+            stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_KEY, JSON.toJSONString(query.getData()),60, TimeUnit.SECONDS);
             for (subject datum : query.getData()) {
                 int countSub = datum.getCount();
                 String id = datum.getId();
@@ -172,6 +173,7 @@ public class SubjectService {
             }
             return query;
         } else {
+            int count = subjects.size();
             for (subject datum : subjects) {
                 int countSub = datum.getCount();
                 String id = datum.getId();
@@ -188,7 +190,8 @@ public class SubjectService {
         HashMap<String, Object> HashMap = new HashMap<>();
         HashMap.put("message", -1);
         // 从BaseContext把用户信息取出来
-        String userName = BaseContext.getCurrentId();
+        //String userName = BaseContext.getCurrentId();
+        String userName = "1";
         synchronized (userName.intern()){
             // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
             String s = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + subId);
