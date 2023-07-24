@@ -1,4 +1,4 @@
-package com.student.service;
+package com.student.service.JucTest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,6 +14,9 @@ public class Test {
     }
 }
 
+/**
+ * 两阶段终止
+ */
 @Slf4j(topic = "designDemo")
 class DesignDemo {
     private Thread monitor;

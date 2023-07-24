@@ -1,4 +1,4 @@
-package com.student.service;
+package com.student.service.JucTest;
 
 import lombok.extern.slf4j.Slf4j;
 
