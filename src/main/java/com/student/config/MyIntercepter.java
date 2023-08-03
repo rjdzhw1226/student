@@ -56,9 +56,9 @@ public class MyIntercepter implements HandlerInterceptor {
                 }
                 return true;
             }else {
-//                String contextPath = request.getContextPath();
-//                response.sendRedirect(contextPath + "/backend/login.html");
-//                log.info("contextPath:"+contextPath);
+                String contextPath = request.getContextPath();
+                response.sendRedirect(contextPath + "/backend/login.html");
+                log.info("contextPath:"+contextPath);
             }
         }
         return true;

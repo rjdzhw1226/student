@@ -13,6 +13,12 @@ public class ObjectUtils {
     public static void main(String[] args) {
         arrange(new Integer[]{1,2,3},new Stack<>());
     }
+
+    /**
+     * 全排列 栈实现
+     * @param array
+     * @param stack
+     */
     public static void arrange(Integer[] array, Stack<Integer> stack){
         if(array.length == 0){
             System.out.println(stack);
