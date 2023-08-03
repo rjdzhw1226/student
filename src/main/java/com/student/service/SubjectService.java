@@ -13,6 +13,7 @@ import com.student.pojo.subject;
 import com.student.pojo.vo.subjectVo;
 import com.student.util.BaseContext;
 import com.student.util.rabbitMQ.MQSender;
+import com.student.util.redis.LockRedis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,6 +31,9 @@ import java.util.concurrent.*;
 
 @Service
 public class SubjectService {
+
+    private static final LockRedis lock = new LockRedis();
+
     @Value("${file.readPath}")
     private String readFilePath;
 
@@ -192,7 +196,8 @@ public class SubjectService {
         // 从BaseContext把用户信息取出来
         //String userName = BaseContext.getCurrentId();
         String userName = "1";
-        synchronized (userName.intern()){
+        lock.lock();
+        //synchronized (userName.intern()){
             // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
             String s = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + subId);
             // 已选这门课 直接返回
@@ -211,7 +216,8 @@ public class SubjectService {
             mapRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_CHOOSE_KEY + subId, userName);
             // 将用户信息和subId 传入队列存储 后续做数据库增减
             mqSender.send(subId,userName);
-        }
+        //}
+        lock.unlock();
         HashMap.put("message", 0);
         return new HashMap<>();
     }
