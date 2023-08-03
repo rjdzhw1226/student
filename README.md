@@ -8,3 +8,5 @@
 >![image](https://github.com/rjdzhw1226/student/assets/101936023/2a25a094-48c9-46b8-9e16-c2128ee3dd0a)
 <p>将maven仓库和setting.xml换成自己本地的maven地址，再配置application.yml数据库</p><br>
 
+<p>安装rabbitmq以及redis</p>
+

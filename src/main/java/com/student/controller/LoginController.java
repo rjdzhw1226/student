@@ -1,5 +1,6 @@
 package com.student.controller;
 
+import com.student.annotaion.Log;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.service.LoginService;
@@ -32,6 +33,7 @@ public class LoginController {
     private LoginService loginService;
 
     @RequestMapping("/user")
+    @Log(title="登录模块",action="login")
     public Map<String,Object> login(@RequestBody userDto user, HttpServletRequest req, HttpServletResponse res){
         Map<String,Object> map = new HashMap<>();
         if (loginService.login(user,req)) {
@@ -94,6 +96,7 @@ public class LoginController {
     }
 
     @RequestMapping("/checkCode")
+    @Log(title="验证码模块",action="checkCode")
     public void getCheckCode(HttpServletRequest req, HttpServletResponse res){
         res.setHeader("Pragma", "No-cache");
         res.setHeader("Cache-Control", "no-cache");
