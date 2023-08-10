@@ -9,4 +9,5 @@
 <p>将maven仓库和setting.xml换成自己本地的maven地址，再配置application.yml数据库</p><br>
 
 <p>安装rabbitmq以及redis</p>
-
+项目地址 <br>
+https://40q75226c6.goho.co/backend/login.html
