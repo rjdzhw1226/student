@@ -123,20 +123,50 @@ public class ClassService {
         return result;
     }
     @Transactional
-    public void findStudentByClass(String name) {
+    public List<List<String>> findStudentByClass(String name) {
         String grade = name.split("-")[0];
         String gradeClass = name.split("-")[1];
         List<student> students = studentMapper.queryByGradeClass(grade, gradeClass);
         final List<FileVo> list = new ArrayList<>();
-        //分组
-        int size = students.size() % 10;
-        int remainders = size > 0 ? students.size() / 10 + 1 : students.size() / 10;
         // 获取需要的线程数
         int timeSize = 10;
-        CountDownLatch countDownLatch=new CountDownLatch(timeSize);
-        for(int i = 0; i < timeSize; i++){
-            //数据分割
-            List<student> subList = students.subList(i * remainders, Math.min(students.size(), i * remainders + remainders));
+        //分组
+        int size = students.size() % timeSize;
+        //int remainders = size > 0 ? students.size() / 10 + 1 : students.size() / 10;
+        int remainders = (students.size() - size) / timeSize;
+        CountDownLatch countDownLatch=new CountDownLatch(timeSize + 1);
+        for(int i = 0; i < timeSize + 1; i++){
+            if(i != timeSize){
+                //数据分割
+                List<student> subList = students.subList(remainders * i, remainders * i + remainders);
+                threadPoolTaskExecutor.submit(() -> {
+                    //线程池
+                    try {
+                        //数据操作
+                        FileVo fileVo = extractedAdd(subList);
+                        list.add(fileVo);
+                    }catch (Exception e) {
+                        System.out.println("exception"+e.getMessage());
+                    }finally{
+                        countDownLatch.countDown(); //当前线程的任务执行完毕，任务计数器-1
+                    }
+                });
+            }else {
+                List<student> subList = students.subList(remainders * i, remainders * i + size);
+                threadPoolTaskExecutor.submit(() -> {
+                    //线程池
+                    try {
+                        //数据操作
+                        FileVo fileVo = extractedAdd(subList);
+                        list.add(fileVo);
+                    }catch (Exception e) {
+                        System.out.println("exception"+e.getMessage());
+                    }finally{
+                        countDownLatch.countDown(); //当前线程的任务执行完毕，任务计数器-1
+                    }
+                });
+            }
+/*            List<student> subList = students.subList(i * remainders, Math.min(students.size(), i * remainders + remainders));
             threadPoolTaskExecutor.submit(() -> {
                 //线程池
                 try {
@@ -148,7 +178,7 @@ public class ClassService {
                 }finally{
                     countDownLatch.countDown(); //当前线程的任务执行完毕，任务计数器-1
                 }
-            });
+            });*/
         }
         try {
             countDownLatch.await();    //主线程等待所有的子任务结束，如果有一个子任务没有完成则会一直等待
@@ -166,8 +196,9 @@ public class ClassService {
         try {
             PoiUtil.exportCSVFile(strArray,getDownloadList,0,path + "student" +UUID.randomUUID() +".csv");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return getDownloadList;
     }
 
     private FileVo extractedAdd(List<student> sublist) {

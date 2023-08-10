@@ -35,4 +35,7 @@ public interface SubjectMapper {
 
     @Update("update subject set count = count - 1 where id = #{subId}")
     public int update(String subId);
+
+    @Select("select * from subject where 1=1")
+    public List<subject> queryAllReal();
 }

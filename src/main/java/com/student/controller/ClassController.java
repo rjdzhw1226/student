@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,8 +29,8 @@ public class ClassController {
     public Map<String,Object> findStudentByClassChange(@PathVariable("name") String name){
         Map<String,Object> map = new HashMap<>();
         //List<List<String>> studentByClassChange = classService.findStudentByClassString(name);
-        classService.findStudentByClass(name);
-        //map.put("data",studentByClassChange);
+        List<List<String>> studentByClass = classService.findStudentByClass(name);
+        map.put("data",studentByClass);
         return map;
     }
 

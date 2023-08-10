@@ -14,6 +14,8 @@ import com.student.pojo.vo.subjectVo;
 import com.student.util.BaseContext;
 import com.student.util.rabbitMQ.MQSender;
 import com.student.util.redis.LockRedis;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,6 +38,9 @@ public class SubjectService {
 
     @Value("${file.readPath}")
     private String readFilePath;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -66,6 +71,8 @@ public class SubjectService {
 
     @Autowired
     private MQSender mqSender;
+
+    private HashMap<String, Boolean> localOverMap = new HashMap<String, Boolean>();
 
     /**
      * 同步
@@ -164,6 +171,114 @@ public class SubjectService {
         return null;
     }
 
+    public Map<String, Object> connectSubject(String subId) {
+        // 进入选课页面时就应该把所有课查出来存入缓存 默认选课失败
+        HashMap<String, Object> HashMap = new HashMap<>();
+        HashMap.put("message", -1);
+        // 从BaseContext把用户信息取出来
+        String userName = BaseContext.getCurrentId();
+        //String userName = "1";
+        lock.lock();
+        try{
+            //synchronized (userName.intern()){
+            // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
+            String s = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + userName + subId);
+            // 已选这门课 直接返回
+            if("1".equals(s)){
+                return HashMap;
+            }
+            // 未选 查询此门课程当前剩余量
+            String countSub = stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_COUNT_KEY + subId);
+            Integer integer = Integer.valueOf(countSub);
+            // 小于零直接返回
+            if(Integer.valueOf(countSub) <= 0){
+                return HashMap;
+            }
+            // 大于零 更新缓存库存量
+            stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + subId,String.valueOf(integer - 1));
+            mapRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_CHOOSE_KEY + userName + subId, "1");
+            // 将用户信息和subId 传入队列存储 后续做数据库增减
+            mqSender.send(subId,userName);
+            //}
+        }catch(Exception e){
+            e.printStackTrace();
+            return HashMap;
+        }finally {
+            lock.unlock();
+        }
+        HashMap.put("message", 0);
+        return HashMap;
+    }
+
+    public Map<String, Object> doSubjectChoose(String subId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", -1);
+        //主线程中取出用户名
+        String stuName = BaseContext.getCurrentId();
+        String stock = stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY);
+        if (Integer.valueOf(stock) < 0) {
+            afterPropertiesSet();
+            String stock2 = stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY);
+            if(Integer.valueOf(stock2) < 0){
+                localOverMap.put(stock2, true);
+                return map;
+            }
+        }
+        RLock lock1 = redissonClient.getLock("lock:subject:" + stuName);
+        boolean islock = lock1.tryLock();
+        if(!islock){
+            return map;
+        }
+        try {
+            //代理对象
+
+        }finally {
+            lock.unlock();
+        }
+        return connectSubName(subId,stuName);
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> connectSubName(String subId, String stuName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", -1);
+        if(subId.equals("")){
+            throw new RuntimeException("subId-异常");
+        }
+        // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
+        String redisId = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + stuName + subId);
+        // 已选这门课 直接返回
+        if("1".equals(redisId)){
+            return map;
+        }
+        if(redisId == null){
+            //查询
+            String id = studentMapper.queryMiddleById(subId,stuName);
+            if("1".equals(id)){
+                return map;
+            }
+        }
+        //减库存并关联课程结果
+        subjectMapper.update(subId);
+        studentMapper.connectSub(subId,stuName,"1");
+        map.put("message", 0);
+        return map;
+    }
+    //初始化方法
+    public void afterPropertiesSet() {
+        List<subject> subjects = JSON.parseArray(stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY),subject.class);
+        if (subjects == null) {
+            subjects = subjectMapper.queryAllReal();
+            stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_KEY, JSON.toJSONString(subjects),60, TimeUnit.SECONDS);
+            return;
+        }
+        for (subject goods : subjects) {
+            //初始化
+            stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + goods.getId(), String.valueOf(goods.getCount()));
+            localOverMap.put(goods.getId(), false);
+        }
+    }
+
     public page<subject> chooseSubject(Integer page, Integer size) {
         page<subject> pages = new page<>();
         List<subject> subjects = JSON.parseArray(stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_KEY),subject.class);
@@ -188,42 +303,9 @@ public class SubjectService {
             return pages;
         }
     }
-
-    public Map<String, Object> connectSubject(String subId) {
-        // 进入选课页面时就应该把所有课查出来存入缓存 默认选课失败
-        HashMap<String, Object> HashMap = new HashMap<>();
-        HashMap.put("message", -1);
-        // 从BaseContext把用户信息取出来
-        //String userName = BaseContext.getCurrentId();
-        String userName = "1";
-        lock.lock();
-        //synchronized (userName.intern()){
-            // 查询当前用户选课的记录 先看缓存 再决定查不查数据库
-            String s = mapRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_CHOOSE_KEY + subId);
-            // 已选这门课 直接返回
-            if(userName.equals(s)){
-                return HashMap;
-            }
-            // 未选 查询此门课程当前剩余量
-            String countSub = stringRedisTemplate.opsForValue().get(RedisKey.CACHE_SUB_COUNT_KEY + subId);
-            Integer integer = Integer.valueOf(countSub);
-            // 小于零直接返回
-            if(Integer.valueOf(countSub) <= 0){
-                return HashMap;
-            }
-            // 大于零 更新缓存库存量
-            stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + subId,String.valueOf(integer - 1));
-            mapRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_CHOOSE_KEY + subId, userName);
-            // 将用户信息和subId 传入队列存储 后续做数据库增减
-            mqSender.send(subId,userName);
-        //}
-        lock.unlock();
-        HashMap.put("message", 0);
-        return new HashMap<>();
-    }
     @Transactional(rollbackFor = Exception.class)
     public void executeChoose(String subId, String stuName) {
         subjectMapper.update(subId);
-        studentMapper.connectSub(subId,stuName);
+        studentMapper.connectSub(subId,stuName,"1");
     }
 }

@@ -4,6 +4,7 @@ import com.student.annotaion.Log;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.service.LoginService;
+import com.student.util.BaseContext;
 import com.student.util.CheckCodeUtil;
 import com.student.util.jwt.JWTUtils;
 import com.student.util.jwt.JwtUtil;
@@ -53,6 +54,7 @@ public class LoginController {
     }
 
     @RequestMapping("/logout")
+    @Log(title="登出模块",action="logout")
     public Map<String,Object> logout(HttpServletRequest req){
         Map<String,Object> map = new HashMap<>();
         try{
@@ -91,8 +93,9 @@ public class LoginController {
     @RequestMapping("/getUserName")
     //TODO 改了session 拿不到暂时
     public String getUserName(HttpServletRequest req){
-        userDto user = (userDto) req.getSession().getAttribute("user");
-        return user.getUsername();
+        //userDto user = (userDto) req.getSession().getAttribute("user");
+        String userName = BaseContext.getCurrentId();
+        return userName;
     }
 
     @RequestMapping("/checkCode")
