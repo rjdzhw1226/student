@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <title>测试</title>
+</head>
+<body>
+<div id="app">
+    <el-button @click="jump">跳转</el-button>
+    <a id="jumpLink" href="/toPage/test/test02" style="display: none;"></a>
+</div>
+</body>
+<script>
+
+    new Vue({
+        el: '#app',
+        data: {
+
+        },
+        created() {
+
+        },
+        methods: {
+            jump(){
+                document.getElementById("jumpLink").click();
+            }
+        }
+    })
+</script>
+</html>
