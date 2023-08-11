@@ -1,5 +1,6 @@
 package com.student.controller;
 
+import com.student.annotaion.Log;
 import com.student.pojo.page;
 import com.student.pojo.pageBean;
 import com.student.pojo.subject;
@@ -51,6 +52,7 @@ public class SubjectController {
 
     @RequestMapping("/doChoose/{subId}")
     @ResponseBody
+    @Log(title="抢课模块",action="doChoose")
     public Map<String, Object> doChoose(@PathVariable("subId") String subId){
         Map<String, Object> result = subjectService.connectSubject(subId);
         return result;
