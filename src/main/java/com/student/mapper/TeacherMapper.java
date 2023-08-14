@@ -21,7 +21,7 @@ public interface TeacherMapper {
             "           (select id ,name,class_id as grade, grade_id as class, phone,position,status from teacher where 1 = 1) as s\n" +
             "      where s.grade = t.id) as a\n" +
             "where t1.id = a.class\n" +
-            "order by id" +
+            "order by id\n" +
             "limit #{page},#{size}")
     public List<teacher> findAll(Map<String, Object> map);
 
