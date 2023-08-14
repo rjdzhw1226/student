@@ -5,13 +5,12 @@ import com.student.pojo.page;
 import com.student.pojo.pageBean;
 import com.student.pojo.subject;
 import com.student.service.SubjectService;
+import com.student.service.impl.SubjectServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RequestMapping("/subject")
@@ -54,7 +53,9 @@ public class SubjectController {
     @ResponseBody
     @Log(title="抢课模块",action="doChoose")
     public Map<String, Object> doChoose(@PathVariable("subId") String subId){
-        Map<String, Object> result = subjectService.connectSubject(subId);
+        //Map<String, Object> result = subjectService.connectSubject(subId);
+        //新
+        Map<String, Object> result = subjectService.doSubjectChoose(subId);
         return result;
     }
 }

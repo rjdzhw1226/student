@@ -126,10 +126,7 @@
     el: '#app',
     data: {
       gridData: [],
-      tableData:[{
-        id:1037723,name:'马彦龙',grade:31,grade_class:7,phone:13807964503,position:4
-
-      }],
+      tableData:[],
       multipleSelection: [],
       username:'',
       queryString:'',
@@ -141,9 +138,16 @@
       visible:false,
     },
     created() {
-
+      this.queryPage();
     },
     methods: {
+      queryPage(){
+        var pageBean = this.pageBean;
+        axios.post("/teacher/queryAll",pageBean).then((response)=>{
+          this.tableData = response.data.data;
+          this.total = response.data.total;
+        })
+      },
       editMemberHandle(){
 
       },
@@ -154,6 +158,12 @@
 
       },
       mangerHandle(row){
+        var id = row.id;
+        if(this.visible === false){
+          axios.get("/teacher/querySub"+ id +"").then((response)=>{
+
+          })
+        }
         this.visible = !this.visible;
       },
       handleSizeChange(){
