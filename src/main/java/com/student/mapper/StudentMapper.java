@@ -70,6 +70,9 @@ public interface StudentMapper {
     @Select("select name from student where 1=1")
     public List<String> queryName();
 
-    @Insert("insert into submiddle (subId,stuName) values (#{subId},#{stuName})")
-    public void connectSub(String subId, String stuName);
+    @Select("select sign from submiddle where stuName = #{stuName} and subId = #{subId}")
+    public String queryMiddleById(String subId,String stuName);
+
+    @Insert("insert into submiddle (subId,stuName,sign) values (#{subId},#{stuName},#{sign})")
+    public void connectSub(String subId, String stuName,String sign);
 }
