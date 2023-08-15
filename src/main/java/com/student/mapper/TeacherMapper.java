@@ -1,5 +1,6 @@
 package com.student.mapper;
 
+import com.student.pojo.DateSign;
 import com.student.pojo.dto.teacherDto;
 import com.student.pojo.dto.teacherDtos;
 import com.student.pojo.teacher;
@@ -40,4 +41,7 @@ public interface TeacherMapper {
 
     @Select("select count(1) from teacher where 1=1")
     public int count();
+
+    @Select("")
+    public List<DateSign> findSign();
 }

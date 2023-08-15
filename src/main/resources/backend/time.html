@@ -2,9 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <link href="img/favicon.ico" rel="shortcut icon">
+    <title>学生后台管理系统</title>
+    <style>
+        .is-selected {
+            color: #1989FA;
+        }
+    </style>
 </head>
 <body>
-
+<div id="app">
+    <el-calendar>
+        <template slot="dateCell" slot-scope="{date, data}">
+            <div>
+                {{dealMyDate(data.day)}}
+                <el-button @click="pinToday(data.day)" style="margin-top: 10px;margin-left: 140px">{{ data.day.split('-').slice(1).join('-') }}</el-button>
+            </div>
+        </template>
+    </el-calendar>
+</div>
 </body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            resDate: [],
+            username:''
+        },
+        created() {
+            this.find();
+            axios.get('/login/getUserName').then((response)=>{
+                this.username = response.data;
+            });
+        },
+        methods: {
+            find(){
+                axios.get("/pin/query/"+this.username+"").then((response)=>{
+                    this.resDate = response.data;
+                })
+            },
+            pinToday(day){
+                //alert(day);
+                axios.get("/pin/sign/"+day+"").then((response)=>{
+                    if(response.data.flag){
+                        this.$message.success('签到成功！')
+                    }else {
+                        this.$message.error('签到失败！')
+                    }
+                }).catch(() => {
+                    this.find();
+                })
+            },
+            dealMyDate(v){
+                let len = this.resDate.length
+                let res = ""
+                for(let i=0; i<len; i++){
+                    if(this.resDate[i].date == v) {
+                        res = this.resDate[i].content
+                        break
+                    }
+                }
+                return res
+            }
+        }
+    })
+</script>
 </html>

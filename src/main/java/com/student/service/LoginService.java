@@ -22,7 +22,7 @@ public class LoginService {
         String code = (String) req.getSession().getAttribute("code");
         Long l2 = (Long) req.getSession().getAttribute("codeTime");
         long l1 = System.currentTimeMillis();
-        if(checkCode.equals(code.toLowerCase()) && (l1-l2) < 300000){
+        if((checkCode.toLowerCase()).equals(code.toLowerCase()) && (l1-l2) < 300000){
             userDto login = mapper.login(username);
             if (login.getPassword().equals(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()))) {
                 return true;

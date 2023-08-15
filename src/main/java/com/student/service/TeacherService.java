@@ -2,13 +2,10 @@ package com.student.service;
 
 import com.student.mapper.StudentMapper;
 import com.student.mapper.TeacherMapper;
+import com.student.pojo.*;
 import com.student.pojo.dto.studentDto;
 import com.student.pojo.dto.teacherDto;
 import com.student.pojo.dto.teacherDtos;
-import com.student.pojo.page;
-import com.student.pojo.pageBean;
-import com.student.pojo.student;
-import com.student.pojo.teacher;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,5 +86,10 @@ public class TeacherService {
         map.put("page", (page1 - 1) * size1);
         map.put("size", size1);
         return map;
+    }
+
+    public List<DateSign> pinAll(String user) {
+
+        return null;
     }
 }
