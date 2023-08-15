@@ -34,6 +34,10 @@ public class LoginService {
     }
 
     public void register(user user) {
+        String username = user.getUsername();
+        if (mapper.registerCount(username) > 0) {
+            throw new RuntimeException("已存在同名用户请重新注册");
+        }
         String password = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
         user.setPassword(password);
         mapper.register(user);
