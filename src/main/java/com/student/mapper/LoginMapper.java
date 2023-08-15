@@ -13,4 +13,7 @@ public interface LoginMapper {
 
     @Insert("insert into user( id,birthday,gender,username,password,station,telephone) values(#{id},#{birthday},#{gender},#{username},#{password},#{station},#{telephone}) ")
     public void register(user user);
+
+    @Select("select count(1) from user where username = #{username}")
+    public int registerCount(String username);
 }

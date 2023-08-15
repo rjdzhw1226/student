@@ -29,13 +29,26 @@
       </el-header>
       <el-popover
               placement="right"
-              width="400"
+              width="900"
               trigger="manual"
               v-model="visible">
         <el-table :data="gridData">
-          <el-table-column width="auto" property="date" label="日期"></el-table-column>
-          <el-table-column width="auto" property="name" label="姓名"></el-table-column>
-          <el-table-column width="auto" property="address" label="地址"></el-table-column>
+          <el-table-column type="index" align="center" label="序号">
+          </el-table-column>
+          <el-table-column prop="id" label="学号" width="auto">
+          </el-table-column>
+          <el-table-column prop="name" label="姓名" width="auto">
+          </el-table-column>
+          <el-table-column prop="grade" label="年级" width="auto">
+          </el-table-column>
+          <el-table-column prop="grade_class" label="班级" width="auto">
+          </el-table-column>
+          <el-table-column prop="phone" label="手机号" width="auto">
+          </el-table-column>
+          <el-table-column prop="age" label="年龄" width="auto">
+          </el-table-column>
+          <el-table-column prop="gender" label="性别" width="auto">
+          </el-table-column>
           <el-table-column
                   label="操作"
                   width="auto"
