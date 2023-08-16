@@ -6,10 +6,7 @@ import java.lang.reflect.Method;
 import com.student.annotaion.Log;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +21,25 @@ public class LogAspect {
     // 配置织入点
     @Pointcut("@annotation(com.student.annotaion.Log)")
     public void logPointCut() {
+    }
+
+    @Before(value = "logPointCut()")
+    public void AspectWear(JoinPoint joinPoint){
+        try {
+            Object target = joinPoint.getTarget();
+            Object[] arguments = joinPoint.getArgs();
+            String methodName = joinPoint.getSignature().getName();
+            Class<?>[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
+            Method method = target.getClass().getMethod(methodName, parameterTypes);
+            Log interceptor = method.getAnnotation(Log.class);
+            if (interceptor.params()) {
+                for (int i = 0; i < arguments.length; i++) {
+                    log.info("参数：{}",arguments[i].toString());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -1,19 +1,25 @@
 package com.student.service;
 
+import com.student.mapper.MenuMapper;
 import com.student.mapper.StudentMapper;
 import com.student.mapper.TeacherMapper;
 import com.student.pojo.*;
-import com.student.pojo.dto.studentDto;
-import com.student.pojo.dto.teacherDto;
-import com.student.pojo.dto.teacherDtos;
+import com.student.pojo.dto.*;
+import com.student.pojo.vo.DateSignVo;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static cn.hutool.poi.excel.sax.AttributeName.s;
 
 @Service
 public class TeacherService {
@@ -21,6 +27,9 @@ public class TeacherService {
     private TeacherMapper teacherMapper;
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    private MenuMapper menuMapper;
 
     @Autowired
     public TeacherService ts;
@@ -63,8 +72,9 @@ public class TeacherService {
 
     public List<student> querySub(String id){
         teacherDto byId = teacherMapper.findById(id);
-
-        List<student> students = studentMapper.queryByGradeClass(byId.getGrade(), byId.getGrade_class());
+        String s1 = menuMapper.queryTreeById(byId.getGrade());
+        String s2 = menuMapper.queryTreeById(byId.getGrade_class());
+        List<student> students = studentMapper.queryByGradeClass(s1, s2);
         return students;
     }
 
@@ -88,8 +98,33 @@ public class TeacherService {
         return map;
     }
 
-    public List<DateSign> pinAll(String user) {
+    public List<DateSignVo> pinAll(String user) {
+        List<DateSign> sign = teacherMapper.findSign(user);
+        List<DateSignVo> collect = sign.stream().map(TeacherService::dateResolve).collect(Collectors.toList());
+        return collect;
+    }
 
-        return null;
+    private static DateSignVo dateResolve(DateSign dateSign) {
+        SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy-MM-dd" );
+        DateSignVo dateSignVo = new DateSignVo();
+        String format = sdf.format(dateSign.getDate());
+        dateSignVo.setDate(format);
+        dateSignVo.setContent(dateSign.getContent());
+        return dateSignVo;
+    }
+
+    public Map<String, Object> savePin(DateSignDto dto) {
+        Map<String, Object> map = new HashMap<>();
+        SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy-MM-dd" );
+        try {
+            Date date = sdf.parse(dto.getDay());
+            signDto sign = new signDto(dto.getUsername(),date,"已签到");
+            teacherMapper.insert(sign);
+            map.put("flag",true);
+        } catch (ParseException e) {
+            map.put("flag",false);
+            throw new RuntimeException(e);
+        }
+        return map;
     }
 }

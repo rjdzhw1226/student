@@ -18,11 +18,12 @@
 </head>
 <body>
 <div id="app">
+    {{username}}
     <el-calendar>
         <template slot="dateCell" slot-scope="{date, data}">
             <div>
                 {{dealMyDate(data.day)}}
-                <el-button @click="pinToday(data.day)" style="margin-top: 10px;margin-left: 140px">{{ data.day.split('-').slice(1).join('-') }}</el-button>
+                <el-button @click="pinToday(data.day)">{{ data.day.split('-').slice(1).join('-') }}</el-button>
             </div>
         </template>
     </el-calendar>
@@ -36,27 +37,35 @@
             username:''
         },
         created() {
-            this.find();
-            axios.get('/login/getUserName').then((response)=>{
+            axios.get("/login/getUserName").then((response)=>{
                 this.username = response.data;
             });
+            this.find();
         },
         methods: {
             find(){
-                axios.get("/pin/query/"+this.username+"").then((response)=>{
+                axios.get("/pin/query").then((response)=>{
                     this.resDate = response.data;
+                    let len = this.resDate.length
+                    for (let i = 0; i < len; i++) {
+                        this.dealMyDate(this.resDate[i].date);
+                    }
                 })
             },
             pinToday(day){
                 //alert(day);
-                axios.get("/pin/sign/"+day+"").then((response)=>{
+                var params = {
+                    day:day,
+                    username:this.username
+                }
+                axios.post("/pin/sign",params).then((response)=>{
                     if(response.data.flag){
                         this.$message.success('签到成功！')
+                        this.find();
                     }else {
                         this.$message.error('签到失败！')
+                        this.find();
                     }
-                }).catch(() => {
-                    this.find();
                 })
             },
             dealMyDate(v){

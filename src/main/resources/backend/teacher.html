@@ -173,8 +173,8 @@
       mangerHandle(row){
         var id = row.id;
         if(this.visible === false){
-          axios.get("/teacher/querySub"+ id +"").then((response)=>{
-
+          axios.get("/teacher/querySub/"+ id +"").then((response)=>{
+            this.gridData = response.data
           })
         }
         this.visible = !this.visible;

@@ -1,9 +1,11 @@
 package com.student.mapper;
 
 import com.student.pojo.DateSign;
+import com.student.pojo.dto.signDto;
 import com.student.pojo.dto.teacherDto;
 import com.student.pojo.dto.teacherDtos;
 import com.student.pojo.teacher;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -42,6 +44,9 @@ public interface TeacherMapper {
     @Select("select count(1) from teacher where 1=1")
     public int count();
 
-    @Select("")
-    public List<DateSign> findSign();
+    @Select("select date ,content from sign where username = #{user}")
+    public List<DateSign> findSign(String user);
+
+    @Insert("insert into sign (username,date,content) values (#{username},#{date},#{content})")
+    public void insert(signDto dto);
 }

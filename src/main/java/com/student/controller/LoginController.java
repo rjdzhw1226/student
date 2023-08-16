@@ -8,6 +8,8 @@ import com.student.util.BaseContext;
 import com.student.util.CheckCodeUtil;
 import com.student.util.jwt.JWTUtils;
 import com.student.util.jwt.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.DigestUtils;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -26,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/login")
+@Slf4j
 public class LoginController {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -74,6 +78,7 @@ public class LoginController {
         return map;
     }
     @RequestMapping("/register")
+    @Log(title="注册模块",action="register",params = true)
     public Map<String,Object> register(@RequestBody user user){
         Map<String,Object> map = new HashMap<>();
         try{
@@ -91,15 +96,16 @@ public class LoginController {
     }
 
     @RequestMapping("/getUserName")
-    //TODO 改了session 拿不到暂时
+    @Log(title="用户名模块",action="getUserName",params = true)
     public String getUserName(HttpServletRequest req){
         //userDto user = (userDto) req.getSession().getAttribute("user");
+        log.info("getUserName:{}",BaseContext.getCurrentId());
         String userName = BaseContext.getCurrentId();
         return userName;
     }
 
     @RequestMapping("/checkCode")
-    @Log(title="验证码模块",action="checkCode")
+    @Log(title="验证码模块",action="checkCode",params = true)
     public void getCheckCode(HttpServletRequest req, HttpServletResponse res){
         res.setHeader("Pragma", "No-cache");
         res.setHeader("Cache-Control", "no-cache");
@@ -107,19 +113,20 @@ public class LoginController {
         res.setContentType("image/jpeg");
         OutputStream fos = null;
         String checkCode = "";
+        HttpSession session = req.getSession();
         try {
             fos = res.getOutputStream();
             checkCode = CheckCodeUtil.outputVerifyImage(100, 50, fos, 4);
-            if (req.getSession().getAttribute("code") != null) {
-                req.getSession().removeAttribute("code");
-                req.getSession().removeAttribute("codeTime");
-                req.getSession().setAttribute("code", checkCode);
-                req.getSession().setAttribute("codeTime", System.currentTimeMillis());
-                System.out.println(checkCode);
+            if (session.getAttribute("code") != null) {
+                session.removeAttribute("code");
+                session.removeAttribute("codeTime");
+                session.setAttribute("code", checkCode);
+                session.setAttribute("codeTime", System.currentTimeMillis());
+                log.info("checkCode:{}",checkCode);
             }else {
-                req.getSession().setAttribute("code", checkCode);
-                req.getSession().setAttribute("codeTime", System.currentTimeMillis());
-                System.out.println(checkCode);
+                session.setAttribute("code", checkCode);
+                session.setAttribute("codeTime", System.currentTimeMillis());
+                log.info("checkCode:{}",checkCode);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

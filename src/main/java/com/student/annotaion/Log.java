@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD,ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Log {
@@ -16,5 +16,8 @@ public @interface Log {
 
     /** 功能 */
     String action() default "";
+
+    /** 参数 */
+    boolean params() default false;
 
 }
