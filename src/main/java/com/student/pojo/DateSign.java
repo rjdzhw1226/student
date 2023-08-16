@@ -2,8 +2,10 @@ package com.student.pojo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class DateSign {
-    private String date;
+    private Date date;
     private String content;
 }
