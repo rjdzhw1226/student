@@ -4,12 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.springframework.beans.BeanUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -118,6 +117,16 @@ public class CommonUtil {
             bufferedWriter.close();
         }
 
+    public static BufferedImage InputImage(MultipartFile file) {
+        BufferedImage srcImage = null;
+        try {
+            FileInputStream in = (FileInputStream) file.getInputStream();
+            srcImage = javax.imageio.ImageIO.read(in);
+        } catch (IOException e) {
+            System.out.println("读取图片文件出错！" + e.getMessage());
+        }
+        return srcImage;
+    }
 
         /**
          * 分割csv文件传浏览器(适用xlxs文件)
@@ -127,13 +136,13 @@ public class CommonUtil {
          * @throws IOException
          */
         public static void outCsvStreamCSV(HttpServletResponse response, String absolutePath) throws IOException {
-            java.io.OutputStream out = response.getOutputStream();
+            OutputStream out = response.getOutputStream();
             byte[] b = new byte[10240];
-            java.io.File fileLoad = new java.io.File(absolutePath);
+            File fileLoad = new File(absolutePath);
             response.reset();
             response.setContentType("application/csv");
             response.setHeader("content-disposition", "attachment; filename=" + URLEncoder.encode("export.csv", "UTF-8"));
-            java.io.FileInputStream in = new java.io.FileInputStream(fileLoad);
+            FileInputStream in = new FileInputStream(fileLoad);
             int n;
             //为了保证excel打开csv不出现中文乱码
             out.write(new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF});
@@ -199,7 +208,7 @@ public class CommonUtil {
         try {
             String filePath = filePathAndName;
             filePath = filePath.toString();
-            java.io.File myDelFile = new java.io.File(filePath);
+            File myDelFile = new File(filePath);
             myDelFile.delete();
         } catch (Exception e) {
             System.out.println("删除文件操作出错");

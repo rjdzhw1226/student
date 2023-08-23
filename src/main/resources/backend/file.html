@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <link href="img/favicon.ico" rel="shortcut icon">
+    <title>学生后台管理系统</title>
+</head>
+<body>
+<div id="app">
+    <el-form>
+        <el-form-item label="上传图片" prop="fysjtDesc">
+            <el-upload
+                    class="upload-demo"
+                    ref="upload"
+                    action="/card/upload"
+                    :before-upload="beforeAvatarUpload"
+                    :on-success="handleAvatarSuccess"
+                    :data="getfileData()"
+                    :file-list="fileList"
+                    :limit="1"
+                    :auto-upload="false">
+                <el-button slot="trigger" size="small" type="primary">附件</el-button>
+                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+            </el-upload>
+            <span>返回参数</span>
+            <el-input type="textarea" :rows="4" v-model="strtext"></el-input>
+        </el-form-item>
+    </el-form>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            fileList:[],
+            fileData:{},
+            strtext:''
+        },
+        created() {
+
+        },
+        methods: {
+            getfileData() {
+                //文件附带格式信息
+                var vm = this;
+                return vm.fileData
+            },
+            handleAvatarSuccess(res){
+                this.strtext = res.data;
+            },
+            beforeAvatarUpload(file){
+                var isJPG = false;
+                if(file.type === 'image/jpeg' || file.type === 'image/png'){
+                    isJPG = true;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 5;
+
+                if (!isJPG) {
+                    this.$message.error('上传图片只能是 JPG和PNG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 5MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            submitUpload() {
+                this.getfileData();
+                //此处调用的为封装好的submit（）方法 如果有特定格式可以在此做校验文件
+                this.$refs.upload.submit();
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                //图片的话建议用带框的上传样式 在这里根据查询拼回显url
+                console.log(file);
+            },
+        }
+    })
+</script>
+</html>
