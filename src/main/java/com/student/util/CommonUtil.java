@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLEncoder;
@@ -14,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -116,16 +119,115 @@ public class CommonUtil {
             }
             bufferedWriter.close();
         }
+    public static String run(String command) throws IOException {
+        Scanner input = null;
+        String result = "";
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            try {
+                //等待命令执行完成
+                process.waitFor(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            InputStream is = process.getInputStream();
+            input = new Scanner(is);
+            while (input.hasNextLine()) {
+                result += input.nextLine() + "\n";
+            }
+            result = command + "\n" + result; //加上命令本身，打印出来
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+            if (process != null) {
+                process.destroy();
+            }
+        }
+        return result;
+    }
 
     public static BufferedImage InputImage(MultipartFile file) {
         BufferedImage srcImage = null;
         try {
             FileInputStream in = (FileInputStream) file.getInputStream();
             srcImage = javax.imageio.ImageIO.read(in);
-        } catch (IOException e) {
+            srcImage = gray(srcImage);
+            srcImage = binaryImage(srcImage);
+        } catch (Exception e) {
             System.out.println("读取图片文件出错！" + e.getMessage());
         }
         return srcImage;
+    }
+
+    private static int colorToRGB(int alpha, int red, int green, int blue) {
+        int newPixel = 0;
+        newPixel += alpha;
+        newPixel = newPixel << 8;
+        newPixel += red;
+        newPixel = newPixel << 8;
+        newPixel += green;
+        newPixel = newPixel << 8;
+        newPixel += blue;
+
+        return newPixel;
+
+    }
+    public static BufferedImage gray(BufferedImage bufferedImage) {
+        BufferedImage grayImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), bufferedImage.getType());
+        for (int i = 0; i < bufferedImage.getWidth(); i++) {
+            for (int j = 0; j < bufferedImage.getHeight(); j++) {
+
+                final int color = bufferedImage.getRGB(i, j);
+                final int r = (color >> 16) & 0xff;     //右移四位
+                final int g = (color >> 8) & 0xff;      //右移3为
+                final int b = color & 0xff;
+                //运用灰度处理 的方法  加权平均值
+                int gray = (int) (0.3 * r + 0.59 * g + 0.11 * b);
+                //每一个像素点的灰度转化
+                int newPixel = colorToRGB(255, gray, gray, gray);
+                grayImage.setRGB(i, j, newPixel);
+
+
+            }
+        }
+        return grayImage;
+    }
+
+
+    public static BufferedImage binaryImage(BufferedImage image) throws Exception {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        float[] rgb = new float[3];
+        double[][] zuobiao = new double[w][h];
+        int black = new java.awt.Color(0, 0, 0).getRGB();
+        int white = new Color(255, 255, 255).getRGB();
+        BufferedImage bi= new BufferedImage(w, h,
+                BufferedImage.TYPE_BYTE_BINARY);;
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                int pixel = image.getRGB(x, y);
+                rgb[0] = (pixel & 0xff0000) >> 16;
+                rgb[1] = (pixel & 0xff00) >> 8;
+                rgb[2] = (pixel & 0xff);
+                float avg = (rgb[0]+rgb[1]+rgb[2])/3;
+                zuobiao[x][y] = avg;
+
+            }
+        }
+        //这里是阈值，白底黑字还是黑底白字，大多数情况下建议白底黑字，后面都以白底黑字为例
+        double SW = 192;
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                if (zuobiao[x][y] < SW) {
+                    bi.setRGB(x, y, black);
+                }else{
+                    bi.setRGB(x, y, white);
+                }
+            }
+        }
+        return bi;
     }
 
         /**

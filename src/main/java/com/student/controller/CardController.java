@@ -48,4 +48,10 @@ public class CardController {
         return map;
     }
 
+    @RequestMapping("/fileUpload")
+    public Map<String,Object> saveFile(@RequestParam("file") MultipartFile file){
+        String filename = file.getOriginalFilename();
+        return null;
+    }
+
 }
