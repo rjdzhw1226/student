@@ -11,12 +11,12 @@ body{
 /* 最外层元素样式 */
 .components{
 	position:fixed;/* 固定定位 */
-	top: 5%;
-	left:90%;
+	top: 94%;
+	left:94%;
 	margin-left:-90px;
 	margin-top: -35px;/* 按钮在页面中居中 */
-	width: 180px;
-	height: 70px;
+	width: 170px;
+	height: 53px;
 	background-color: rgba(70, 133, 192,1);/* 按钮背景颜色 */
 	border-radius: 100px;
 	box-shadow: inset 0 0 5px 3px rgba(0, 0, 0, 0.5);/* 按钮的内阴影,实现立体感 */
@@ -28,8 +28,8 @@ body{
 /* 主要按钮样式 */
 .main-button{
 	margin: 7.5px 0 0 7.5px;
-	width: 55px;
-	height:55px;
+	width: 40px;
+	height:40px;
 	background-color: rgba(255, 195, 35,1);
 	border-radius: 50%;
 	box-shadow:3px 3px 5px rgba(0, 0, 0, 0.5), inset  -3px -5px 3px -3px rgba(0, 0, 0, 0.5), inset  4px 5px 2px -2px rgba(255, 230, 80,1);
@@ -51,25 +51,25 @@ body{
 /* 第一个陨石坑 */
 .moon:nth-child(1){
 	top: 7.5px;
-	left: 25px;
-	width: 12.5px;
-	height: 12.5px;
+	left: 20px;
+	width: 7.5px;
+	height: 7.5px;
 }
 
 /* 第二个陨石坑 */
 .moon:nth-child(2){
-	top: 20px;
-	left: 7.5px;
-	width: 20px;
-	height: 20px;
+	top: 22px;
+	left: 6.5px;
+	width: 10px;
+	height: 10px;
 }
 
 /* 第三个陨石坑 */
 .moon:nth-child(3){
-	top: 32.5px;
-	left: 32.5px;
-	width: 12.5px;
-	height: 12.5px;
+	top: 23.5px;
+	left: 22.5px;
+	width: 10.5px;
+	height: 10.5px;
 }
 
 /* 按钮背后的虚影 */
@@ -131,7 +131,7 @@ body{
 /* 云和虚影由6个圆形组成，第1个圆形和第7个圆形大小相同 */
 .cloud-son:nth-child(6n+1){
 	right: -20px;
-	bottom: 10px;
+	bottom: 8px;
 	width: 50px;
 	height: 50px;
 }
@@ -225,57 +225,57 @@ body{
 /* 所有星星的位置 */
 .star:nth-child(1){
 	top: 10px;
-	left: 40px;	
+	left: 40px;
 }
 
 .star:nth-child(2){
 	top: 20px;
-	left: 95px;	
+	left: 95px;
 }
 
 .star:nth-child(3){
 	top: 20px;
-	left: 20px;	
+	left: 20px;
 }
 
 .star:nth-child(4){
 	top: 35px;
-	left: 50px;	
+	left: 50px;
 }
 
 .star:nth-child(5){
 	top: 50px;
-	left: 80px;	
+	left: 80px;
 }
 
 .star:nth-child(6){
 	top: 50px;
-	left: 20px;	
+	left: 20px;
 }
 
 .star:nth-child(7){
 	top: 40px;
-	left: 27.5px;	
+	left: 27.5px;
 }
 
 .star:nth-child(8){
 	top: 55px;
-	left: 45px;	
+	left: 45px;
 }
 
 .star:nth-child(9){
 	top: 20px;
-	left: 75px;	
+	left: 75px;
 }
 
 .star:nth-child(10){
 	top: 32.5px;
-	left: 67.5px;	
+	left: 67.5px;
 }
 
 .star:nth-child(11){
 	top:40px;
-	left: 95px;	
+	left: 95px;
 }
 
 /* 每一个星星由四个div向左浮动,拼合而成 */

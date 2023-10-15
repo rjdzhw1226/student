@@ -11,6 +11,9 @@ public interface LoginMapper {
     @Select("select username, password from user where username = #{username}")
     public userDto login(String username);
 
+    @Select("select id, username, password from user where username = #{username}")
+    public user query(String username);
+
     @Insert("insert into user( id,birthday,gender,username,password,station,telephone) values(#{id},#{birthday},#{gender},#{username},#{password},#{station},#{telephone}) ")
     public void register(user user);
 

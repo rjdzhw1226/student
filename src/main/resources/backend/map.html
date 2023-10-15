@@ -29,7 +29,7 @@
     </div>
   </el-main>
   <el-footer>
-      <el-button>添加</el-button>
+      <el-button @click="add">添加</el-button>
   </el-footer>
 </el-container>
 </div>
@@ -41,38 +41,50 @@
   }
 </script>
 <script>
-  var x = 0;
-  var y = 0;
 
   //初始化地图插件
   window.onload = function(){
     var map = new AMap.Map("map");
 
-    // 创建一个 Marker 实例：（标记点）
-    var marker = new AMap.Marker({
-      position: new AMap.LngLat(x, y), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-      title: "位置标题"
-    });
-
-    // 将创建的点标记添加到已有的地图实例：
-    map.add(marker);
-
     AMap.event.addListener(map,'click',function (e) { //添加点击事件,传入对象名，事件名，回调函数
-      alert("x"+e.lnglat.getLng()+"y"+e.lnglat.getLat());
+      location.x = e.lnglat.getLng();
+      location.y = e.lnglat.getLat();
+      // 创建一个 Marker 实例：（标记点）
+      var marker = new AMap.Marker({
+        position: new AMap.LngLat(location.x, location.y), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+        title: "位置标题"
+      });
+
+      // 将创建的点标记添加到已有的地图实例：
+      map.add(marker);
     })
   }
 
   new Vue({
     el: '#app',
     data: {
-
+      location:{
+        x:0,
+        y:0
+      },
+      username:''
     },
     created() {
-      x=116.44927;
-      y=39.9584;
+      axios.get('/login/getUserName').then((response)=>{
+        this.username = response.data;
+      });
     },
     methods: {
-
+      add(){
+        var params = {
+          x:this.location.x,
+          y:this.location.y,
+          username:this.username
+        }
+        axios.post("/teacher/map",params).then((response)=>{
+          alert(response.data)
+        })
+      }
     }
   })
 </script>

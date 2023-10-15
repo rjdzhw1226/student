@@ -1,6 +1,8 @@
 package com.student.controller;
 
+import com.student.Constant.RedisKey;
 import com.student.annotaion.Log;
+import com.student.config.SpringBeanUtils;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.service.LoginService;
@@ -11,8 +13,10 @@ import com.student.util.jwt.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -117,6 +121,19 @@ public class LoginController {
         try {
             fos = res.getOutputStream();
             checkCode = CheckCodeUtil.outputVerifyImage(100, 50, fos, 4);
+/*            String redisCode = stringRedisTemplate.opsForValue().get(RedisKey.CODE_KEY);
+            if (redisCode != null && !redisCode.equals("")) {
+                Boolean delete = stringRedisTemplate.delete(RedisKey.CODE_KEY);
+                if(Boolean.TRUE.equals(delete)){
+                    stringRedisTemplate.opsForValue().set(RedisKey.CODE_KEY, checkCode, 300, TimeUnit.SECONDS);
+                    log.info("checkCode:{}",checkCode);
+                } else {
+                    throw new RuntimeException("旧验证码删除失败");
+                }
+            }else {
+                stringRedisTemplate.opsForValue().set(RedisKey.CODE_KEY, checkCode, 300, TimeUnit.SECONDS);
+                log.info("checkCode:{}",checkCode);
+            }*/
             if (session.getAttribute("code") != null) {
                 session.removeAttribute("code");
                 session.removeAttribute("codeTime");
@@ -131,6 +148,14 @@ public class LoginController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/shutdown")
+    @Log(title="关闭模块",action="shutdown")
+    public void shutdown() {
+        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) SpringBeanUtils.getApplicationContext();
+        log.info("----- 收到关闭服务请求，服务即将关闭！-----");
+        applicationContext.close();
     }
 
 }

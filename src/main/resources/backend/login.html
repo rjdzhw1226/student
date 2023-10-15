@@ -11,27 +11,84 @@
   <link href="img/favicon.ico" rel="shortcut icon">
   <title>学生后台管理系统登录</title>
   <style>
-    .el-icon-close:before {
-      content: "\e6db";
-      display: none;
-    }
-    .el-input {
-      width: auto;
-    }
+      body{
+          position: absolute;
+          display: block;
+          width: 100%;
+          height: 100%;
+      }
+      .el-form-item{
+          text-align: center;
+      }
+      .el-input {
+          width: auto;
+      }
   </style>
 </head>
 <body>
 <div id="app">
-  <el-dialog :visible.sync="centerDialogVisible" width="30%">
-    <el-form label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+    <el-row type="flex" justify="center" align="middle" style=" height:100%;margin-top: 10%">
+        <el-col style="width:auto;">
+            <el-card class="um-loginbox">
+                <el-form action="/login" method="post" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="auto">
+                    <el-form-item label="用户名称" prop="name">
+                        <el-input v-model="ruleForm.username" name="username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="ruleForm.password" name="password"></el-input>
+                    </el-form-item>
+                    <el-form-item label="验证码">
+                        <el-input v-model="ruleForm.checkCode" name="checkCode"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <img id="img" @click="ImgClick" src="/login/checkCode" alt="点击切换"></img>
+                        <label>看不清？点击图片换一张</label>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-input type="button" value="登录" onclick="submit()"></el-input>
+                        <el-button @click="resetForm('ruleForm')">注册</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </el-col>
+    </el-row>
+
+<!--<el-row type="flex" justify="center" align="middle" style=" height:100%;margin-top: 10%">
+        <el-col style="width:auto;">
+            <el-card class="um-loginbox">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="auto">
+                    <el-form-item label="用户名称" prop="name">
+                        <el-input v-model="ruleForm.username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="ruleForm.password"></el-input>
+                    </el-form-item>
+                    <el-form-item label="验证码">
+                        <el-input v-model="ruleForm.checkCode"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <img id="img" @click="ImgClick" src="/login/checkCode" alt="点击切换"></img>
+                        <label>看不清？点击图片换一张</label>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+                        <el-button @click="resetForm('ruleForm')">注册</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </el-col>
+    </el-row>-->
+
+<!--  <el-dialog :visible.sync="centerDialogVisible" width="30%">
+    <el-form action="/login" label-position="left" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="用户名称" prop="name">
-        <el-input v-model="ruleForm.username"></el-input>
+        <el-input v-model="ruleForm.username" name="username"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input type="password" v-model="ruleForm.password"></el-input>
+        <el-input type="password" v-model="ruleForm.password" name="password"></el-input>
       </el-form-item>
       <el-form-item label="验证码">
-        <el-input v-model="ruleForm.checkCode"></el-input>
+        <el-input v-model="ruleForm.checkCode" name="checkcode"></el-input>
       </el-form-item>
       <el-form-item>
         <img id="img" @click="ImgClick" src="/login/checkCode" alt="点击切换"></img>
@@ -39,11 +96,11 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+        <el-input type="submit" value="login"></el-input>
         <el-button @click="resetForm('ruleForm')">注册</el-button>
       </el-form-item>
     </el-form>
-  </el-dialog>
-
+  </el-dialog>-->
 </div>
 </body>
 <script>
@@ -103,8 +160,12 @@
                   message:response.data.message,
                   type:'success'
                 });
-                window.location = "index.html"
+
               }
+            }).finally((response)=>{
+                if(response.data.flag){
+                    this.locationReplace("index.html")
+                }
             })
           } else {
             console.log('error submit!!');
@@ -114,9 +175,17 @@
       },
       resetForm(form){
         this.$refs[form].resetFields();
-        window.location = "register.html"
+        this.locationReplace("register.html");
+        //window.location = "register.html"
       },
-
+      locationReplace(url){
+          if(history.replaceState){
+              history.replaceState(null, document.title, url);
+              history.go(0);
+          }else{
+              location.replace(url);
+          }
+      }
     }
   })
 </script>

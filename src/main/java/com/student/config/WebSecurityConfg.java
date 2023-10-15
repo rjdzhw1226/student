@@ -1,27 +1,30 @@
-/*
 package com.student.config;
 
-import com.student.handler.CustomLogoutSuccessHandler;
+import com.student.filter.LoginTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.annotation.Resource;
 
-*/
 /**
  * @Author qt
  * @Date 2021/3/25
  * @Description spring-security权限管理的核心配置
- *//*
+ */
 
 @Configuration
 @EnableWebSecurity//开启Spring Security的功能
@@ -29,17 +32,50 @@ import javax.annotation.Resource;
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
 
-    @Resource
-    private AuthenticationSuccessHandler loginSuccessHandler; //认证成功结果处理器
-    @Resource
-    private AuthenticationFailureHandler loginFailureHandler; //认证失败结果处理器
+    @Autowired
+    private AuthenticationSuccessHandler successHandler;
 
+    @Autowired
+    private AuthenticationFailureHandler failureHandler;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    public WebSecurityCustomizer securityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/vue/**", "/axios/**", "/element-ui/**", "/js/**", "/plugins/**", "/css/**");
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+    }
     //http请求拦截配置
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.headers().frameOptions().disable();//开启运行iframe嵌套页面
-
-        http//1、配置权限认证
+        http.headers().frameOptions().disable(); //开启运行iframe嵌套页面
+        http.authorizeRequests()
+                //指定那些地址可以直接访问， 和登录有关的需要进行指定
+                .antMatchers(
+                        "/index",
+                        "/backend/login.html",
+                        "/login",
+                        "/login/checkCode",
+                        "/registry/**",
+                        "/backend/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                //.successHandler(successHandler)
+                .failureHandler(failureHandler)
+                .loginPage("/backend/login.html")  //登录的自定义视图页面
+                .loginProcessingUrl("/login") //form中登录的访问uri地址
+                .defaultSuccessUrl("/backend/index.html")//登录成功后默认的跳转页面路径
+                .and()
+                //关于跨域访问的安全设置，先禁用
+                .csrf().disable();
+        http.addFilterBefore(new LoginTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        /*http//1、配置权限认证
             .authorizeRequests()
                 //配置不拦截路由
                 .antMatchers("/500").permitAll()
@@ -64,22 +100,23 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
                 .failureHandler(loginFailureHandler)//使用自定义失败的结果处理器
                 .and()
             //3、注销
-            .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler())
-                .permitAll()
-                .and()
+//            .logout()
+//                .logoutUrl("/logout")
+//                .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+//                .permitAll()
+//                .and()
             //4、session管理
-            .sessionManagement()
-                .invalidSessionUrl("/login") //失效后跳转到登陆页面
+//            .sessionManagement()
+//                .invalidSessionUrl("/login") //失效后跳转到登陆页面
                 //单用户登录，如果有一个登录了，同一个用户在其他地方登录将前一个剔除下线
                 //.maximumSessions(1).expiredSessionStrategy(expiredSessionStrategy())
                 //单用户登录，如果有一个登录了，同一个用户在其他地方不能登录
                 //.maximumSessions(1).maxSessionsPreventsLogin(true) ;
-                .and()
+//                .and()
             //5、禁用跨站csrf攻击防御
             .csrf()
-                .disable();
+                .disable();*/
+
     }
 
     @Override
@@ -88,10 +125,9 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/static/**","/backend/**");
     }
 
-    */
 /**
      * 指定加密方式
-     *//*
+     */
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -99,4 +135,3 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 }
-*/

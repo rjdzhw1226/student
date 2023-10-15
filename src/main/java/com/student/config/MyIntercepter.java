@@ -1,5 +1,6 @@
 package com.student.config;
 
+import com.student.Constant.RedisKey;
 import com.student.util.BaseContext;
 import com.student.util.jwt.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +18,21 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class MyIntercepter implements HandlerInterceptor {
-//    private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
 //    public MyIntercepter(StringRedisTemplate stringRedisTemplate) {
 //        this.stringRedisTemplate = stringRedisTemplate;
 //    }
+
+    /**
+     * 这里同时配置了spring Security 先进入过滤器再进入拦截器
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //在处理器处理请求之前执行
@@ -52,7 +63,7 @@ public class MyIntercepter implements HandlerInterceptor {
                 if (JWTUtils.isNeedUpdate(token)){
                     String newToken = JWTUtils.createToken(sub);
                     request.getSession().setAttribute(JWTUtils.USER_LOGIN_TOKEN,newToken);
-                    //stringRedisTemplate.opsForValue().set(JWTUtils.USER_LOGIN_TOKEN, newToken,60, TimeUnit.MINUTES);
+                    //stringRedisTemplate.opsForValue().set(RedisKey.USER_KEY, newToken,60, TimeUnit.MINUTES);
                 }
                 return true;
             }else {

@@ -8,4 +8,6 @@ public class RedisKey {
     public static final String CACHE_SUB_CHOOSE_KEY = "cache:sub:choose:";
 
     public static final String MAP_KEY = "load:geo:";
+    public static final String USER_KEY = "login:user:";
+    public static final String CODE_KEY = "login:code:";
 }

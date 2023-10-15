@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="plugins/element-ui/index.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
   <script src="plugins/vue/vue.js"></script>
   <script src="plugins/element-ui/index.js"></script>
   <script src="plugins/axios/axios.min.js"></script>
@@ -13,107 +13,109 @@
   <title>学生后台管理系统</title>
 </head>
 <body>
+
 <div class="components">
-  <!-- 组件所有元素 -->
-  <div class="main-button">
-    <!-- 按钮主体(圆) -->
-    <div class="moon"></div>
-    <div class="moon"></div>
-    <div class="moon"></div>
-    <!-- 月亮上的陨石坑 -->
+    <!-- 组件所有元素 -->
+    <div class="main-button">
+      <!-- 按钮主体(圆) -->
+      <div class="moon"></div>
+      <div class="moon"></div>
+      <div class="moon"></div>
+      <!-- 月亮上的陨石坑 -->
+    </div>
+    <div class="daytime-backgrond"></div>
+    <div class="daytime-backgrond"></div>
+    <div class="daytime-backgrond"></div>
+    <!-- 按钮底层的三个虚影 -->
+    <div class="cloud">
+      <!-- 所有的云 -->
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+    </div>
+    <div class="cloud-light cloud-float">
+      <!-- 云的虚影 -->
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+      <div class="cloud-son"></div>
+    </div>
+    <div class="stars">
+      <!-- 所有星星，每一个星星由四个div拼合而成 -->
+      <div class="star big">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star big">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star medium">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star medium">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star medium">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star small">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star small">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star small">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star small">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star small">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+      <div class="star small">
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+        <div class="star-son"></div>
+      </div>
+    </div>
   </div>
-  <div class="daytime-backgrond"></div>
-  <div class="daytime-backgrond"></div>
-  <div class="daytime-backgrond"></div>
-  <!-- 按钮底层的三个虚影 -->
-  <div class="cloud">
-    <!-- 所有的云 -->
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-  </div>
-  <div class="cloud-light cloud-float">
-    <!-- 云的虚影 -->
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-    <div class="cloud-son"></div>
-  </div>
-  <div class="stars">
-    <!-- 所有星星，每一个星星由四个div拼合而成 -->
-    <div class="star big">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star big">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star medium">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star medium">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star medium">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star small">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star small">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star small">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star small">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star small">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-    <div class="star small">
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-      <div class="star-son"></div>
-    </div>
-  </div>
-</div>
+
 <div id="app">
   <div class="container">
     <el-form ref="form" :model="form" label-width="80px" style="margin-top: 20px;">
