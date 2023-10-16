@@ -12,6 +12,12 @@
     <link href="img/favicon.ico" rel="shortcut icon">
     <title>学生管理系统后台注册页面</title>
   <style>
+    body{
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
     .el-icon-close:before {
       content: "\e6db";
       display: none;
@@ -21,111 +27,122 @@
 <body>
 <div id="app">
   <div class="add-form">
-    <el-dialog title="注册用户" :visible.sync="dialogFormVisible">
-      <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="left" label-width="100px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="姓名" prop="username">
-              <el-input v-model="formData.username"/>
+    <el-row type="flex" justify="center" align="middle" style=" height:100%;margin-top: 10%">
+      <el-col style="width:auto;">
+        <el-card class="um-loginbox">
+          <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="left" label-width="100px">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="姓名" prop="username">
+                  <el-input v-model="formData.username"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="密码" prop="password">
+                  <el-input v-model="formData.password" type="password"></el-input>
+                </el-form-item>
+                <el-form-item label="重复密码" prop="passwordConfirm" v-if="formData.password != null && formData.password != ''">
+                  <el-input v-model="formData.passwordConfirm" type="password"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="性别">
+                  <el-select v-model="formData.gender">
+                    <el-option label="男" value="男"></el-option>
+                    <el-option label="女" value="女"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="状态" prop="station">
+                  <el-input v-model="formData.station"/>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12" >
+                <el-form-item label="电话号码" prop="telephone">
+                  <el-input v-model="formData.telephone"/>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="生日">
+                  <el-date-picker
+                          v-model="formData.birthday"
+                          type="date"
+                          placeholder="选择日期">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-form-item>
+              <el-button @click="reset()">取消</el-button>
+              <el-button type="primary" @click="confirm()">确定</el-button>
+            </el-form-item>
+          </el-form>
+
+        </el-card>
+      </el-col>
+    </el-row>
+    <!--          <div slot="footer" class="dialog-footer">
+                <el-button @click="reset()">取消</el-button>
+                <el-button type="primary" @click="confirm()">确定</el-button>
+              </div>-->
+    <!--<el-dialog title="注册用户" :visible.sync="dialogFormVisible">-->
+    <!--        <el-row>
+          <el-col>
+            <el-form-item label="上传文件">
+              <el-col :span="24">
+                <el-upload
+                        class="upload-demo"
+                        drag
+                        action="/setmeal/file/upload"
+                        accept=".xlsx"
+                        :before-upload="beforeUploadFile"
+                        :on-change="fileChange"
+                        :on-exceed="exceedFile"
+                        :on-remove="fileRemove"
+                        :on-success="handleSuccess"
+                        :on-error="handleError"
+                        :file-list="fileList"
+                        :limit="2"
+                        multiple>
+                  <i class="el-icon-upload"></i>
+                  <div class="el-upload__text"><em>点击上传</em></div>
+                  <div class="el-upload__tip" slot="tip">只能上传xlsx文件</div>
+                </el-upload>
+              </el-col>
+              <el-col>
+                <el-button @click="submitFile()">按钮</el-button>
+              </el-col>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="密码" prop="password">
-              <el-input v-model="formData.password" type="password"></el-input>
-            </el-form-item>
-            <el-form-item label="重复密码" prop="passwordConfirm" v-if="formData.password != null && formData.password != ''">
-              <el-input v-model="formData.passwordConfirm" type="password"></el-input>
+          <el-col>
+            <el-form-item label="附件上传" prop="fysjtDesc">
+              <el-upload
+                      class="upload-demo"
+                      ref="upload"
+                      action="/setmeal/fileList/upload"
+                      :data="getfileData()"
+                      :file-list="fileList"
+                      :auto-upload="false">
+                <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
+                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="性别">
-              <el-select v-model="formData.gender">
-                <el-option label="男" value="男"></el-option>
-                <el-option label="女" value="女"></el-option>
-              </el-select>
+          <el-col :span="24">
+            <el-form-item label="备注">
+              <el-input v-model="formData.remark" type="textarea"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态" prop="station">
-              <el-input v-model="formData.station"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12" >
-            <el-form-item label="电话号码" prop="telephone">
-              <el-input v-model="formData.telephone"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="生日">
-              <el-date-picker
-                      v-model="formData.birthday"
-                      type="date"
-                      placeholder="选择日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-<!--        <el-row>-->
-<!--          <el-col>-->
-<!--            <el-form-item label="上传文件">-->
-<!--              <el-col :span="24">-->
-<!--                <el-upload-->
-<!--                        class="upload-demo"-->
-<!--                        drag-->
-<!--                        action="/setmeal/file/upload"-->
-<!--                        accept=".xlsx"-->
-<!--                        :before-upload="beforeUploadFile"-->
-<!--                        :on-change="fileChange"-->
-<!--                        :on-exceed="exceedFile"-->
-<!--                        :on-remove="fileRemove"-->
-<!--                        :on-success="handleSuccess"-->
-<!--                        :on-error="handleError"-->
-<!--                        :file-list="fileList"-->
-<!--                        :limit="2"-->
-<!--                        multiple>-->
-<!--                  <i class="el-icon-upload"></i>-->
-<!--                  <div class="el-upload__text"><em>点击上传</em></div>-->
-<!--                  <div class="el-upload__tip" slot="tip">只能上传xlsx文件</div>-->
-<!--                </el-upload>-->
-<!--              </el-col>-->
-<!--              <el-col>-->
-<!--                <el-button @click="submitFile()">按钮</el-button>-->
-<!--              </el-col>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--          <el-col>-->
-<!--            <el-form-item label="附件上传" prop="fysjtDesc">-->
-<!--              <el-upload-->
-<!--                      class="upload-demo"-->
-<!--                      ref="upload"-->
-<!--                      action="/setmeal/fileList/upload"-->
-<!--                      :data="getfileData()"-->
-<!--                      :file-list="fileList"-->
-<!--                      :auto-upload="false">-->
-<!--                <el-button slot="trigger" size="small" type="primary">选取附件</el-button>-->
-<!--                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>-->
-<!--              </el-upload>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
-<!--        <el-row>-->
-<!--          <el-col :span="24">-->
-<!--            <el-form-item label="备注">-->
-<!--              <el-input v-model="formData.remark" type="textarea"></el-input>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="reset()">取消</el-button>
-        <el-button type="primary" @click="confirm()">确定</el-button>
-      </div>
+        </el-row>-->
     </el-dialog>
   </div>
 </div>

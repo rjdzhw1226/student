@@ -6,9 +6,12 @@ import com.student.mapper.LoginMapper;
 import com.student.pojo.user;
 import com.student.pojo.userLogin;
 import com.student.service.UserService;
+import com.student.util.BaseContext;
 import com.student.util.jwt.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,8 +36,9 @@ public class UserServiceImpl implements UserService {
         if(use == null){
             throw new UsernameNotFoundException("用户不存在");
         }
-        String token = JWTUtils.createToken(use.getId() + "-" + use.getUsername() + "-" + DigestUtils.md5DigestAsHex(use.getPassword().getBytes()));
-        stringRedisTemplate.opsForValue().set(RedisKey.USER_KEY + use.getId(), token);
+        BaseContext.setCurrentId(use.getUsername());
+        //String token = JWTUtils.createToken(use.getId() + "-" + use.getUsername() + "-" + DigestUtils.md5DigestAsHex(use.getPassword().getBytes()));
+        //stringRedisTemplate.opsForValue().set(RedisKey.USER_KEY + use.getId(), token);
         return new userLogin(use);
     }
 }
