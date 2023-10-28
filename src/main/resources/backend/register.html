@@ -303,7 +303,8 @@
                   type:'success'
                 });
                 setTimeout(3000);
-                window.location.href="login.html";
+                //window.location.href="login.html";
+                this.locationReplace("login.html")
               }else{
                 vm.reset();
                 //失败
@@ -317,6 +318,14 @@
           }
         })
       },
+      locationReplace(url){
+        if(history.replaceState){
+          history.replaceState(null, document.title, url);
+          history.go(0);
+        }else{
+          location.replace(url);
+        }
+      }
     }
   });
 </script>

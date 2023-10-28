@@ -26,8 +26,16 @@
                     :file-list="fileList"
                     :limit="1"
                     :auto-upload="false">
-                <el-button slot="trigger" size="small" type="primary">附件</el-button>
-                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+                <el-button slot="trigger" size="middle" type="primary">附件</el-button>
+                <el-button style="margin-left: 10px;" size="middle" type="success" @click="submitUpload">上传到服务器</el-button>
+                <el-select v-model="languageName" placeholder="请选择识别语言">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
             </el-upload>
             <span>返回参数</span>
             <el-input type="textarea" :rows="4" v-model="strtext"></el-input>
@@ -39,8 +47,18 @@
     new Vue({
         el: '#app',
         data: {
+            options:[{
+                value:'1',
+                label:'英语'
+            },{
+                value:'2',
+                label:'汉语'
+            },],
             fileList:[],
-            fileData:{},
+            fileData:{
+                name:''
+            },
+            languageName:'',
             strtext:''
         },
         created() {
@@ -50,6 +68,7 @@
             getfileData() {
                 //文件附带格式信息
                 var vm = this;
+                vm.fileData.name = vm.languageName;
                 return vm.fileData
             },
             handleAvatarSuccess(res){

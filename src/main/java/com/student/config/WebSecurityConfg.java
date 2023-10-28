@@ -62,6 +62,7 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
                         "/login",
                         "/login/checkCode",
                         "/registry/**",
+                        "/login/registry/**",
                         "/backend/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -70,7 +71,8 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
                 .failureHandler(failureHandler)
                 .loginPage("/backend/login.html")  //登录的自定义视图页面
                 .loginProcessingUrl("/login") //form中登录的访问uri地址
-                .defaultSuccessUrl("/backend/index.html")//登录成功后默认的跳转页面路径
+                .defaultSuccessUrl("https://40q75226c6.goho.co/backend/index.html")//登录成功后默认的跳转页面路径
+                //.defaultSuccessUrl("/backend/index.html")//登录成功后默认的跳转页面路径
                 .and()
                 //关于跨域访问的安全设置，先禁用
                 .csrf().disable();

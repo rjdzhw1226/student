@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../backend/plugins/element-ui/index.css">
+    <script src="../backend/plugins/vue/vue.js"></script>
+    <script src="../backend/plugins/element-ui/index.js"></script>
+    <script src="../backend/plugins/axios/axios.min.js"></script>
+    <title>学生后台管理系统</title>
+</head>
+<style>
+    #app {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 50px;
+    }
+    .fold{
+        line-height: 30px;
+        text-align: center;
+        width: 200px;
+        height: auto;
+    }
+    .box{
+        height: 100%;
+    }
+</style>
+<body>
+<div id="app">
+    <el-container>
+    <el-header>
+        <el-button @click="sameDir()">添加同级文件夹</el-button>
+    </el-header>
+    <el-main>
+        <el-table :data="pathList">
+            <el-table-column label="文件名" align="center" prop="name" width="auto"></el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="auto"
+                    align="center">
+                <template slot-scope="scope">
+                    <el-button
+                            type="text"
+                            size="small"
+                            @click="backBread(scope.row)">
+                        {{ scope.row.id == '1' ? '' : '返回' }}
+                    </el-button>
+
+                    <i class="el-icon-plus" v-if="scope.row.type != 'file'" @click="addFolder(scope.row)"></i>
+                    <i class="el-icon-download" v-if="scope.row.type == 'file'" @click="download(scope.row)"></i>
+                    <i class="el-icon-files" v-if="scope.row.childList.length !== 0 && scope.row.type != 'file'" @click="getFoldList(scope.row)"></i>
+                    <i class="el-icon-folder" v-if="scope.row.childList.length == 0 && scope.row.type != 'file'" @click="empty()"></i>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-main>
+</el-container>
+    <el-dialog :visible.sync="dialogFormVisible" title="文件上传/文件夹新建">
+        <el-row>
+            <label>文件上传</label>
+            <el-upload
+                    class="upload-demo"
+                    ref="upload"
+                    action="/file/upload"
+                    :before-upload="beforeAvatarUpload"
+                    :on-success="handleAvatarSuccess"
+                    :data="getfileData()"
+                    :file-list="fileList"
+                    :limit="1"
+                    :auto-upload="false">
+                <el-button slot="trigger" size="middle" type="primary">附件</el-button>
+                <el-button style="margin-left: 10px;" size="middle" type="success" @click="submitUpload">上传到服务器</el-button>
+            </el-upload>
+            <!--<el-upload
+                class="upload-demo"
+                ref="upload"
+                action=/file/upload"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+                :data="getfileData()"
+                :show-file-list="false"
+                :file-list="fileList"
+                :limit="1"
+                :auto-upload="false">
+&lt;!&ndash;            <i class="el-icon-plus avatar-uploader-icon"></i>&ndash;&gt;
+                <el-button slot="trigger" size="small" type="primary">附件</el-button>
+                <el-button size="small" type="primary" @click="submitUpload">上传到服务器</el-button>
+            </el-upload>-->
+        </el-row>
+        <el-row>
+            <label>文件夹名</label>
+            <el-input v-model="name"></el-input>
+            <label>文件夹路径</label>
+            <el-input :disabled=true v-model="dir"></el-input>
+        </el-row>
+        <el-button @click="addConfirm()">确定</el-button>
+    </el-dialog>
+    <!--        <div :class="pathList.length - 1 !== i?'fold':''" v-for="(item,i) in pathList" :key="i">
+                <i class="el-icon-arrow-left" v-if="item.id !== 1" @click="backBread(item)"></i>
+                <span class="txt-overflow file-title">{{item.name}}</span>
+                <i class="el-icon-plus" @click="addFolder()"></i>
+                <i class="el-icon-arrow-right" v-if="item.childList.length !== 0" @click="getFoldList(item)"></i>
+                <i class="el-icon-folder" v-if="item.childList.length == 0"></i>
+
+            </div>-->
+    <!--    <div class="box">
+        <div class="fold" v-for="(item,i) in pathList" :key="i">
+
+        </div>
+    </div>-->
+
+    <!--<table>
+        <thead>
+        <tr>
+            <th>返回</th>
+            <th>文件名</th>
+            <th>新建/下载</th>
+            <th>下一级</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in pathList">
+            <td><i class="el-icon-arrow-left" v-if="item.id !== 1" @click="backBread(item)"></i></td>
+            <td><span>{{item.name}}</span></td>
+            <td>
+                <i class="el-icon-plus" v-if="item.type != 'file'" @click="addFolder(item)"></i>
+                <i class="el-icon-download" v-if="item.type == 'file'" @click="download(item)"></i>
+            </td>
+            <td>
+                <i class="el-icon-arrow-right" v-if="item.childList.length !== 0 && item.type != 'file'" @click="getFoldList(item)"></i>
+                <i class="el-icon-folder" v-if="item.childList.length == 0 && item.type != 'file'" @click="empty()"></i>
+            </td>
+        </tr>
+        </tbody>
+    </table>-->
+    <!--<el-row v-for="(item,i) in pathList" :key="i">
+        <i class="el-icon-arrow-left" v-if="item.id !== 1" @click="backBread(item)"></i>
+        <span>{{item.name}}</span>
+        <i class="el-icon-plus" v-if="item.type != 'file'" @click="addFolder(item)"></i>
+        <i class="el-icon-download" v-if="item.type == 'file'" @click="download(item)"></i>
+        <i class="el-icon-arrow-right" v-if="item.childList.length !== 0 && item.type != 'file'" @click="getFoldList(item)"></i>
+        <i class="el-icon-folder" v-if="item.childList.length == 0 && item.type != 'file'" @click="empty()"></i>
+    </el-row>-->
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            fileList:[],
+            name:'',
+            dir:'',
+            fileList:[],
+            fileData:{
+                path:'',
+                name:''
+            },
+            dialogFormVisible:false,
+            tempPathList:[],
+            tempPath:[],
+            pathConfirm:'',
+            pathDirList:[],
+            pathList:[],
+            pathDialogList:[],
+            searchForm:{}
+        },
+        created() {
+            this.getList();
+        },
+        methods: {
+            sameDir(){
+                let str = '';
+                for (let i = 0; i < this.tempPath.length; i++) {
+                    if(this.tempPath[i] != ''){
+                        str = str + "/" + this.tempPath[i];
+                    }
+                }
+                alert(str == '' ? '/':str)
+            },
+            getList(){
+                axios.get("/file/All").then((response)=>{
+                    this.pathList = response.data;
+                })
+                /*this.pathList = [{
+                    id:1,
+                    name:'123',
+                    type:'dir',
+                    childList:[{
+                        id:2,
+                        name:'4',
+                        type:'dir',
+                        childList: [{
+                            id:3,
+                            name:'5',
+                            type:'dir',
+                            childList: []
+                        }]
+                    },{
+                        id:2,
+                        name:'78',
+                        type:'dir',
+                        childList: [{
+                            id:3,
+                            name:'35',
+                            type:'dir',
+                            childList: [{
+                                id:4,
+                                name:'75',
+                                type:'dir',
+                                childList: []
+                            }]
+                        }]
+                    },{
+                        id:2,
+                        name:'7788',
+                        type:'file',
+                        childList: []
+                    }],
+                },{
+                    id:1,
+                    name:'3',
+                    type:'dir',
+                    childList: []
+                },{
+                    id:1,
+                    name:'12',
+                    type:'dir',
+                    childList: [{
+                        id:2,
+                        name:'6',
+                        type:'dir',
+                        childList: []
+                    }]
+                },{
+                    id:1,
+                    name:'1',
+                    type:'dir',
+                    childList: []
+                },]*/
+            },
+            download(node) {
+                //alert(node.name)
+                axios.get("/test/download/"+node.name+"",{responseType:'blob'}).then((response)=>{
+                    let blob = new Blob([response.data]);
+                    //let url = window.URL.createObjectURL(blob);
+                    let filename = node.name;
+                    const f = document.createElement('a');
+                    f.download = filename;
+                    f.style.display = 'none';
+                    f.href = URL.createObjectURL(blob);
+                    document.body.appendChild(f);
+                    f.click();
+                    URL.revokeObjectURL(f.href); // 释放URL 对象
+                    document.body.removeChild(f);
+                })
+            },
+            addFolder(node) {
+                if(node.id == 1){
+                    this.dir = "/" + node.name;
+                } else {
+                    let str = '';
+                    for (let i = 0; i < this.tempPath.length; i++) {
+                        if(this.tempPath[i] != ''){
+                            str = str + "/" + this.tempPath[i];
+                        }
+                    }
+                    this.dir = str + "/" + node.name
+                }
+                this.dialogFormVisible = true;
+            },
+            addConfirm(){
+                let param = {
+                    fileName:this.name,
+                    dir:this.dir
+                }
+                //alert(this.name + "-" + this.dir)
+                axios.post("/file/addDir",param).then((response)=>{
+                    if(response.data.flag){
+                        this.getList();
+                    }
+                }).finally(()=>{
+                    this.dialogFormVisible = false;
+                })
+            },
+            deleteFolder(){
+
+            },
+            getFoldList(node){
+                this.tempPathList[node.id] = this.pathList;
+                this.pathList = node.childList;
+                this.tempPath[node.id - 1] = node.name;
+            },
+            empty(){
+                this.$message({
+                    message: '文件夹为空',
+                    type: 'info',
+                })
+            },
+            backBread(node){
+                this.pathList = this.tempPathList[node.id - 1];
+                this.tempPath[node.id - 2] = '';
+                if(node.id == 2){
+                    this.tempPathList = [];
+                }
+            },
+            handleAvatarSuccess(){
+                this.dialogFormVisible = false;
+            },
+            beforeAvatarUpload(file){
+                var vm = this;
+                vm.fileData.path = vm.dir;
+                vm.fileData.name = file.name;
+                const isLt2M = file.size / 1024 / 1024 < 20;
+                if (!isLt2M) {
+                    vm.$message.error('上传文件大小不能超过 20MB!');
+                }
+                return isLt2M;
+            },
+            getfileData(){
+                var vm = this;
+                return vm.fileData;
+            },
+            submitUpload(){
+                //this.getfileData();
+                this.$refs.upload.submit();
+                this.getList();
+            }
+        }
+    })
+</script>
+</html>
