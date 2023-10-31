@@ -11,14 +11,21 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @Author qt
@@ -61,8 +68,8 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
                         "/backend/login.html",
                         "/login",
                         "/login/checkCode",
-                        "/registry/**",
-                        "/login/registry/**",
+                        "/register/**",
+                        "/login/register/**",
                         "/backend/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -76,6 +83,12 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
                 .and()
                 //关于跨域访问的安全设置，先禁用
                 .csrf().disable();
+        http
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("https://40q75226c6.goho.co/backend/login.html")
+                //.logoutSuccessUrl("/backend/login.html")
+                .invalidateHttpSession(true);
         http.addFilterBefore(new LoginTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         /*http//1、配置权限认证
             .authorizeRequests()

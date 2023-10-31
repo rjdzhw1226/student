@@ -17,21 +17,13 @@
       justify-content: center;
       margin: 50px;
     }
-    .fold{
-        line-height: 30px;
-        text-align: center;
-        width: 200px;
-        height: auto;
-    }
-    .box{
-        height: 100%;
-    }
 </style>
 <body>
 <div id="app">
     <el-container>
     <el-header>
         <el-button @click="sameDir()">添加同级文件夹</el-button>
+        <el-button @click="sameFile()">上传文件</el-button>
     </el-header>
     <el-main>
         <el-table :data="pathList">
@@ -47,7 +39,12 @@
                             @click="backBread(scope.row)">
                         {{ scope.row.id == '1' ? '' : '返回' }}
                     </el-button>
-
+                    <el-button
+                            type="text"
+                            size="small"
+                            @click="deleteFolder(scope.row)">
+                        删除
+                    </el-button>
                     <i class="el-icon-plus" v-if="scope.row.type != 'file'" @click="addFolder(scope.row)"></i>
                     <i class="el-icon-download" v-if="scope.row.type == 'file'" @click="download(scope.row)"></i>
                     <i class="el-icon-files" v-if="scope.row.childList.length !== 0 && scope.row.type != 'file'" @click="getFoldList(scope.row)"></i>
@@ -57,9 +54,17 @@
         </el-table>
     </el-main>
 </el-container>
-    <el-dialog :visible.sync="dialogFormVisible" title="文件上传/文件夹新建">
+    <el-dialog :visible.sync="dialogFormVisible" title="文件夹新建">
         <el-row>
-            <label>文件上传</label>
+            <label>文件夹名</label>
+            <el-input v-model="name"></el-input>
+            <label>文件夹路径</label>
+            <el-input :disabled=true v-model="dir"></el-input>
+        </el-row>
+        <el-button @click="addConfirm()">确定</el-button>
+    </el-dialog>
+    <el-dialog :visible.sync="dialogFormVisibleFile" title="文件上传">
+        <el-row>
             <el-upload
                     class="upload-demo"
                     ref="upload"
@@ -70,79 +75,11 @@
                     :file-list="fileList"
                     :limit="1"
                     :auto-upload="false">
-                <el-button slot="trigger" size="middle" type="primary">附件</el-button>
+                <el-button slot="trigger" size="middle" type="primary">选择附件</el-button>
                 <el-button style="margin-left: 10px;" size="middle" type="success" @click="submitUpload">上传到服务器</el-button>
             </el-upload>
-            <!--<el-upload
-                class="upload-demo"
-                ref="upload"
-                action=/file/upload"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
-                :data="getfileData()"
-                :show-file-list="false"
-                :file-list="fileList"
-                :limit="1"
-                :auto-upload="false">
-&lt;!&ndash;            <i class="el-icon-plus avatar-uploader-icon"></i>&ndash;&gt;
-                <el-button slot="trigger" size="small" type="primary">附件</el-button>
-                <el-button size="small" type="primary" @click="submitUpload">上传到服务器</el-button>
-            </el-upload>-->
         </el-row>
-        <el-row>
-            <label>文件夹名</label>
-            <el-input v-model="name"></el-input>
-            <label>文件夹路径</label>
-            <el-input :disabled=true v-model="dir"></el-input>
-        </el-row>
-        <el-button @click="addConfirm()">确定</el-button>
     </el-dialog>
-    <!--        <div :class="pathList.length - 1 !== i?'fold':''" v-for="(item,i) in pathList" :key="i">
-                <i class="el-icon-arrow-left" v-if="item.id !== 1" @click="backBread(item)"></i>
-                <span class="txt-overflow file-title">{{item.name}}</span>
-                <i class="el-icon-plus" @click="addFolder()"></i>
-                <i class="el-icon-arrow-right" v-if="item.childList.length !== 0" @click="getFoldList(item)"></i>
-                <i class="el-icon-folder" v-if="item.childList.length == 0"></i>
-
-            </div>-->
-    <!--    <div class="box">
-        <div class="fold" v-for="(item,i) in pathList" :key="i">
-
-        </div>
-    </div>-->
-
-    <!--<table>
-        <thead>
-        <tr>
-            <th>返回</th>
-            <th>文件名</th>
-            <th>新建/下载</th>
-            <th>下一级</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="item in pathList">
-            <td><i class="el-icon-arrow-left" v-if="item.id !== 1" @click="backBread(item)"></i></td>
-            <td><span>{{item.name}}</span></td>
-            <td>
-                <i class="el-icon-plus" v-if="item.type != 'file'" @click="addFolder(item)"></i>
-                <i class="el-icon-download" v-if="item.type == 'file'" @click="download(item)"></i>
-            </td>
-            <td>
-                <i class="el-icon-arrow-right" v-if="item.childList.length !== 0 && item.type != 'file'" @click="getFoldList(item)"></i>
-                <i class="el-icon-folder" v-if="item.childList.length == 0 && item.type != 'file'" @click="empty()"></i>
-            </td>
-        </tr>
-        </tbody>
-    </table>-->
-    <!--<el-row v-for="(item,i) in pathList" :key="i">
-        <i class="el-icon-arrow-left" v-if="item.id !== 1" @click="backBread(item)"></i>
-        <span>{{item.name}}</span>
-        <i class="el-icon-plus" v-if="item.type != 'file'" @click="addFolder(item)"></i>
-        <i class="el-icon-download" v-if="item.type == 'file'" @click="download(item)"></i>
-        <i class="el-icon-arrow-right" v-if="item.childList.length !== 0 && item.type != 'file'" @click="getFoldList(item)"></i>
-        <i class="el-icon-folder" v-if="item.childList.length == 0 && item.type != 'file'" @click="empty()"></i>
-    </el-row>-->
 </div>
 </body>
 <script>
@@ -158,6 +95,7 @@
                 name:''
             },
             dialogFormVisible:false,
+            dialogFormVisibleFile:false,
             tempPathList:[],
             tempPath:[],
             pathConfirm:'',
@@ -170,81 +108,33 @@
             this.getList();
         },
         methods: {
-            sameDir(){
+            common(){
                 let str = '';
                 for (let i = 0; i < this.tempPath.length; i++) {
                     if(this.tempPath[i] != ''){
                         str = str + "/" + this.tempPath[i];
                     }
                 }
-                alert(str == '' ? '/':str)
+                if(str === ''){
+                    str = '/';
+                }
+                return str;
+            },
+            sameFile(){
+                this.dialogFormVisibleFile = true;
+            },
+            sameDir(){
+                this.dir = this.common();
+                this.dialogFormVisible = true;
             },
             getList(){
                 axios.get("/file/All").then((response)=>{
                     this.pathList = response.data;
                 })
-                /*this.pathList = [{
-                    id:1,
-                    name:'123',
-                    type:'dir',
-                    childList:[{
-                        id:2,
-                        name:'4',
-                        type:'dir',
-                        childList: [{
-                            id:3,
-                            name:'5',
-                            type:'dir',
-                            childList: []
-                        }]
-                    },{
-                        id:2,
-                        name:'78',
-                        type:'dir',
-                        childList: [{
-                            id:3,
-                            name:'35',
-                            type:'dir',
-                            childList: [{
-                                id:4,
-                                name:'75',
-                                type:'dir',
-                                childList: []
-                            }]
-                        }]
-                    },{
-                        id:2,
-                        name:'7788',
-                        type:'file',
-                        childList: []
-                    }],
-                },{
-                    id:1,
-                    name:'3',
-                    type:'dir',
-                    childList: []
-                },{
-                    id:1,
-                    name:'12',
-                    type:'dir',
-                    childList: [{
-                        id:2,
-                        name:'6',
-                        type:'dir',
-                        childList: []
-                    }]
-                },{
-                    id:1,
-                    name:'1',
-                    type:'dir',
-                    childList: []
-                },]*/
             },
             download(node) {
-                //alert(node.name)
                 axios.get("/test/download/"+node.name+"",{responseType:'blob'}).then((response)=>{
                     let blob = new Blob([response.data]);
-                    //let url = window.URL.createObjectURL(blob);
                     let filename = node.name;
                     const f = document.createElement('a');
                     f.download = filename;
@@ -252,7 +142,7 @@
                     f.href = URL.createObjectURL(blob);
                     document.body.appendChild(f);
                     f.click();
-                    URL.revokeObjectURL(f.href); // 释放URL 对象
+                    URL.revokeObjectURL(f.href);
                     document.body.removeChild(f);
                 })
             },
@@ -275,7 +165,6 @@
                     fileName:this.name,
                     dir:this.dir
                 }
-                //alert(this.name + "-" + this.dir)
                 axios.post("/file/addDir",param).then((response)=>{
                     if(response.data.flag){
                         this.getList();
@@ -284,8 +173,81 @@
                     this.dialogFormVisible = false;
                 })
             },
-            deleteFolder(){
-
+            deleteFolder(node){
+                let param = {
+                    fileName:node.name,
+                    dir:this.common()
+                }
+                if (node.type === 'file') {
+                    axios.post("/file/deleteDir",param).then((response)=>{
+                        if(response.data.flag){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getList();
+                        } else {
+                            this.$message({
+                                type: 'error',
+                                message: '删除失败'
+                            });
+                        }
+                    })
+                } else {
+                    if(node.childList.length !== 0){
+                        this.$confirm('文件夹下还有文件, 是否继续删除?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            axios.post("/file/deleteDir",param).then((response)=>{
+                                if(response.data.flag){
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                    this.getList();
+                                } else {
+                                    this.$message({
+                                        type: 'error',
+                                        message: '删除失败'
+                                    });
+                                }
+                            })
+                        }).catch(() => {
+                            this.$message({
+                                type: 'info',
+                                message: '已取消删除'
+                            });
+                        });
+                    } else {
+                        this.$confirm('是否删除?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            axios.post("/file/deleteDir",param).then((response)=>{
+                                if(response.data.flag){
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                    this.getList();
+                                } else {
+                                    this.$message({
+                                        type: 'error',
+                                        message: '删除失败'
+                                    });
+                                }
+                            })
+                        }).catch(()=>{
+                            this.$message({
+                                type: 'info',
+                                message: '已取消删除'
+                            });
+                        });
+                    }
+                }
             },
             getFoldList(node){
                 this.tempPathList[node.id] = this.pathList;
@@ -306,7 +268,8 @@
                 }
             },
             handleAvatarSuccess(){
-                this.dialogFormVisible = false;
+                this.getList();
+                this.dialogFormVisibleFile = false;
             },
             beforeAvatarUpload(file){
                 var vm = this;
@@ -323,9 +286,7 @@
                 return vm.fileData;
             },
             submitUpload(){
-                //this.getfileData();
                 this.$refs.upload.submit();
-                this.getList();
             }
         }
     })

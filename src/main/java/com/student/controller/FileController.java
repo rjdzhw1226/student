@@ -40,8 +40,15 @@ public class FileController {
     }
 
     @RequestMapping("/deleteDir")
-    public Map<String, Object> delete(@RequestParam(value = "father") String par){
-        return null;
+    public Map<String, Object> delete(@RequestBody file file){
+        Map<String, Object> map = new HashMap<>();
+        map.put("flag", false);
+        userLogin user = getUserLogin();
+        boolean b = service.deleteDir(totalPath, user.getUsername(), file.getDir(), file.getFileName());
+        if(b){
+            map.put("flag", true);
+        }
+        return map;
     }
 
     @RequestMapping("/All")

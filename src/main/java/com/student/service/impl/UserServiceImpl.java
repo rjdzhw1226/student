@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("用户不存在");
         }
         BaseContext.setCurrentId(use.getUsername());
+        //BaseContext.setCurrentId(getUserLogin().getUsername());
         //String token = JWTUtils.createToken(use.getId() + "-" + use.getUsername() + "-" + DigestUtils.md5DigestAsHex(use.getPassword().getBytes()));
         //stringRedisTemplate.opsForValue().set(RedisKey.USER_KEY + use.getId(), token);
         return new userLogin(use);

@@ -3,11 +3,17 @@ package com.student.service;
 import com.student.mapper.LoginMapper;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
+import com.student.pojo.userLogin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * 登录业务类<br>
@@ -29,7 +35,13 @@ public class LoginService {
     private LoginMapper mapper;
 
     /**
-     * <h2>登录服务</h2>
+     * <h3>邮件发送</h3>
+     */
+    @Autowired
+    private JavaMailSender mailSender;
+
+    /**
+     * <h2>登录服务(拦截器)</h2>
      * <p>登录校验以及鉴权</p>
      * <pre>{@code
      *     登录参数传递
@@ -81,8 +93,24 @@ public class LoginService {
         if (mapper.registerCount(username) > 0) {
             throw new RuntimeException("已存在同名用户请重新注册");
         }
-        String password = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        //String password = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
+        String password = encoder.encode(user.getPassword());
         user.setPassword(password);
         mapper.register(user);
+    }
+
+    public void sendEmail(String email) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setText(""); // 设置邮件文本内容
+        message.setSentDate(new Date());
+        //发送
+        mailSender.send(message);
+    }
+
+    private static userLogin getUserLogin() {
+        userLogin user = (userLogin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user;
     }
 }

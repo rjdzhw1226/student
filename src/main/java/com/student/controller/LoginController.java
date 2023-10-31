@@ -5,6 +5,7 @@ import com.student.annotaion.Log;
 import com.student.config.SpringBeanUtils;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
+import com.student.pojo.userLogin;
 import com.student.service.LoginService;
 import com.student.util.BaseContext;
 import com.student.util.CheckCodeUtil;
@@ -15,11 +16,9 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +60,7 @@ public class LoginController {
         }
     }
 
-    @RequestMapping("/logout")
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @Log(title="登出模块",action="logout")
     public Map<String,Object> logout(HttpServletRequest req){
         Map<String,Object> map = new HashMap<>();
@@ -148,6 +147,12 @@ public class LoginController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/emailCode/{email}")
+    public Map<String,Object> email(@PathVariable("email") String email) {
+        loginService.sendEmail(email);
+        return null;
     }
 
     @GetMapping("/shutdown")
