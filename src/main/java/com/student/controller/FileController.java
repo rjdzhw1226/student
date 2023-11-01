@@ -129,7 +129,14 @@ public class FileController {
         }
         userLogin user = getUserLogin();
         String username = user.getUsername();
-        File dest=new File(totalPath + username + "/" + path + "/" + fileName);
+        //File dest=new File(totalPath + username + "/" + path + "/" + fileName);
+        String s = "";
+        if(path.equals("/")){
+            s = totalPath + username + "/" + fileName;
+        } else {
+            s = totalPath + username + path + "/" + fileName;
+        }
+        File dest=new File(s);
         // 判断文件是否存在
         if(!dest.getParentFile().exists()){
             dest.getParentFile().mkdirs();

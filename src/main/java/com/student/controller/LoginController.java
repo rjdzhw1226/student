@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -150,9 +152,23 @@ public class LoginController {
     }
 
     @GetMapping("/emailCode/{email}")
-    public Map<String,Object> email(@PathVariable("email") String email) {
+    public void email(@PathVariable("email") String email) {
         loginService.sendEmail(email);
-        return null;
+    }
+
+    @RequestMapping("/changePassword")
+    public Map<String,Object> updateUser(@RequestBody userDto userDto){
+        Map<String,Object> map = new HashMap<>();
+        byte[] decode = Base64.getDecoder().decode(userDto.getPassword());
+        String s = "";
+        try {
+            s = new String(decode, "utf-8");
+            boolean b = loginService.change(s,userDto.getCheckCode());
+            map.put("flag",b);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     @GetMapping("/shutdown")

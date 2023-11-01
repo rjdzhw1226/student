@@ -1,10 +1,12 @@
 package com.student.service;
 
+import com.student.Constant.RedisKey;
 import com.student.mapper.LoginMapper;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 登录业务类<br>
@@ -25,6 +28,8 @@ import java.util.Date;
 @Service
 public class LoginService {
     public static void main(String[] args) {
+        LoginService service = new LoginService();
+        service.sendEmail("656779436@qq.com");
         System.out.println(DigestUtils.md5DigestAsHex("000000".getBytes()));
     }
 
@@ -39,6 +44,9 @@ public class LoginService {
      */
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * <h2>登录服务(拦截器)</h2>
@@ -101,13 +109,33 @@ public class LoginService {
     }
 
     public void sendEmail(String email) {
+        userLogin user = getUserLogin();
         SimpleMailMessage message = new SimpleMailMessage();
+        int intFlag = (int)(Math.random() * 100000000);
+        stringRedisTemplate.opsForValue().set(RedisKey.CODE_KEY + user.getUsername(),String.valueOf(intFlag),5, TimeUnit.MINUTES);
         message.setTo(email);
-        message.setText(""); // 设置邮件文本内容
+        message.setText("验证码是：" + intFlag);
         message.setSentDate(new Date());
         //发送
         mailSender.send(message);
     }
+    public boolean change(String pass, String checkCode) {
+        userLogin user = getUserLogin();
+        String unit = stringRedisTemplate.opsForValue().get(RedisKey.CODE_KEY + user.getUsername());
+        if(unit.equals(checkCode)){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String password = encoder.encode(pass);
+            int i = mapper.updatePass(password, user.getUsername());
+            if(i == 1){
+                return true;
+            }else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
 
     private static userLogin getUserLogin() {
         userLogin user = (userLogin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

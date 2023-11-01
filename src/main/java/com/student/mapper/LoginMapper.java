@@ -5,6 +5,7 @@ import com.student.pojo.dto.userDto;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface LoginMapper {
@@ -19,4 +20,7 @@ public interface LoginMapper {
 
     @Select("select count(1) from user where username = #{username}")
     public int registerCount(String username);
+
+    @Update("update user set password = #{password} where username = #{username}")
+    public int updatePass(String password, String username);
 }

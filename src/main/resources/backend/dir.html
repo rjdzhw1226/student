@@ -8,7 +8,7 @@
     <script src="../backend/plugins/vue/vue.js"></script>
     <script src="../backend/plugins/element-ui/index.js"></script>
     <script src="../backend/plugins/axios/axios.min.js"></script>
-    <title>学生后台管理系统</title>
+    <title>学生文件管理系统</title>
 </head>
 <style>
     #app {
@@ -22,8 +22,10 @@
 <div id="app">
     <el-container>
     <el-header>
-        <el-button @click="sameDir()">添加同级文件夹</el-button>
-        <el-button @click="sameFile()">上传文件</el-button>
+        <el-button-group>
+            <el-button @click="sameDir()">添加同级文件夹</el-button>
+            <el-button @click="sameFile()">上传文件</el-button>
+        </el-button-group>
     </el-header>
     <el-main>
         <el-table :data="pathList">
@@ -131,6 +133,62 @@
                 axios.get("/file/All").then((response)=>{
                     this.pathList = response.data;
                 })
+                /*this.pathList = [{
+                    id:1,
+                    name:'123',
+                    type:'dir',
+                    childList:[{
+                        id:2,
+                        name:'4',
+                        type:'dir',
+                        childList: [{
+                            id:3,
+                            name:'5',
+                            type:'dir',
+                            childList: []
+                        }]
+                    },{
+                        id:2,
+                        name:'78',
+                        type:'dir',
+                        childList: [{
+                            id:3,
+                            name:'35',
+                            type:'dir',
+                            childList: [{
+                                id:4,
+                                name:'75',
+                                type:'dir',
+                                childList: []
+                            }]
+                        }]
+                    },{
+                        id:2,
+                        name:'7788',
+                        type:'file',
+                        childList: []
+                    }],
+                },{
+                    id:1,
+                    name:'3',
+                    type:'dir',
+                    childList: []
+                },{
+                    id:1,
+                    name:'12',
+                    type:'dir',
+                    childList: [{
+                        id:2,
+                        name:'6',
+                        type:'dir',
+                        childList: []
+                    }]
+                },{
+                    id:1,
+                    name:'1',
+                    type:'dir',
+                    childList: []
+                },]*/
             },
             download(node) {
                 axios.get("/test/download/"+node.name+"",{responseType:'blob'}).then((response)=>{
@@ -171,6 +229,7 @@
                     }
                 }).finally(()=>{
                     this.dialogFormVisible = false;
+                    this.name = '';
                 })
             },
             deleteFolder(node){
@@ -195,7 +254,7 @@
                     })
                 } else {
                     if(node.childList.length !== 0){
-                        this.$confirm('文件夹下还有文件, 是否继续删除?', '提示', {
+                        this.$confirm('目录下还有文件, 是否删除?', '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             type: 'warning'
@@ -270,10 +329,11 @@
             handleAvatarSuccess(){
                 this.getList();
                 this.dialogFormVisibleFile = false;
+                this.fileList = [];
             },
             beforeAvatarUpload(file){
                 var vm = this;
-                vm.fileData.path = vm.dir;
+                vm.fileData.path = vm.common();
                 vm.fileData.name = file.name;
                 const isLt2M = file.size / 1024 / 1024 < 20;
                 if (!isLt2M) {

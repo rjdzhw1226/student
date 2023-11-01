@@ -8,8 +8,9 @@
   <script src="plugins/vue/vue.js"></script>
   <script src="plugins/element-ui/index.js"></script>
   <script src="plugins/axios/axios.min.js"></script>
+  <script src="plugins/jquery.min.js"></script>
   <link href="img/favicon.ico" rel="shortcut icon">
-    <title>学生管理系统后台首页</title>
+  <title>学生管理系统后台首页</title>
 </head>
 <style>
   body {
@@ -51,111 +52,118 @@
 </style>
 <body>
 <div id="app">
-    <el-container style="border: 1px solid #eee">
-      <div class="toggle-button" @click="toggleCollapse">
-        <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></i>
-      </div>
-      <el-aside :class="[isBin ? 'blockClass' : 'flexClass']" :width="isCollapse ? '0px' : '200px'" style="background-color: rgb(238, 241, 246)">
-        <el-menu
-                :collapse="isCollapse"
-                :default-active="defAct"
-                :collapse-transition="false"
-                text-color="black"
-                active-text-color="blue"
-        >
-          <div v-for="item in menuList" :key="item.id">
-            <el-submenu :index="item.id" v-if="item.children && item.children.length>0">
-              <template slot="title">
-                <span>{{item.name}}</span>
-              </template>
-              <el-menu-item
-                      v-for="sub in item.children"
-                      :index="sub.id"
-                      :key="sub.id"
-                      @click="menuHandle(sub,false)"
-              >
-                <span slot="title">{{sub.name}}</span>
-              </el-menu-item
-              >
-            </el-submenu>
-            <el-menu-item v-else :index="item.id" @click="menuHandle(item,false)">
-              <span slot="title">{{item.name}}</span>
-            </el-menu-item>
-          </div>
-        </el-menu>
-      </el-aside>
-      <el-container>
-        <el-header style="text-align: right; font-size: 12px">
-          <!--<img src="img/btn_close@2x.png" style="width: 25px;height: 25px;" class="outLogin" alt="退出" @click="logout" />-->
-          <el-form :inline="true" action="/logout" method="post">
-            <el-form-item>
-              <img src="img/btn_close@2x.png" style="width: 30px;height: 30px;" class="outLogin" alt="退出" onclick="submit()" />
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="changePassword()">修改密码</el-button>
-            </el-form-item>
-          </el-form>
-        </el-header>
-        <el-main>
-          <iframe
-                  id="cIframe"
-                  class="c_iframe"
-                  name="cIframe"
-                  :src="iframeUrl"
-                  width="100%"
-                  height="100%"
-                  frameborder="0"
-                  v-show="!loading"
-          ></iframe>
-        </el-main>
-      </el-container>
-    </el-container>
-    <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
-      <el-form ref="dataAddForm" :model="passwordNation" :rules="rules" label-position="right" label-width="100px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="新密码" prop="Password">
-              <el-input v-model="passwordNation.Password" placeholder="请输入新密码"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="确认新密码" prop="PasswordConfirm">
-              <el-input v-model="passwordNation.PasswordConfirm" placeholder="请再次输入新密码"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="邮箱">
-              <el-input v-model="email" placeholder="邮箱">
-                <template slot="append">.com</template>
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-button @click="send()">获取验证码</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-form-item label="验证码">
-            <el-input v-model="passwordNation.validCode" placeholder="验证码"/>
+  <el-container style="border: 1px solid #eee">
+    <div class="toggle-button" @click="toggleCollapse">
+      <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></i>
+    </div>
+    <el-aside :class="[isBin ? 'blockClass' : 'flexClass']" :width="isCollapse ? '0px' : '200px'" style="background-color: rgb(238, 241, 246)">
+      <el-menu
+              :collapse="isCollapse"
+              :default-active="defAct"
+              :collapse-transition="false"
+              text-color="black"
+              active-text-color="blue"
+      >
+        <div v-for="item in menuList" :key="item.id">
+          <el-submenu :index="item.id" v-if="item.children && item.children.length>0">
+            <template slot="title">
+              <span>{{item.name}}</span>
+            </template>
+            <el-menu-item
+                    v-for="sub in item.children"
+                    :index="sub.id"
+                    :key="sub.id"
+                    @click="menuHandle(sub,false)"
+            >
+              <span slot="title">{{sub.name}}</span>
+            </el-menu-item
+            >
+          </el-submenu>
+          <el-menu-item v-else :index="item.id" @click="menuHandle(item,false)">
+            <span slot="title">{{item.name}}</span>
+          </el-menu-item>
+        </div>
+      </el-menu>
+    </el-aside>
+    <el-container>
+      <el-header style="text-align: right; font-size: 12px">
+        <!--<img src="img/btn_close@2x.png" style="width: 25px;height: 25px;" class="outLogin" alt="退出" @click="logout" />-->
+        <el-form :inline="true" action="/logout" method="post">
+          <el-form-item>
+            <el-button size="small" type="success" @click="changePassword()">修改密码</el-button>
           </el-form-item>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="reset()">取消</el-button>
-        <el-button type="primary" @click="submit()">确定</el-button>
-      </div>
-    </el-dialog>
-  </div>
+          <el-form-item>
+            <img src="img/btn_close@2x.png" style="width: 30px;height: 30px;" class="outLogin" alt="退出" onclick="submit()" />
+          </el-form-item>
+        </el-form>
+      </el-header>
+      <el-main>
+        <iframe
+                id="cIframe"
+                class="c_iframe"
+                name="cIframe"
+                :src="iframeUrl"
+                width="100%"
+                height="100%"
+                frameborder="0"
+                v-show="!loading"
+        ></iframe>
+      </el-main>
+    </el-container>
+  </el-container>
+  <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
+    <el-form ref="dataAddForm" :model="passwordNation" :rules="rules" label-position="right" label-width="100px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="新密码" prop="Password">
+            <el-input type="password" v-model="passwordNation.Password" placeholder="请输入新密码"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="确认新密码" prop="PasswordConfirm">
+            <el-input type="password" v-model="passwordNation.PasswordConfirm" placeholder="请再次输入新密码"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="邮箱">
+            <el-input v-model="email" placeholder="邮箱"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <!--          <input id="validateCodeButton" @click="send()" type="button" value="获取验证码" style="font-size: 14px"/>-->
+          <el-button id="validateCodeButton" @click="send()" >
+            {{value}}
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-form-item label="验证码">
+          <el-input v-model="passwordNation.validCode" placeholder="验证码"/>
+        </el-form-item>
+      </el-row>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="reset()">取消</el-button>
+      <el-button type="primary" @click="submit()">确定</el-button>
+    </div>
+  </el-dialog>
+</div>
 
 </div>
 </body>
 <script>
+  let clock = '获取验证码';
+  let nums = 30;
+  let validateCodeButton;
   new Vue({
     el: '#app',
     data: function() {
       return {
+        value:'获取验证码',
+        clock:'',
+        nums:30,
         isCollapse: false,
         dialogFormVisible: false,
         isBin: true,
@@ -206,21 +214,64 @@
       changePassword(){
         this.dialogFormVisible=true;
       },
+      doLoop() {
+        validateCodeButton.disabled = true;
+        nums--;
+        if (nums > 0) {
+          this.value = nums + '秒后重新获取';
+        } else {
+          clearInterval(clock);
+          validateCodeButton.disabled = false;
+          this.value = '获取验证码';
+          nums = 30;
+        }
+      },
       send(){
         let email = this.email;
-        if(email !== ''||email !== null){
-          axios.get("/login/emailCode/"+ email +"").then((response)=>{
-
-          })
+        let pattern = /^([a-zA-Z\d][\w-]{2,})@(\w{2,})\.([a-z]{2,})(\.[a-z]{2,})?$/;
+        if(email !== ''|| email !== null){
+          if(pattern.test(email)){
+            validateCodeButton = $("#validateCodeButton")[0];
+            clock = window.setInterval(this.doLoop, 1000);
+            axios.get("/login/emailCode/"+ email +"").then((response)=>{
+              if(response.data.flag){
+                this.$message.success("验证码已发送")
+              } else {
+                this.$message.error("验证码发送失败 请重试！")
+              }
+            })
+          } else {
+            this.$message.error("邮箱格式有误！")
+          }
+        } else {
+          this.$message.error("邮箱为空！")
         }
       },
       reset(){
-
+        this.passwordNation ={};
+        this.email ='';
+        this.dialogFormVisible=false;
       },
       submit(){
-        axios.post("/login/changePassword", '').then((response)=>{
+        if(this.passwordNation.Password === this.passwordNation.PasswordConfirm){
+          let param = {
+            password:window.btoa(this.passwordNation.Password),
+            checkCode:this.passwordNation.validCode,
+          }
+          axios.post("/login/changePassword", param).then((response)=>{
+            if(response.data.flag){
+              this.$message.success("密码修改成功")
+            } else {
+              this.$message.error("密码修改失败")
+            }
+          }).finally(()=>{
+            this.reset()
+            this.dialogFormVisible=false;
+          })
+        } else {
+          this.$message.error("两次输入密码不一致！")
+        }
 
-        })
       }
     }
   })
