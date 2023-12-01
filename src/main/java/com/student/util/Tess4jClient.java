@@ -9,12 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
 @Getter
 @Setter
 @Component
@@ -37,20 +31,6 @@ public class Tess4jClient {
         //替换回车和tal键  使结果为一行
         result = result.replaceAll("\\r|\\n", "-").replaceAll(" ", "");
         return result;
-    }
-
-    public static void main(String[] args) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String net = "";
-        URL url = new URL(net);
-        URLConnection urlConnection = url.openConnection();
-        InputStreamReader isr = new InputStreamReader(urlConnection.getInputStream());
-        int ch;
-        while((ch = isr.read()) != -1){
-            sb.append((char) ch);
-        }
-        isr.close();
-        System.out.println(sb.toString());
     }
 
 }
