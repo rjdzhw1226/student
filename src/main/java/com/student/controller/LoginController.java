@@ -152,8 +152,11 @@ public class LoginController {
     }
 
     @GetMapping("/emailCode/{email}")
-    public void email(@PathVariable("email") String email) {
+    public Map<String,Object> email(@PathVariable("email") String email) {
+        Map<String,Object> map = new HashMap<>();
         loginService.sendEmail(email);
+        map.put("flag",true);
+        return map;
     }
 
     @RequestMapping("/changePassword")

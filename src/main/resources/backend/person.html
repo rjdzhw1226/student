@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<!--  <link rel="stylesheet" href="../backend/plugins/element-ui/index.css">-->
+<!--  <script src="../backend/plugins/vue/vue.js"></script>-->
+<!--  <script src="../backend/plugins/element-ui/index.js"></script>-->
+      <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="../backend/plugins/axios/axios.min.js"></script>
+  <title>个人简历</title>
+  <style>
+    .el-avatar {
+      display: inline-block;
+      box-sizing: border-box;
+      text-align: center;
+      color: #fff;
+      background: #C0C4CC;
+      width: 50px;
+      height: 50px;
+      line-height: 40px;
+      font-size: 14px;
+    }
+
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+    }
+    #app {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 50px;
+    }
+
+    .el-icon-close:before {
+      display: none;
+    }
+    .el-select {
+      width: auto;
+    }
+
+    .block{
+      width: auto;
+      display: block;
+      margin:5px 0;
+    }
+    label {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <el-descriptions class="margin-top" title="个人简历" :column="3" border>
+    <template slot="extra">
+      <el-button type="primary" size="small" @click="outer">添加</el-button>
+      <el-button type="primary" size="small" @click="download">获取pdf文件</el-button>
+    </template>
+    <el-descriptions-item>
+      <template slot="label">
+        <i class="el-icon-user"></i>
+        头像
+      </template>
+      <el-avatar :src="imageUrl"></el-avatar>
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        <i class="el-icon-user"></i>
+        姓名
+      </template>
+      {{ruleForm.name}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        <i class="el-icon-mobile-phone"></i>
+        手机号
+      </template>
+      {{ruleForm.phone}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        <i class="el-icon-location-outline"></i>
+        性别
+      </template>
+      {{ruleForm.gender}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        <i class="el-icon-tickets"></i>
+        年龄
+      </template>
+      {{ruleForm.age}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template slot="label">
+        <i class="el-icon-office-building"></i>
+        学号
+      </template>
+      {{ruleForm.number}}
+    </el-descriptions-item>
+    <el-descriptions-item :contentStyle="{'word-wrap':'break-word'}" :span="3">
+      <template slot="label">
+        <i class="el-icon-ice-tea"></i>
+        自我介绍
+      </template>
+      {{ruleForm.self}}
+    </el-descriptions-item>
+    <el-descriptions-item :span="3">
+      <template slot="label">
+        <i class="el-icon-edit-outline"></i>
+        个人能力
+      </template>
+      {{ruleForm.ability}}
+    </el-descriptions-item>
+  </el-descriptions>
+
+  <el-dialog title="填充表格" :visible.sync="outerVisible">
+    <el-card>
+      <el-form>
+        <el-row type="flex" justify="start">
+          <el-form-item>
+            <div class="block">
+              <label>头像:</label>
+              <el-upload
+                      class="avatar-uploader"
+                      action="/card/fileUpload"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                <el-avatar v-if="imageUrl" :src="imageUrl"></el-avatar>
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-row>
+        <el-row type="flex" justify="start">
+          <el-col :span="12">
+            <el-form-item>
+              <div class="block">
+                <label>姓名:</label>
+                <el-input v-model="ruleForm.name"></el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item>
+              <div class="block">
+                <label>性别：</label>
+                <el-select v-model="ruleForm.gender" style="">
+                  <el-option label="男" value="男"></el-option>
+                  <el-option label="女" value="女"></el-option>
+                </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="start">
+          <el-col :span="12">
+            <el-form-item>
+              <div class="block">
+                <label>学号:</label>
+                <el-input v-model="ruleForm.number"></el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item>
+              <div class="block">
+                <label>手机号:</label>
+                <el-input v-model="ruleForm.phone"></el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="start">
+          <el-col :span="12">
+            <el-form-item>
+              <div class="block">
+                <label>年龄:</label>
+                <el-input v-model="ruleForm.age"></el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item>
+              <div class="block">
+                <label>班级:</label>
+                <el-input v-model="ruleForm.grade"></el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="start">
+          <el-col :span="24">
+            <el-form-item>
+              <div class="block">
+                <label>自我介绍:</label>
+                <el-input
+                        type="textarea"
+                        :rows="2"
+                        v-model="ruleForm.self">
+                </el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="start">
+          <el-col :span="24">
+            <el-form-item>
+              <div class="block">
+                <label>个人能力:</label>
+                <el-input
+                        type="textarea"
+                        :rows="2"
+                        v-model="ruleForm.ability">
+                </el-input>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item style="text-align: center">
+            <el-button @click="reset()">取消</el-button>
+            <el-button @click="confirm()">确定</el-button>
+          </el-form-item>
+        </el-row>
+      </el-form>
+    </el-card>
+  </el-dialog>
+
+</div>
+</body>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      ruleForm: {},
+      imageUrl: '',
+      avatar_imageUrl: '',
+      outerVisible:false,
+
+    },
+    created() {
+
+    },
+    methods: {
+      beforeAvatarUpload(file){
+
+      },
+      handleAvatarSuccess(res, file){
+        this.imageUrl = res.path;
+        this.avatar_imageUrl = res.fileName;
+      },
+      outer(){
+        this.outerVisible = true;
+      },
+      reset(){
+        this.outerVisible = false;
+        this.ruleForm = {}
+      },
+      confirm(){
+        this.outerVisible = false;
+      },
+      download(){
+        let params = {
+          number: this.ruleForm.number,
+          name: this.ruleForm.name,
+          grade: this.ruleForm.grade,
+          phone: this.ruleForm.phone,
+          age: this.ruleForm.age,
+          gender: this.ruleForm.gender,
+          self: this.ruleForm.self,
+          ability: this.ruleForm.ability,
+          avatar_img: this.avatar_imageUrl,
+          life1_img: '1.jpg'
+        }
+        // let jsonText = JSON.stringify(params);
+        // console.log(jsonText);
+        axios.post("/card/printPDF/", params, {responseType:'blob'}).then((response)=>{
+          let blob = new Blob([response.data]);
+          //let url = window.URL.createObjectURL(blob);
+          let filename = "个人简历.pdf"
+          const f = document.createElement('a');
+          f.download = filename;
+          f.style.display = 'none';
+          f.href = URL.createObjectURL(blob);
+          document.body.appendChild(f);
+          f.click();
+          URL.revokeObjectURL(f.href); // 释放URL 对象
+          document.body.removeChild(f);
+        })
+
+      }
+    }
+  })
+</script>
+</html>

@@ -26,6 +26,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         //可以不做映射 静态文件放resource下的static文件夹 动态文件放template文件夹
         log.info("项目静态资源映射启动！");
         registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");
+        registry.addResourceHandler("/product/**").addResourceLocations("file:/usr/local/file/student/");
         //registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
     }
 

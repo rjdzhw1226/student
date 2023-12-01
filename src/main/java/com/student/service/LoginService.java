@@ -5,6 +5,7 @@ import com.student.mapper.LoginMapper;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
+import com.student.util.Mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,7 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -38,12 +41,6 @@ public class LoginService {
      */
     @Autowired
     private LoginMapper mapper;
-
-    /**
-     * <h3>邮件发送</h3>
-     */
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -110,14 +107,17 @@ public class LoginService {
 
     public void sendEmail(String email) {
         userLogin user = getUserLogin();
-        SimpleMailMessage message = new SimpleMailMessage();
         int intFlag = (int)(Math.random() * 100000000);
         stringRedisTemplate.opsForValue().set(RedisKey.CODE_KEY + user.getUsername(),String.valueOf(intFlag),5, TimeUnit.MINUTES);
-        message.setTo(email);
-        message.setText("验证码是：" + intFlag);
-        message.setSentDate(new Date());
-        //发送
-        mailSender.send(message);
+        Mail mail = new Mail(email);
+        try {
+            //发送
+            mail.ClientTestA(intFlag);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
     public boolean change(String pass, String checkCode) {
         userLogin user = getUserLogin();
