@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <title>地图测试文件</title>
+  <style type="text/css">
+    #container {
+      width: 300px;
+      height: 180px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="container"></div>
+<button type="button" onclick="btn()">点我获取经纬度</button>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=72b6fec36a8632a9ed173ff2e8f6ef73"></script>
+<script type="text/javascript">
+  var map = new AMap.Map('container');
+
+  function getLocation() {
+    return new Promise((resolve, reject) => {
+      AMap.plugin('AMap.Geolocation', function() {
+        var geolocation = new AMap.Geolocation({
+          // 是否使用高精度定位，默认：true
+          enableHighAccuracy: true,
+          // 设置定位超时时间，默认：无穷大
+          timeout: 10000,
+          // 定位按钮的停靠位置的偏移量，默认：Pixel(10, 20)
+          buttonOffset: new AMap.Pixel(10, 20),
+          //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+          zoomToAccuracy: true,
+          //  定位按钮的排放位置,  RB表示右下
+          buttonPosition: 'RB'
+        })
+
+        geolocation.getCurrentPosition()
+        AMap.event.addListener(geolocation, 'complete', onComplete)
+        AMap.event.addListener(geolocation, 'error', onError)
+        function onComplete(data) {
+          resolve(data)
+        }
+        function onError(data) {
+          console.log(data)
+          reject(data)
+        }
+      })
+    })
+  }
+  //点击事件es5语法
+  function btn() {
+    getLocation().then(res => {
+      console.log(res)
+    })
+  }
+</script>
+</body>
+</html>
+
