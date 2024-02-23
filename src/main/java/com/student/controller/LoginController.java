@@ -6,6 +6,7 @@ import com.student.config.SpringBeanUtils;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
+import com.student.pojo.vo.User;
 import com.student.service.LoginService;
 import com.student.util.BaseContext;
 import com.student.util.CheckCodeUtil;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,13 +104,43 @@ public class LoginController {
 
     @RequestMapping("/getUserName")
     @Log(title="用户名模块",action="getUserName",params = true)
-    public String getUserName(HttpServletRequest req){
+    public String getUserName(){
         //userDto user = (userDto) req.getSession().getAttribute("user");
-        log.info("getUserName:{}",BaseContext.getCurrentId());
-        String userName = BaseContext.getCurrentId();
-        return userName;
+        //log.info("getUserName:{}",BaseContext.getCurrentId());
+        return getString();
     }
 
+    @RequestMapping("/getUserId")
+    @Log(title="用户ID模块",action="getUserId",params = true)
+    public String getUserId(){
+        String userName = getString();
+        user u = loginService.queryUser(userName);
+        log.info("getUserId:{}",u.getId());
+        return u.getId().toString();
+    }
+
+    @RequestMapping("/getImage")
+    @ResponseBody
+    @Log(title="用户模块",action="getImage",params = true)
+    public User getImage(){
+        String userName = getString();
+        user u = loginService.queryUser(userName);
+        log.info("getUserId:{}",u.getId());
+        return new User(u.getId().toString(),u.getUsername(),u.getImage());
+    }
+
+    private static String getString() {
+        String userName;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            userName = ((UserDetails) principal).getUsername();
+            log.info("getUserName:{}",userName);
+        } else {
+            userName = principal.toString();
+            log.info("getUserName:{}",userName);
+        }
+        return userName;
+    }
     @RequestMapping("/checkCode")
     @Log(title="验证码模块",action="checkCode",params = true)
     public void getCheckCode(HttpServletRequest req, HttpServletResponse res){

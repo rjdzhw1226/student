@@ -25,6 +25,7 @@ import com.student.service.fileService;
 import com.student.util.CommonUtil;
 import com.student.util.Tess4jClient;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -217,6 +218,16 @@ public class CardController {
         return (Map<String, String>) JSON.parseObject(JSON.toJSONString(str), Map.class);
     }
 
+    @RequestMapping("/getData")
+    @ResponseBody
+    public Map<String, Object> getData(){
+        JSONArray java = classService.mainJava(loadPath);
+        Map<String, Object> map = new HashMap<>();
+        map.put("flag", true);
+        map.put("data", java);
+        return map;
+    }
+
 
     /**
      * 删除文件
@@ -233,6 +244,8 @@ public class CardController {
             e.printStackTrace();
         }
     }
+
+
 
     public static final File replaceTextFieldPdf(String templatePdfPath, String destPdfPath,
                                                  Map<String, String> params) {

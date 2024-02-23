@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="plugins/element-ui/index.css">
+    <link rel="stylesheet/less" href="css/chat.less">
+    <script type="text/javascript" src='plugins/js/less.min.js'></script>
+    <script src="plugins/vue/vue.js"></script>
+<!--    <script src="plugins/vue/vuex.js"></script>-->
+<!--    <script src="plugins/js/require.js"></script>-->
+    <script src="plugins/element-ui/index.js"></script>
+    <script src="plugins/axios/axios.min.js"></script>
+    <script src="plugins/jquery.min.js"></script>
+    <link href="img/favicon.ico" rel="shortcut icon">
+    <title>聊天</title>
+</head>
+<body>
+<div id="app">
+    <div class="wechat-container">
+        <input type='file' id='filebutton' ref="fileInt" style='display:none' @change="fileSelected">
+        <div class="chatwapper">
+            <div class="left-tab">
+                <img class="current-user-headImg" :src="'./assets/' + user.image">
+<!--                <div class="current-user-headImg"></div>-->
+                <div class="chat-list" :class="{'chatActive': tabActive}" @click="changeToChat"></div>
+                <div class="friend-list" :class="{'friendActive': !tabActive}" @click="changeFirend"></div>
+            </div>
+            <div class="center-friend">
+                <!-- 聊天列表 -->
+                <div class="immediate-chat-container" v-show="tabActive">
+                    <div style="position: relative;top: -30px;">当前聊天列表</div>
+                    <div class="chatObj-item" v-for="(item, index) in currentChatingList" :key="index"
+                         :class="{'selectActive': chatCurrentIndex==index}"
+                         @click="changeChatObject(item, index)"
+                         @contextmenu.prevent="openMenu($event,item)">
+                      <img class="friend-img" :src="'./assets/' + item.image">
+                        <div class="column-container">
+                            <div class="chatObj-userName">{{item.showName}}</div>
+                            <div class="chat-new-message" :title="item.messageTip">{{item.messageTip}}</div>
+                            <div class="chatObj-unReadCount"
+                                 :class="{'visibility': item.unReadCount > 0 && item.userId != chatCurrentObject.userId}">
+                                {{item.unReadCount}}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 鼠标右键弹出操作框 -->
+                    <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+                        <li v-if="rightHandItem.isTop == false" @click="topChat">置顶聊天</li>
+                        <li v-else-if="rightHandItem.isTop == true" @click="unTopChat">取消置顶</li>
+                        <li>上移</li>
+                        <li>下移</li>
+                        <li @click="deleteOnline">删除聊天</li>
+                    </ul>
+                    <!-- 鼠标右键弹出操作框 -->
+                </div>
+                <!-- 好友列表 -->
+                <div class="my-friendlist-container" v-show="!tabActive">
+                    <div class="createGroup" @click="openGroupSelect">+</div>
+                    <div class="friend-item" v-for="(item, index) in friendList" :key="index"
+                         :class="{'selectActive': currentSort==index}"
+                         @click="clickUserInfo(item, index)">
+                        <img class="friend-img" :src="'./assets/' + item.image">
+                        <div class="friend-userName">{{item.showName}}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- textarea输入框区域 -->
+            <div class="right-input" v-show="inputMessageActive&&!userInfoActive">
+                <div class="top-information">
+                    <div class="chatObjName">{{chatCurrentObject.showName}}</div>
+                </div>
+                <div id="overflowMessage" class="message-content-container">
+                    <div class="message-item" v-for="(item, index) in chatMessageList" :key="index">
+                        <div class="senderImg" :class="[margintype(item.type) ? 'leftMargin-class' : 'rightMargin-class']"></div>
+                        <div v-if="item.fileType==0" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']"
+                             :style="{'float': typeFloat(item.type)}" v-html="renderMessage(item.message)"></div>
+                        <div v-else-if="item.fileType==1" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']"
+                             :style="{'float': typeFloat(item.type)}" style="display:flex">
+                            <div class="FileInformation">
+                                <div class="fileName">{{item.message}}</div>
+                                <div class="download" @click="fileDownload(item.fileName)">下载</div>
+                            </div>
+                            <div class="iconFile" :class="fileClass(item.fileName)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="self-input">
+                    <div class="expression-container" v-show="expressionActive">
+                        <div class="expressionItem" v-for="(item, index) in expresionData" :key="index"
+                             :title="item.title" @click="selectExpression(item.title, item.name)">
+                            <img class="imgClass" :src="'assets/'+item.name">
+                        </div>
+                    </div>
+                    <div class="emojiClass" @click="emojiClick"></div>
+                    <div class="uploadClass" @click="uploadClick"></div>
+                    <div class="sendMessageButton" @click="sendMessage">发送</div>
+                    <textarea v-model="message" class="chat-input-textarea" @keydown="chatInput($event)"></textarea>
+                </div>
+            </div>
+            <div class="right-input-nodata" v-show="!inputMessageActive&&!userInfoActive">
+
+            </div>
+            <!-- textarea输入框区域 -->
+            <div class="right-userinfo" v-if="userInfoActive">
+                <div>{{selectFriendInfo.showName}}</div>
+                <div class="select-firend-headImg">
+            </div>
+            <div class="extra-info">
+                <div class="friend-property">备注：</div>
+                <div class="friend-property">地区：</div>
+                <div class="friend-property">微信号：</div>
+            </div>
+            <div class="sendToSomeBodyMessage" @click="createMessageFrame">发消息</div>
+        </div>
+    </div>
+    <div class="selector-container" v-show="isShowSelector">
+        <div class="left-container">
+            <input class="searchInput" type="input" placeholder="搜索(暂不提供)" />
+            <div
+                    class="friend-item"
+                    v-for="(item, index) in friendList"
+                    :key="index"
+                    :class="{ selectActive: currentSort == index }"
+                    @click="clickUserInfo(item, index)"
+            >
+                <img class="friend-img" :src="'./assets/' + item.image">
+                <div class="friend-userName">{{item.showName}}</div>
+                <div class="checkbox-container"><input class="tui-checkbox" type="checkbox" v-model="item.selected" @change="selectChange"></div>
+            </div>
+        </div>
+        <div class="right-container">
+            <div class="close" @click="close">✖</div>
+            <div v-if = "SelectedFriendList.length == 0" class="top-information">请勾选需要添加的联系人</div>
+            <div v-else class="top-information">已选择了{{SelectedFriendList.length}}个联系人</div>
+            <div
+                    class="friend-item"
+                    v-for="(item, index) in SelectedFriendList" :key="index"
+                    @click="clickUserInfo(item, index)">
+              <img class="friend-img" :src="'./assets/' + item.image">
+                <div class="friend-userName">{{item.showName}}</div>
+                <div class="unselect" @click="unSelected(item)">✖</div>
+            </div>
+
+            <div class="footer-button">
+                <div class="none-makesure" v-if="SelectedFriendList.length == 0">确定</div>
+                <div v-else class="makesure" @click="makesure">确定</div>
+                <div class="cancel" @click="cancel">取消</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+<script>
+    let urlParams = null;
+    new Vue({
+        el: '#app',
+        data: {
+            user:{},
+            tabActive: true,
+            socket: null,
+            userInfoActive: false,
+            currentSort: null,
+            friendList: [],
+            selectFriendInfo: null,
+            message: "",
+            currentChatingList: [],
+            chatCurrentIndex: null,
+            chatCurrentObject: {},
+            chatMessageList: [],
+            cacheUserInfo: null,
+            messageContentMapping: {},
+            inputMessageActive: false,
+            isShowSelector: false,
+            selectIndex: 1,
+            Messagetype: 1,
+            expressionActive: false,
+            uuid: null,
+            visible: false,
+            top: 0,
+            left: 0,
+            rightHandItem: {},
+            currentSort: null,
+            SelectedFriendList: [],
+            token: "",
+            expresionData: [
+                {title: "[爱你]", name: "2018new_aini_org.png"},
+                {title: "[拜拜]", name: "2018new_baibai_org.png"},
+                {title: "[抱抱]", name: "2018new_baobao_org.png"},
+                {title: "[悲伤]", name: "2018new_beishang_org.png"},
+                {title: "[并不简单]", name: "2018new_bingbujiandan_org.png"},
+                {title: "[鄙视]", name: "2018new_bishi_org.png"},
+                {title: "[闭嘴]", name: "2018new_bizui_org.png"},
+                {title: "[馋嘴]", name: "2018new_chanzui_org.png"},
+                {title: "[吃瓜]", name: "2018new_chigua_org.png"},
+                {title: "[吃惊]", name: "2018new_chijing_org.png"},
+                {title: "[憧憬]", name: "2018new_chongjing_org.png"},
+                {title: "[打哈欠]", name: "2018new_dahaqian_org.png"},
+                {title: "[打脸]", name: "2018new_dalian_org.png"},
+                {title: "[顶]", name: "2018new_ding_org.png"},
+                {title: "[doge]", name: "2018new_doge02_org.png"},
+                {title: "[二哈]", name: "2018new_erha_org.png"},
+                {title: "[跪]", name: "2018new_gui_org.png"},
+                {title: "[鼓掌]", name: "2018new_guzhang_org.png"},
+                {title: "[哈哈]", name: "2018new_haha_org.png"},
+                {title: "[害羞]", name: "2018new_haixiu_org.png"},
+                {title: "[汗]", name: "2018new_han_org.png"},
+                {title: "[黑线]", name: "2018new_heixian_org.png"},
+                {title: "[哼]", name: "2018new_heng_org.png"},
+                {title: "[坏笑]", name: "2018new_huaixiao_org.png"},
+                {title: "[花心]", name: "2018new_huaxin_org.png"},
+                {title: "[互粉]", name: "2018new_hufen02_org.png"},
+                {title: "[挤眼]", name: "2018new_jiyan_org.png"},
+                {title: "[可爱]", name: "2018new_keai_org.png"},
+                {title: "[可怜]", name: "2018new_kelian_org.png"},
+                {title: "[口罩]", name: "2018new_kouzhao_org.png"},
+                {title: "[酷]", name: "2018new_ku_org.png"},
+                {title: "[困]", name: "2018new_kun_org.png"},
+                {title: "[苦笑]", name: "2018new_kuxiao_org.png"},
+                {title: "[懒得理你]", name: "2018new_landelini_org.png"},
+                {title: "[泪目]", name: "2018new_leimu_org.png"},
+                {title: "[猫猫]", name: "2018new_miaomiao_org.png"},
+                {title: "[疑问]", name: "2018new_ningwen_org.png"},
+                {title: "[怒]", name: "2018new_nu_org.png"},
+                {title: "[钱]", name: "2018new_qian_org.png"},
+                {title: "[亲亲]", name: "2018new_qinqin_org.png"},
+                {title: "[傻眼]", name: "2018new_shayan_org.png"},
+                {title: "[生病]", name: "2018new_shengbing_org.png"},
+                {title: "[失望]", name: "2018new_shiwang_org.png"},
+                {title: "[衰]", name: "2018new_shuai_org.png"},
+                {title: "[睡觉]", name: "2018new_shuijiao_thumb.png"},
+                {title: "[思考]", name: "2018new_sikao_org.png"},
+                {title: "[太开心]", name: "2018new_taikaixin_org.png"},
+                {title: "[摊手]", name: "2018new_tanshou_org.png"},
+                {title: "[舔屏]", name: "2018new_tianping_org.png"},
+                {title: "[偷笑]", name: "2018new_touxiao_org.png"},
+                {title: "[吐]", name: "2018new_tu_org.png"},
+                {title: "[挖鼻]", name: "2018new_wabi_thumb.png"},
+                {title: "[委屈]", name: "2018new_weiqu_org.png"},
+                {title: "[微笑]", name: "2018new_weixioa02_org.png"},
+                {title: "[问号]", name: "2018new_wenhao_org.png"},
+                {title: "[污]", name: "2018new_wu_org.png"},
+                {title: "[鲜花]", name: "2018new_xianhua_org.png"},
+                {title: "[笑而不语]", name: "2018new_xiaoerbuyu_org.png"},
+                {title: "[笑哭]", name: "2018new_xiaoku_thumb.png"},
+                {title: "[心]", name: "2018new_xin_thumb.png"},
+                {title: "[嘻嘻]", name: "2018new_xixi_org.png"},
+                {title: "[嘘]", name: "2018new_xu_org.png"},
+                {title: "[淫笑]", name: "2018new_yinxian_org.png"},
+                {title: "[右哼哼]", name: "2018new_youhengheng_org.png"},
+                {title: "[晕]", name: "2018new_yun_org.png"},
+                {title: "[中国赞]", name: "2018new_zhongguozan_org.png"},
+                {title: "[咒骂]", name: "2018new_zhouma_org.png"},
+                {title: "[抓狂]", name: "2018new_zhuakuang_org.png"},
+                {title: "[左哼哼]", name: "2018new_zuohengheng_org.png"},
+                {title: "[作揖]", name: "2018new_zuoyi_org.png"},
+                {title: "[裂开]", name: "202011_liekai_org.png"},
+                {title: "[花木兰]", name: "dianying_huamulan_org.png"},
+                {title: "[我酸了]", name: "hot_wosuanle_org.png"},
+                {title: "[啊我死了]", name: "moren_awsl02_org.png"},
+                {title: "[打call]", name: "moren_dacall02_org.png"},
+                {title: "[求饶]", name: "moren_qiurao02_org.png"},
+                {title: "[小心心]", name: "qixi2018_xiaoxinxin_org.png"},
+                {title: "[雪花]", name: "yunying2020_snowflakes_org.png"},
+            ]
+        },
+        created() {
+            //'http://localhost:40000/#/wechat?urlParams={"userId"%3A"04150901"}'
+          let query_string = {};
+          let query = window.location.search.substring(1);
+          console.log("query" + query);
+          let vars = query.split("&");
+          for (let i=0;i<vars.length;i++) {
+            let pair = vars[i].split("=");
+            query_string[pair[0]] = pair[1];
+          }
+          urlParams = query_string["urlParams"];
+          let urlParamsJSON = {
+            "userId" : urlParams
+          };
+          localStorage.setItem("access_token_"+this.userId, this.userId + "token")
+          this.cacheUserInfo = JSON.parse(JSON.stringify(urlParamsJSON));
+          this.token = localStorage.getItem("access_token_"+urlParams);
+
+          axios.get("/login/getImage").then((response)=>{
+            this.user = response.data;
+          });
+        },
+        mounted(){
+            let self = this;
+            window.addEventListener('beforeunload', e => self.beforeunloadHandler(e))
+            window.addEventListener('unload', e => self.unloadHandler(e))
+            $("body").click(function (e) {
+                if (!$(e.target).closest(".self-input").length) {
+                    self.expressionActive = false;
+                }
+            });
+            self.getSocket();
+            // 心跳请求
+            clearInterval(self.uuid);
+            self.uuid = setInterval(function() {
+                if (self.socket.readyState == WebSocket.OPEN) {
+                    let data = {
+                        type: 11,
+                        params: {},
+                    }
+                    self.socket.send(JSON.stringify(data));
+                } else {
+                    self.$message({
+                        message: 'Websocket连接没有开启！',
+                        type: 'warning'
+                    });
+                }
+            }, 1000 * 25)
+        },
+        destroyed() {
+          window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
+          window.removeEventListener('unload', e => this.unloadHandler(e))
+        },
+        watch: {
+            friendData: {
+                deep: true,
+                handler(newObj, oldObj) {
+                }
+            },
+            chatMessageList:{
+                handler(newName, oldName) {
+                    this.$nextTick(() => {
+                        setTimeout(function() {
+                            let message = document.getElementById('overflowMessage');
+                            let scrollVal = message.scrollHeight;
+                            $("#overflowMessage").scrollTop(scrollVal);
+                        }, 10)
+                    })
+                },
+                deep: true
+            },
+            visible(value) {
+                if (value) {
+                    //给页面body添加点击事件  无论点了那里都会触发
+                    document.body.addEventListener('click', this.closeMenu)
+                } else {
+                    document.body.removeEventListener('click', this.closeMenu)
+                }
+            },
+        },
+        methods: {
+            selectExpression: function(title, name) {
+                let params = {
+                    title: title,
+                    name: name
+                }
+                this.seleceExpress(params);
+            },
+            makesure: function() {
+                this.createChat(this.SelectedFriendList);
+            },
+            cancel: function() {
+                this.isShowSelector= false;
+            },
+            unSelected: function(val) {
+                for (let i = 0; i < this.friendData.length; i++) {
+                    if (this.friendData[i].userId == val.userId) {
+                        this.friendData[i].selected = false;
+                        this.$set(this.friendData, i, this.friendData[i])
+                    }
+                }
+                this.SelectedFriendList.splice(this.SelectedFriendList.findIndex(e => e.userId === val.userId), 1)
+            },
+            selectChange: function() {
+                this.SelectedFriendList = this.friendData.filter(function(item){
+                    return item.selected == true;
+                })
+            },
+            close: function () {
+                this.isShowSelector= false;
+            },
+            clickUserInfo: function(val, index) {
+                let self = this;
+                self.currentSort = index;
+            },
+            //聊天排序公用
+            charSortCommon: function(flag) {
+                let sortFunction = function(a, b) {
+                    return a.sortIndex - b.sortIndex;
+                }
+                let sortFunctionDesc = function(a, b) {
+                    return b.sortIndex - a.sortIndex;
+                }
+                this.currentChatingList = this.currentChatingList.sort(flag ? sortFunction : sortFunctionDesc);
+            },
+            //取消置顶聊天
+            unTopChat: function() {
+                let self = this;
+                let offset = 0;
+                for (let i = 0; i < self.currentChatingList.length; i++) {
+                    if (self.rightHandItem.userId == self.currentChatingList[i].userId) {
+                        self.currentChatingList[i].sortIndex = self.currentChatingList[i].oldIndex;
+                        self.currentChatingList[i].isTop = false;
+                        offset = i;
+                    }
+                }
+                if (offset > self.chatCurrentIndex) {
+                    self.chatCurrentIndex++;
+                } else if (offset == self.chatCurrentIndex) {
+                    self.chatCurrentIndex = 0
+                } else {
+                    self.chatCurrentIndex--;
+                }
+                self.charSortCommon(false);
+            },
+            //置顶聊天
+            topChat: function() {
+                let self = this;
+                let offset = 0;
+                for (let i = 0; i < self.currentChatingList.length; i++) {
+                    if (self.rightHandItem.userId == self.currentChatingList[i].userId) {
+                        self.currentChatingList[i].sortIndex = -1;
+                        self.currentChatingList[i].isTop = true;
+                        offset = i;
+                    }
+                }
+                if (offset > self.chatCurrentIndex) {
+                    self.chatCurrentIndex++;
+                } else if (offset == self.chatCurrentIndex) {
+                    self.chatCurrentIndex = 0
+                }
+                self.charSortCommon(true);
+            },
+            //右键选择删除聊天
+            deleteOnline: function() {
+                let self = this;
+                self.currentChatingList.some(function(item, i) {
+                    if (self.rightHandItem.userId = item.userId) {
+                        self.currentChatingList.splice(i, 1);
+                        self.chatCurrentIndex--;
+                        self.$delete(self.messageContentMapping, self.rightHandItem.userId)
+                        return true;
+                    }
+                })
+                if (self.rightHandItem.userId == self.chatCurrentObject.userId) {
+                    self.userInfoActive = false;
+                    self.inputMessageActive = false;
+                    self.chatCurrentIndex = null;
+                    self.chatCurrentObject = {};
+                }
+            },
+            fileClass: function(fileName) {
+                let suffix = fileName.split(".")[1];
+                let className = "";
+                switch(suffix) {
+                    case "txt":
+                        className = "icon-txt";
+                        break;
+                    case "word":
+                        className = "icon-word";
+                        break;
+                    case "xlsx":
+                        className = "icon-excel";
+                        break;
+                    case "pdf":
+                        className = "icon-pdf";
+                        break;
+                    case "pptx":
+                        className = "icon-ppt";
+                        break;
+                    default:
+                        break;
+                }
+                this.$nextTick(function(){
+                    let messageItemDom = $(".message-item");
+                    for (let j = 0; j < messageItemDom.length; j++) {
+                        let temp = $(messageItemDom[j]);
+                        let childrenHeight = temp.children(".messageInfo").height() + 30;
+                        temp.css("height", childrenHeight + 'px');
+                    }
+                })
+                return className;
+            },
+            closeMenu: function() {
+                this.visible = false;
+            },
+            // 右键弹出选择框 根据event对象拿到X Y 坐标
+            openMenu: function(e, item) {
+                this.rightHandItem = item; //右键显示哪个聊天item
+                this.top = e.pageY;
+                this.left = e.pageX;
+                this.visible = true;
+            },
+            // v-html渲染方法
+            renderMessage: function(message) {
+                message = String(message);
+                let lookData = this.expresionData;
+                let url = '';
+                let template = '';
+                for (let i = 0; i < lookData.length; i++) {
+                    if (message.indexOf(lookData[i].title) > -1) {
+                        url = './assets/' + lookData[i].name;
+                        template = '<img class="messageImg" src='+url+'>';
+                        message = message.replace(lookData[i].title, template);
+                    }
+                }
+                this.$nextTick(function(){
+                    let messageItemDom = $(".message-item");
+                    for (let j = 0; j < messageItemDom.length; j++) {
+                        let temp = $(messageItemDom[j]);
+                        let childrenHeight = temp.children(".messageInfo").height() + 30;
+                        temp.css("height", childrenHeight + 'px');
+                    }
+                })
+                return message;
+            },
+            //表情选择后
+            seleceExpress: function(val) {
+                this.expressionActive = false;
+                this.message += val.title;
+            },
+            // 弹出表情选择框
+            emojiClick: function() {
+                this.expressionActive = !this.expressionActive;
+            },
+            fileDownload: function(fileName) {
+                let params = {
+                    fileName:  fileName,
+                }
+                axios.post("/wechat/download", params, this.token).then(function(res){
+                    let url = window.URL.createObjectURL(new Blob([res.data]));
+                    let link = document.createElement('a');
+                    link.style.display = 'none';
+                    link.href = url;
+                    //文件名
+                    link.setAttribute('download', res.config.params.fileName);
+                    document.body.appendChild(link);
+                    link.click();
+                }).catch(function(error){
+                    if (error.response.data.error == "invalid_token") {
+                        self.$message({
+                            message: 'token失效请重新登录！',
+                            type: 'warning'
+                        });
+                        window.location.href = "/login.html"
+                    }
+                })
+            },
+            copy(obj) {
+                let newobj = obj.constructor === Array ? [] : {};
+                if(typeof obj !== 'object'){
+                    return;
+                }
+                for(let i in obj){
+                    newobj[i] = typeof obj[i] === 'object' ? this.copy(obj[i]) : obj[i];
+                }
+                return newobj
+            },
+            fileSelected: function() {
+                let self = this;
+                let cacheUserInfo = self.cacheUserInfo;
+                let file = this.$refs.fileInt.files[0];
+                let fd = new FormData();
+                fd.append("file", file);
+                let fileDom = document.getElementById('filebutton');
+                fileDom.value = ''; //file的value值只能设置为空字符串
+                axios.post("/wechat/upload", fd, self.token).then(function(res){
+                    if(res.data.obj) {
+                        let FileResultObj = res.data.obj;
+                        let parmas = {
+                            message: FileResultObj.fileName + "(" + FileResultObj.fileSize +"B)",
+                            fileName: FileResultObj.fileName,
+                            type: self.Messagetype,
+                            image: cacheUserInfo.image,
+                            fileType: 1
+                        }
+                        self.chatMessageList.push(parmas);
+                        self.messageContentMapping[self.chatCurrentObject.userId] = this.copy(self.chatMessageList);
+                        if (self.socket.readyState == WebSocket.OPEN) {
+                            let data = {
+                                type: self.Messagetype,
+                                params: {
+                                    toMessageId: self.chatCurrentObject.userId,
+                                    message: parmas.message,
+                                    fileType: 1,
+                                },
+                            }
+                            self.socket.send(JSON.stringify(data));
+                        } else {
+                            self.$message({
+                                message: 'Websocket连接没有开启！',
+                                type: 'warning'
+                            });
+                        }
+                    }
+                }).catch(function(error){
+                    if (error.response.data.error == "invalid_token") {
+                        self.$message({
+                            message: 'token失效请重新登录！',
+                            type: 'warning'
+                        });
+                        window.location.href = "/login.html"
+                    }
+                })
+            },
+            uploadClick: function() {
+                $("#filebutton").click();
+            },
+            commonCode: function() {
+                let self = this;
+                self.isShowSelector = false; //隐藏弹出选择框
+                self.tabActive = true;
+                self.userInfoActive = false;
+                self.inputMessageActive = true;
+            },
+            // 通过选择框确定创建的聊天  可能是单聊  可能是群聊
+            createChat: function(userList) {
+                let self = this;
+                if (userList.length == 1) {
+                    // 转化为创建单聊
+                    if (self.currentChatingList.length == 0) {
+                        self.chatCurrentIndex = 0;
+                    }
+                    for (let i = 0; i < self.currentChatingList.length; i++) {
+                        if (userList[0].userId == self.currentChatingList[i].userId) {
+                            self.chatCurrentIndex = i;
+                            self.chatCurrentObject = self.currentChatingList[i];
+                            self.chatMessageList = self.messageContentMapping[self.chatCurrentObject.userId] || [];
+                            self.commonCode();
+                            return;
+                        }
+                    }
+                    let createParams = {
+                        messageTip: "",
+                        unReadCount: 0,
+                        sortIndex: self.currentChatingList.length,
+                        oldIndex: self.currentChatingList.length,
+                        isTop: false,
+                    };
+                    $.extend(createParams, userList[0]);
+                    self.chatCurrentObject = createParams;
+                    // 给列表添加到头部
+                    self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
+                    self.chatMessageList = self.messageContentMapping[createParams.userId] || [];
+                    self.commonCode();
+                    return;
+                }
+                let userIdList = [];
+                for (let i = 0; i < userList.length; i++) {
+                    userIdList.push(userList[i].userId);
+                }
+                if (self.socket.readyState == WebSocket.OPEN) {
+                    let data = {
+                        type: 3,
+                        params: {
+                            userIdList: userIdList.toString(),
+                        },
+                    }
+                    self.socket.send(JSON.stringify(data));
+                } else {
+                    self.$message({
+                        message: 'Websocket连接没有开启！',
+                        type: 'warning'
+                    });
+                }
+            },
+            // 关闭群聊选择框
+            closeFrame: function(val) {
+                this.friendList.forEach(function(item){
+                    item.selected = false;
+                })
+                this.isShowSelector = val;
+            },
+            // 弹出群聊选择框
+            openGroupSelect: function() {
+                this.selectIndex++;
+                this.isShowSelector = true;
+            },
+            margintype: function(val) {
+                if (val == 1 || val == 9) {
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+            typeFloat: function(type) {
+                if (type == 1 || type == 9) {
+                    return 'right';
+                } else {
+                    return 'left';
+                }
+            },
+            changeChatObject: function(val, index) {
+                if (val.hasOwnProperty("groupId")) {
+                    this.Messagetype = 9;
+                } else {
+                    this.Messagetype = 1;
+                }
+                this.chatCurrentIndex = index;
+                this.inputMessageActive = true;  // 展示输入框
+                val.unReadCount = 0; // 打开聊天消息后  未读置为0
+                this.chatCurrentObject = $.extend(true, {messageTip: ""}, val);
+                //聊天内容框 需要根据不同的聊天对象映射不同的内容框
+                this.chatMessageList = this.messageContentMapping[val.userId] || [];
+            },
+            createMessageFrame: function(val) {
+                if (this.currentChatingList.length == 0) {
+                    this.chatCurrentIndex = 0;
+                }
+                for (let i = 0; i < this.currentChatingList.length; i++) {
+                    if (this.selectFriendInfo.userId == this.currentChatingList[i].userId) {
+                        this.chatCurrentIndex = i;
+                        this.chatCurrentObject = this.currentChatingList[i];
+                        this.chatMessageList = this.messageContentMapping[this.chatCurrentObject.userId] || [];
+                        this.tabActive = true;
+                        this.userInfoActive = false;
+                        this.inputMessageActive = true;
+                        return;
+                    }
+                }
+                let createParams = {
+                    messageTip: "",
+                    unReadCount: 0,
+                    sortIndex: this.currentChatingList.length,
+                    oldIndex: this.currentChatingList.length,
+                    isTop: false,
+                };
+                $.extend(createParams, this.selectFriendInfo);
+                this.chatCurrentObject = createParams;
+                // 给列表添加到头部
+                this.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
+                this.chatMessageList = this.messageContentMapping[createParams.userId] || [];
+                this.tabActive = true;
+                this.userInfoActive = false;
+                this.inputMessageActive = true;
+            },
+            //点击发送消息
+            sendMessage: function() {
+                let self = this;
+                if (self.message == "") {
+                    self.$message({
+                        message: '发送内容不能为空！',
+                        type: 'warning'
+                    });
+                    return;
+                }
+                let cacheUserInfo = self.cacheUserInfo;
+                let parmas = {
+                    message: self.message,
+                    type: self.Messagetype,
+                    image: cacheUserInfo.image,
+                    fileType: 0,
+                }
+                self.chatMessageList.push(parmas);
+                self.messageContentMapping[self.chatCurrentObject.userId] = this.copy(self.chatMessageList);
+                self.message = "";
+                if (self.socket.readyState == WebSocket.OPEN) {
+                    let data = {
+                        type: self.Messagetype,
+                        params: {
+                            toMessageId: self.chatCurrentObject.userId,
+                            message: parmas.message,
+                            fileType: 0,
+                        },
+                    }
+                    self.socket.send(JSON.stringify(data));
+                } else {
+                    self.$message({
+                        message: 'Websocket连接没有开启！',
+                        type: 'warning'
+                    });
+                }
+            },
+            chatInput: function(event) {
+                if (event.keyCode == 13) {
+                    console.log("触发enter输入事件");
+                    if (this.message.trim() == "") {
+                        alert("不能发送空消息")
+                    }
+                }
+            },
+            clickUserInfo: function(val, index) {
+                let self = this;
+                self.userInfoActive = true;
+                self.currentSort = index;
+                // 当前点击了那个好友详细信息
+                self.selectFriendInfo = val;
+            },
+            changeToChat: function() {
+                this.tabActive = true;
+                this.userInfoActive = false;
+                this.inputMessageActive = true;
+            },
+            /**
+             * 切换到好友列表
+             */
+            changeFirend: function() {
+                let self = this;
+                self.tabActive = false;
+                self.inputMessageActive = false;
+                if (self.selectFriendInfo) {
+                    self.userInfoActive = true;
+                }
+                // f5刷新界面后，vuex会重新更新state 所以存储的数据会丢失
+                let cacheUserInfo = self.cacheUserInfo;
+                let paramsObj = {
+                    userId: cacheUserInfo.userId
+                }
+                axios.get("/wechat/friendList", {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    params: paramsObj
+                }).then(function(res){
+                    self.friendList = res.data.obj;
+                    for (let i = 0; i < self.friendList.length; i++) {
+                        self.friendList[i].selected = false; // 供给弹出框chebox初始化选择
+                    }
+                }).catch(function(error){
+                    if (error.response.data.error == "invalid_token") {
+                        self.$message({
+                            message: 'token失效请重新登录！',
+                            type: 'warning'
+                        });
+                        window.location.href = "/login.html"
+                    }
+                })
+            },
+            getSocket: function () {
+                let socket;
+                let self = this;
+                if (!window.WebSocket) {
+                    window.WebSocket = window.MozWebSocket;
+                }
+                if (window.WebSocket) {
+                    socket = new WebSocket("ws://localhost:9998");
+                    socket.onmessage = function (event) {
+                        let json = JSON.parse(event.data);
+                        if (json.status == 200) {
+                            switch(json.type) {
+                                case 2:
+                                    self.handleSingleMessage(json);
+                                    break;
+                                case 4:
+                                    self.handleCreateChatResponse(json);
+                                    break;
+                                case 10: //群聊消息接受 其实 也是适配单聊
+                                    self.handleGroupMessageResponse(json);
+                                    break;
+                                case 12:
+                                    console.log("收到心跳检测回复")
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            self.$message({
+                                message: '发送失败 对方不在线',
+                                type: 'warning'
+                            });
+                        }
+                    };
+                    // socket连接 连接成功1秒后，将用户信息注册到服务器在线用户表
+                    socket.onopen = setTimeout(function (event) {
+                        console.log("WebSocket已成功连接！");
+                        if (!window.WebSocket) {
+                            return;
+                        }
+                        let cacheUserInfo = self.cacheUserInfo;
+                        if (socket.readyState == WebSocket.OPEN) {
+                            let data = {
+                                type: 7,
+                                params: cacheUserInfo,
+                            }
+                            socket.send(JSON.stringify(data));
+                        } else {
+                            self.$message({
+                                message: 'Websocket连接没有开启！',
+                                type: 'warning'
+                            });
+                        }
+                    }, 1000);
+                    //socket关闭
+                    socket.onclose = function (event) {
+                        clearInterval(self.uuid);
+                    };
+                } else {
+                    self.$message({
+                        message: '您的浏览器不支持WebSocket！',
+                        type: 'warning'
+                    });
+                }
+                this.socket = socket;
+            },
+            // 处理收到单聊的信息
+            handleSingleMessage: function(jsonObj) {
+                let self = this;
+                let parmas = {
+                    message: jsonObj.params.message,
+                    type: 2,
+                    image: jsonObj.params.fromUser.image,
+                    fileType: jsonObj.params.fileType,
+                }
+                if (jsonObj.params.fileType == "1") {
+                    parmas.fileName = jsonObj.params.message.split("(")[0];
+                }
+                let fromUser = jsonObj.params.fromUser;
+                let toUser = jsonObj.params.toUser;
+                let exist = false;
+                for (let i = 0; i < self.currentChatingList.length; i++) {
+                    if (fromUser.userId == self.currentChatingList[i].userId) {
+                        self.currentChatingList[i].messageTip = parmas.message;
+                        if (self.chatCurrentObject.userId != fromUser.userId) {
+                            self.currentChatingList[i].unReadCount++;
+                        }
+                        exist = true;
+                    }
+                }
+                if (!exist) {
+                    //聊天列表不存在  就添加新记录   并且接收到一条消息那么未读提醒unReadCount开始就为0
+                    let createParams = {
+                        messageTip: parmas.message,
+                        unReadCount: 1,
+                        sortIndex: self.currentChatingList.length,
+                        oldIndex: self.currentChatingList.length,
+                        isTop: false,
+                    };
+                    $.extend(createParams, fromUser);
+                    if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) != "{}") {
+                        self.chatCurrentIndex++;
+                    }
+                    self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
+                }
+                if (self.messageContentMapping[fromUser.userId] == undefined) {
+                    self.messageContentMapping[fromUser.userId] = [];
+                }
+                self.messageContentMapping[fromUser.userId].push(parmas);
+                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId == fromUser.userId) {
+                    self.chatMessageList = self.messageContentMapping[self.chatCurrentObject.userId];
+                }
+                //self.chatMessageList = self.messageContentMapping[fromUser.userId];
+                //self.messageContentMapping[fromUser.userId] = request.copy(self.chatMessageList);
+            },
+            // 处理创建聊天成功返回处理
+            handleCreateChatResponse: function(jsonObj) {
+                let self = this;
+                let createParams = {
+                    messageTip: "",
+                    unReadCount: 0,
+                    userId: jsonObj.groupId,
+                    showName: jsonObj.nameList.toString(),
+                    image: 'group.jpg',
+                    groupId: jsonObj.groupId,
+                    sortIndex: self.currentChatingList.length,
+                    oldIndex: self.currentChatingList.length,
+                    isTop: false,
+                };
+                if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) != "{}") {
+                    self.chatCurrentIndex++;
+                }
+                self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
+                self.commonCode();
+            },
+            // 接受群聊信息返回处理
+            handleGroupMessageResponse: function(jsonObj) {
+                let self = this;
+                let parmas = {
+                    message: jsonObj.params.message,
+                    type: 2,
+                    image: jsonObj.params.fromUser.image,
+                    fileType: jsonObj.params.fileType,
+                    showName: jsonObj.params.nameList.toString(),
+                }
+                if (jsonObj.params.fileType == "1") {
+                    parmas.fileName = jsonObj.params.message.split("(")[0];
+                }
+                let fromUser = jsonObj.params.fromUser;
+                let groupId = jsonObj.params.groupId;
+                let exist = false;
+                for (let i = 0; i < self.currentChatingList.length; i++) {
+                    if (groupId == self.currentChatingList[i].groupId) {
+                        self.currentChatingList[i].messageTip = parmas.message;
+                        if (self.chatCurrentObject.userId != groupId) {
+                            self.currentChatingList[i].unReadCount++;
+                        }
+                        exist = true;
+                    }
+                }
+                if (!exist) {
+                    //聊天列表不存在  就添加新记录   并且接收到一条消息那么未读提醒unReadCount开始就为0
+                    let createParams = {
+                        messageTip: parmas.message,
+                        unReadCount: 1,
+                        userId: groupId,
+                        showName: parmas.showName,
+                        image: 'group.jpg',
+                        groupId: groupId,
+                        sortIndex: self.currentChatingList.length,
+                        oldIndex: self.currentChatingList.length,
+                        isTop: false,
+                    };
+                    if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) != "{}") {
+                        self.chatCurrentIndex++;
+                    }
+                    self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
+                }
+                if (self.messageContentMapping[groupId] == undefined) {
+                    self.messageContentMapping[groupId] = [];
+                }
+                self.messageContentMapping[groupId].push(parmas);
+                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId == groupId) {
+                    self.chatMessageList = self.messageContentMapping[groupId];
+                }
+            },
+          beforeunloadHandler(){
+            //关闭页面前执行
+            this.socket.onclose()
+            // alert(1)
+          },
+          unloadHandler(e){
+            //关闭后执行
+            alert("close")
+          }
+
+        },
+    })
+</script>
+</html>

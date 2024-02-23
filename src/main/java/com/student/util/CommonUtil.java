@@ -1,5 +1,6 @@
 package com.student.util;
 
+import com.student.pojo.vo.TreeNodeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -12,10 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -335,4 +333,21 @@ public class CommonUtil {
         return sb.toString();
     }
 
+    public static <H extends TreeNodeVo>List<H> bulidTree(List<H> treeNodes, Object root){
+        ArrayList<H> trees = new ArrayList<>();
+        for (H treeNode : treeNodes) {
+            if (root.equals(treeNode.getParentId())){
+                trees.add(treeNode);
+            }
+            for (H child : treeNodes) {
+                if (child.getParentId().equals(treeNode.getId())){
+                    if (treeNode.getChildren()==null){
+                        treeNode.setChildren(new ArrayList());
+                    }
+                    treeNode.add(child);
+                }
+            }
+        }
+        return trees;
     }
+}

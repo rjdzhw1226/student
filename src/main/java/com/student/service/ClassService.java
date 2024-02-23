@@ -16,6 +16,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -30,9 +32,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -436,5 +440,19 @@ public class ClassService {
     public List<card> queryCard() {
         List<card> query = classMapper.queryCard();
         return query;
+    }
+
+    public JSONArray mainJava(String loadPath) {
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try{
+//            String path = this.getClass().getClassLoader().getResource("result.json").getPath();
+//            String filePath = URLDecoder.decode(path, "UTF-8");
+            obj = parser.parse(new FileReader(loadPath + "/" + "result.json"));
+        }catch (Exception e){
+           e.printStackTrace();
+        }
+        JSONArray jsonArray = (JSONArray) obj;
+        return jsonArray;
     }
 }

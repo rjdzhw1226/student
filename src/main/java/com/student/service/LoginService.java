@@ -141,4 +141,9 @@ public class LoginService {
         userLogin user = (userLogin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user;
     }
+
+    public user queryUser(String userName){
+        return mapper.query(userName);
+    }
+
 }

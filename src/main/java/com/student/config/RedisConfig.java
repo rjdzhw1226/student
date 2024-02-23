@@ -39,11 +39,10 @@ public class RedisConfig extends CachingConfigurerSupport {
         //配置
         //ningzaichun
         Config config = new Config();
-        //config.useSingleServer().setAddress("redis://192.168.179.200:6379");
-        config.useSingleServer().setAddress("redis://192.168.88.130:6379").setPassword("123321");
-        //config.useSingleServer().setAddress("redis://172.18.0.3:6379").setPassword("123321");
-//        config.useSingleServer().setAddress("redis://172.19.0.4:6379").setPassword("ningzaichun");
-        //config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+        //config.useSingleServer().setAddress("redis://192.168.179.200:6379").setPassword("ningzaichun");
+        //config.useSingleServer().setAddress("redis://192.168.88.130:6379").setPassword("123321");
+        config.useSingleServer().setAddress("redis://127.0.0.1:6379").setPassword("123321");
+        //config.useSingleServer().setAddress("redis://192.168.0.108:6379").setPassword("123321");
 
         //返回配置类redisson，创建客户端
         return Redisson.create(config);
