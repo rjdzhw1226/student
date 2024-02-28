@@ -3,6 +3,7 @@ package com.student.service.impl;
 
 import com.student.Constant.RedisKey;
 import com.student.mapper.LoginMapper;
+import com.student.netty.utils.RedisCache;
 import com.student.pojo.user;
 import com.student.pojo.userLogin;
 import com.student.service.UserService;
@@ -19,11 +20,13 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 
+import static com.student.Constant.RedisKey.ONLINE_SIGN;
+
 
 @Service
 public class UserServiceImpl implements UserService {
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisCache redisCache;
     private final LoginMapper userMapper;
 
     public UserServiceImpl(LoginMapper userMapper) {
@@ -36,10 +39,9 @@ public class UserServiceImpl implements UserService {
         if(use == null){
             throw new UsernameNotFoundException("用户不存在");
         }
+        //在线标识
+        redisCache.set(ONLINE_SIGN + "_" + use.getId(), true, 1800);
         BaseContext.setCurrentId(use.getUsername());
-        //BaseContext.setCurrentId(getUserLogin().getUsername());
-        //String token = JWTUtils.createToken(use.getId() + "-" + use.getUsername() + "-" + DigestUtils.md5DigestAsHex(use.getPassword().getBytes()));
-        //stringRedisTemplate.opsForValue().set(RedisKey.USER_KEY + use.getId(), token);
         return new userLogin(use);
     }
 }

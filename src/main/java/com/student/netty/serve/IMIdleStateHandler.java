@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class IMIdleStateHandler extends IdleStateHandler{
 
-	private static final int READER_IDLE_TIME = 30;
+	private static final int READER_IDLE_TIME = 300;
 
 	/**
 	 * 第一个参数表示读空闲时间

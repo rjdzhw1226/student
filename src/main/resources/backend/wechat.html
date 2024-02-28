@@ -757,6 +757,7 @@
                         type: self.Messagetype,
                         params: {
                             toMessageId: self.chatCurrentObject.userId,
+                            fromUserid: self.userId,
                             message: parmas.message,
                             fileType: 0,
                         },
@@ -1010,15 +1011,17 @@
                     self.chatMessageList = self.messageContentMapping[groupId];
                 }
             },
-          beforeunloadHandler(){
-            //关闭页面前执行
-            this.socket.onclose()
-            // alert(1)
-          },
-          unloadHandler(e){
-            //关闭后执行
-            alert("close")
-          }
+            beforeunloadHandler() {
+                //关闭页面前执行
+                this.socket.onclose()
+                //关闭页面时回调下线标识
+
+                // alert(1)
+            },
+            unloadHandler(e) {
+                //关闭后执行
+                alert("close")
+            }
 
         },
     })

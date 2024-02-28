@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface LoginMapper {
     @Select("select username, password from user where username = #{username}")
@@ -23,4 +25,11 @@ public interface LoginMapper {
 
     @Update("update user set password = #{password} where username = #{username}")
     public int updatePass(String password, String username);
+    @Select("select * from user where id = #{userId}")
+    public user queryId(String userId);
+
+    @Insert("insert into group (group_id, user_id) values (#{groupId}, #{userId})))")
+    public void saveUserIds(String groupId, String userId);
+    @Select("select user_id from group where group_id = #{groupId}")
+    List<String> findGroup(String groupId);
 }

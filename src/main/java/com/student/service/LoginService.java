@@ -5,6 +5,8 @@ import com.student.mapper.LoginMapper;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
+import com.student.pojo.vo.MessageVo;
+import com.student.pojo.vo.User;
 import com.student.util.Mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -19,6 +21,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -144,6 +147,25 @@ public class LoginService {
 
     public user queryUser(String userName){
         return mapper.query(userName);
+    }
+
+    public User queryUserById(String userId){
+        user user = mapper.queryId(userId);
+        return new User(String.valueOf(user.getId()), user.getUsername(), user.getImage());
+    }
+
+    public void saveGroupName(String groupId, List<String> userIds){
+        for (String userId : userIds) {
+            mapper.saveUserIds(groupId, userId);
+        }
+    }
+
+    public List<String> findGroup(String groupId){
+        return mapper.findGroup(groupId);
+    }
+
+    public void saveMessage(MessageVo vo){
+
     }
 
 }

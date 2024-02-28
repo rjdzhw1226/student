@@ -2,6 +2,7 @@ package com.student.netty.serve;
 
 import com.alibaba.fastjson.JSONObject;
 import com.student.netty.protocol.command.CreateGroupRequestPacket;
+import com.student.netty.utils.A;
 import com.student.netty.utils.SessionUtils;
 import com.student.pojo.vo.User;
 import io.netty.buffer.ByteBuf;
@@ -37,7 +38,7 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 		List<String> nameList = new ArrayList<>();
 		ChannelGroup channelGroup = new DefaultChannelGroup(ctx.executor());
 		channelGroup.add(ctx.channel());
-		nameList.add(SessionUtils.getUser(ctx.channel()).getShowName());
+		nameList.add(SessionUtils.getUser(ctx.channel()).getUserName());
 		for (String userId : userIdList) {
 			Channel channel = SessionUtils.getChannel(userId);
 			User user = SessionUtils.getUser(channel);
@@ -49,6 +50,8 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 		String groupId = UUID.randomUUID().toString();
 		// 绑定群Id 和 channelgroup的映射
 		SessionUtils.bindChannelGroup(groupId, channelGroup);
+		//落表持久化
+		A.a.loginService.saveGroupName(groupId, userIdList);
 		ByteBuf byteBuf = getByteBuf(ctx, groupId, nameList);
 		channelGroup.writeAndFlush(new TextWebSocketFrame(byteBuf));
 	}

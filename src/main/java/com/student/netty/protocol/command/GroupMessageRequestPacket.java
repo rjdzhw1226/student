@@ -3,19 +3,29 @@ package com.student.netty.protocol.command;
 public class GroupMessageRequestPacket extends Packet{
 
 	private String toGroupId;
-	
+	private String fromUserId;
+
 	private String message;
-	
+
 	private String fileType;
-	
+
 	public GroupMessageRequestPacket() {
-		
+
 	}
-	
-	public GroupMessageRequestPacket(String toGroupId, String message) {
+
+	public GroupMessageRequestPacket(String toGroupId, String fromUserId, String message) {
 		super();
 		this.toGroupId = toGroupId;
+		this.fromUserId = fromUserId;
 		this.message = message;
+	}
+
+	public String getFromUserId() {
+		return fromUserId;
+	}
+
+	public void setFromUserId(String fromUserId) {
+		this.fromUserId = fromUserId;
 	}
 
 	public String getToGroupId() {
@@ -33,7 +43,7 @@ public class GroupMessageRequestPacket extends Packet{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
+
 	public String getFileType() {
 		return fileType;
 	}
@@ -44,7 +54,7 @@ public class GroupMessageRequestPacket extends Packet{
 
 	@Override
 	public Byte getCommand() {
-		
+
 		return Command.GROUP_MESSAGE_REQUEST;
 	}
 

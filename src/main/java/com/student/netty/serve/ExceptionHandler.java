@@ -15,16 +15,16 @@ import org.slf4j.LoggerFactory;
  */
 @Sharable
 public class ExceptionHandler extends ChannelDuplexHandler {
-	
+
 	public static ExceptionHandler INSTANCE = new ExceptionHandler();
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
      @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    	
     	 if (cause instanceof RuntimeException) {
-             logger.info("pipeline全局异常处理 Handle Business Exception Success.");
+			 cause.printStackTrace();
+             logger.info("pipeline全局异常处理 Handle Business Exception Success:{}",cause.getMessage());
         	 ByteBuf byteBuf = ctx.alloc().buffer();
      		 JSONObject data = new JSONObject();
      		 data.put("type", 500);

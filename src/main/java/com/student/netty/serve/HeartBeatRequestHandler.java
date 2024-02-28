@@ -20,7 +20,6 @@ public class HeartBeatRequestHandler extends SimpleChannelInboundHandler<HeartBe
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, HeartBeatRequestPacket heartBeatRequestPacket) throws Exception {
-
 		ByteBuf byteBuf = getBuf(ctx);
 		ctx.channel().writeAndFlush(new TextWebSocketFrame(byteBuf));
 	}

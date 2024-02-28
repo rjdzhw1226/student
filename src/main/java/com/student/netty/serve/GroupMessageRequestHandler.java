@@ -2,7 +2,9 @@ package com.student.netty.serve;
 
 import com.alibaba.fastjson.JSONObject;
 import com.student.netty.protocol.command.GroupMessageRequestPacket;
+import com.student.netty.utils.A;
 import com.student.netty.utils.SessionUtils;
+import com.student.pojo.publishPo;
 import com.student.pojo.vo.User;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -32,22 +34,11 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, GroupMessageRequestPacket groupMessageRequestPacket) throws Exception {
-
+		//分布式发送
 		String groupId = groupMessageRequestPacket.getToGroupId();
-		String fileType = groupMessageRequestPacket.getFileType();
-		ChannelGroup channelGroup = SessionUtils.getChannelGroup(groupId);
-		List<String> nameList = new ArrayList<>();
-		for (Channel channel : channelGroup) {
-			User user = SessionUtils.getUser(channel);
-			nameList.add(user.getShowName());
-		}
-		if (channelGroup != null) {
-			User user = SessionUtils.getUser(ctx.channel());
-			ByteBuf byteBuf = getByteBuf(ctx, groupId, groupMessageRequestPacket.getMessage(), user, fileType, nameList);
-			channelGroup.remove(ctx.channel());//发送方不需要自己再收到消息
-			channelGroup.writeAndFlush(new TextWebSocketFrame(byteBuf));
-			channelGroup.add(ctx.channel()); //发送完消息再添加回去 ---todo 是否有更好得方式
-		}
+		ByteBuf byteBuf = getByteBufRes(ctx, groupMessageRequestPacket);
+		publishPo po = new publishPo(9, groupId, groupMessageRequestPacket.getFromUserId(),groupMessageRequestPacket.getMessage(),byteBuf);
+		A.a.redisService.publish("channel_group", po);
 	}
 
 	public ByteBuf getByteBuf(ChannelHandlerContext ctx, String groupId, String message,
@@ -62,6 +53,25 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 		params.put("fromUser", fromUser);
 		params.put("groupId", groupId);
 		Collections.reverse(nameList);
+		params.put("nameList", nameList);
+		data.put("params", params);
+		byte []bytes = data.toJSONString().getBytes(Charset.forName("utf-8"));
+		byteBuf.writeBytes(bytes);
+		return byteBuf;
+	}
+
+	public ByteBuf getByteBufRes(ChannelHandlerContext ctx, GroupMessageRequestPacket groupMessageRequestPacket) {
+		ByteBuf byteBuf = ctx.alloc().buffer();
+		User fromUser = A.a.loginService.queryUserById(groupMessageRequestPacket.getFromUserId());
+		List<String> nameList = A.a.loginService.findGroup(groupMessageRequestPacket.getToGroupId());
+		JSONObject data = new JSONObject();
+		data.put("type", 10);
+		data.put("status", 200);
+		JSONObject params = new JSONObject();
+		params.put("message", groupMessageRequestPacket.getMessage());
+		params.put("fileType", groupMessageRequestPacket.getFileType());
+		params.put("fromUser", fromUser);
+		params.put("groupId", groupMessageRequestPacket.getToGroupId());
 		params.put("nameList", nameList);
 		data.put("params", params);
 		byte []bytes = data.toJSONString().getBytes(Charset.forName("utf-8"));

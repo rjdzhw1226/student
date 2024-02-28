@@ -3,6 +3,7 @@ package com.student.netty.serve;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.student.netty.protocol.command.*;
+import com.student.netty.utils.A;
 import com.student.pojo.vo.User;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -20,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.student.Constant.RedisKey.ONLINE_SIGN;
 
 @Sharable
 public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
@@ -71,44 +74,46 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 		JSONObject parmas = jsonObject.getJSONObject("params");
 		Packet packet = null;
 		switch (type) {
-		   // 注册user-->channel 映射
-		   case 7:
-			  RegisterRequestPacket registerRequestPacket = new RegisterRequestPacket();
-			  User user =  JSON.parseObject(parmas.toJSONString(), User.class);
-			  registerRequestPacket.setUser(user);
-			  packet = registerRequestPacket;
-			  break;
-		   // 单聊
-		   case 1:
-			  MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
-			  messageRequestPacket.setMessage(parmas.getString("message"));
-			  messageRequestPacket.setToUserId(parmas.getString("toMessageId"));
-			  messageRequestPacket.setFileType(parmas.getString("fileType"));
-			  packet = messageRequestPacket;
-			  break;
-		   // 创建群聊
-		   case 3:
-			  CreateGroupRequestPacket createGroupRequestPacket = new CreateGroupRequestPacket();
-			  String userListStr = parmas.getString("userIdList");
-			  List<String> userIdList = Arrays.asList(userListStr.split(","));
-			  createGroupRequestPacket.setUserIdList(userIdList);
-			  packet = createGroupRequestPacket;
-			  break;
-		  // 群聊消息
-		   case 9:
-			  GroupMessageRequestPacket groupMessageRequestPacket = new GroupMessageRequestPacket();
-			  groupMessageRequestPacket.setMessage(parmas.getString("message"));
-			  groupMessageRequestPacket.setToGroupId(parmas.getString("toMessageId"));
-			  groupMessageRequestPacket.setFileType(parmas.getString("fileType"));
-			  packet = groupMessageRequestPacket;
-			  break;
-		  //心跳检测
-		   case 11:
-			  HeartBeatRequestPacket heartBeatRequestPacket = new HeartBeatRequestPacket();
-			  packet = heartBeatRequestPacket;
-			  break;
-			  default:
-			  break;
+			// 注册user-->channel 映射
+			case 7:
+				RegisterRequestPacket registerRequestPacket = new RegisterRequestPacket();
+				User user = JSON.parseObject(parmas.toJSONString(), User.class);
+				registerRequestPacket.setUser(user);
+				packet = registerRequestPacket;
+				break;
+			// 单聊
+			case 1:
+				MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
+				messageRequestPacket.setMessage(parmas.getString("message"));
+				messageRequestPacket.setToUserId(parmas.getString("toMessageId"));
+				messageRequestPacket.setFromUserId(parmas.getString("fromUserid"));
+				messageRequestPacket.setFileType(parmas.getString("fileType"));
+				packet = messageRequestPacket;
+				break;
+			// 创建群聊
+			case 3:
+				CreateGroupRequestPacket createGroupRequestPacket = new CreateGroupRequestPacket();
+				String userListStr = parmas.getString("userIdList");
+				List<String> userIdList = Arrays.asList(userListStr.split(","));
+				createGroupRequestPacket.setUserIdList(userIdList);
+				packet = createGroupRequestPacket;
+				break;
+			// 群聊消息
+			case 9:
+				GroupMessageRequestPacket groupMessageRequestPacket = new GroupMessageRequestPacket();
+				groupMessageRequestPacket.setMessage(parmas.getString("message"));
+				groupMessageRequestPacket.setToGroupId(parmas.getString("toMessageId"));
+				groupMessageRequestPacket.setFromUserId(parmas.getString("fromUserid"));
+				groupMessageRequestPacket.setFileType(parmas.getString("fileType"));
+				packet = groupMessageRequestPacket;
+				break;
+			//心跳检测
+			case 11:
+				HeartBeatRequestPacket heartBeatRequestPacket = new HeartBeatRequestPacket();
+				packet = heartBeatRequestPacket;
+				break;
+			default:
+				break;
 		}
 		ctx.fireChannelRead(packet);
 	}
