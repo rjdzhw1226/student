@@ -60,7 +60,7 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 			//分布式发送
 			A.a.redisService.publish("channel_single", po);
 		}
-		//刷新在线标识时长
+		//刷新在线标识时长 待定 刷新太频繁
 		A.a.redisService.set(ONLINE_SIGN + "_" + messageRequestPacket.getFromUserId(), true, 1800);
 	}
 

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
  * Netty异常处理机制
- * @author holiday
+ * 
  * 2020-12-02
  */
 @Sharable

@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 /**
  * 发送群消息handler组件
- * @author holiday
- * 2020-11-16
  */
 @Sharable
 public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<GroupMessageRequestPacket>{

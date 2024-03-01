@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 /**
  * 创建群号ChannelHandler组件
- * @author holiday
+ * 
  * 2020-11-12
  */
 @Sharable

@@ -22,7 +22,7 @@ import static com.student.Constant.RedisKey.ONLINE_SIGN;
 
 /**
  * 注册 绑定用户channel
- * @author holiday
+ * 
  * date 2020-11-04
  */
 @Sharable

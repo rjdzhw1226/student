@@ -14,7 +14,7 @@ public interface LoginMapper {
     @Select("select username, password from user where username = #{username}")
     public userDto login(String username);
 
-    @Select("select id, username, password from user where username = #{username}")
+    @Select("select id, username, image, password from user where username = #{username}")
     public user query(String username);
 
     @Insert("insert into user( id,birthday,gender,username,password,station,telephone) values(#{id},#{birthday},#{gender},#{username},#{password},#{station},#{telephone}) ")
@@ -34,4 +34,7 @@ public interface LoginMapper {
     List<String> findGroup(String groupId);
     @Select("select username from user where id in(#{userIds})")
     List<String> queryIds(String userIds);
+
+    @Update("update message set read_type = #{readType} where msg_id = #{messageId}")
+    public void updateMessage(String messageId, String readType);
 }

@@ -28,6 +28,9 @@ public class ReadRequestHandler extends SimpleChannelInboundHandler<ReadRequestP
     protected void channelRead0(ChannelHandlerContext ctx, ReadRequestPacket readRequestPacket) throws Exception {
         if (!(Boolean) A.a.redisService.get(ONLINE_SIGN + "_" + readRequestPacket.getToUserId())) {
             //未登录 入库持久化
+            //异步更新数据库信息
+            //必须是对方接收回执在此发现发送方不在线才落表 存在拉数据时和发送数据时
+            A.a.loginService.asyncUpdateMessage(readRequestPacket);
             return;
         }
         Channel toUserChannel = SessionUtils.getChannel(readRequestPacket.getToUserId());

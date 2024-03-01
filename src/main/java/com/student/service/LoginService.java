@@ -2,6 +2,7 @@ package com.student.service;
 
 import com.student.Constant.RedisKey;
 import com.student.mapper.LoginMapper;
+import com.student.netty.protocol.command.ReadRequestPacket;
 import com.student.netty.utils.RedisCache;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
@@ -13,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
@@ -194,6 +197,13 @@ public class LoginService {
             redisCache.del(ONLINE_SIGN + "_" + userId);
         }
 
+
+    }
+
+    @Transactional
+    @Async("taskExecutor")
+    public void asyncUpdateMessage(ReadRequestPacket read) {
+        mapper.updateMessage(read.getMessageId(), read.getReadType());
 
     }
 }

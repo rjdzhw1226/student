@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 /**
  * netty服务端启动类
- * @author holiday
+ * 
  * 2020-10-21
  */
 @Component
