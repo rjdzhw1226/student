@@ -74,10 +74,9 @@
                 <div id="overflowMessage" class="message-content-container">
                     <div class="message-item" v-for="(item, index) in chatMessageList" :key="index">
                         <div class="senderImg" :class="[margintype(item.type) ? 'leftMargin-class' : 'rightMargin-class']"></div>
-                        <div v-if="item.fileType==0" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']"
-                             :style="{'float': typeFloat(item.type)}" v-html="renderMessage(item.message)"></div>
-                        <div v-else-if="item.fileType==1" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']"
-                             :style="{'float': typeFloat(item.type)}" style="display:flex">
+<!--                        <div v-if="item.fileType==0" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']" :style="{'float': typeFloat(item.type)}" v-html="renderMessage(item.message)"></div>-->
+                        <div :id="generateClassNameImg(item.messageId)" v-if="item.fileType==0" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']" :style="{'float': typeFloat(item.type)}" v-html="renderMessage(item)"></div>
+                        <div :id="generateClassNameImg(item.messageId)" v-else-if="item.fileType==1" class="messageInfo" :class="[margintype(item.type) ? 'leftMargin-class2' : 'rightMargin-class2']" :style="{'float': typeFloat(item.type)}" style="display:flex">
                             <div class="FileInformation">
                                 <div class="fileName">{{item.message}}</div>
                                 <div class="download" @click="fileDownload(item.fileName)">下载</div>
@@ -155,15 +154,18 @@
 </body>
 <script>
     let urlParams = null;
+    let port = null;
     new Vue({
         el: '#app',
         data: {
             user:{},
             tabActive: true,
+            nettyPort: '',
             socket: null,
             userInfoActive: false,
             currentSort: null,
             friendList: [],
+            friendData: [],
             selectFriendInfo: null,
             message: "",
             currentChatingList: [],
@@ -268,27 +270,28 @@
         },
         created() {
             //'http://localhost:40000/#/wechat?urlParams={"userId"%3A"04150901"}'
-          let query_string = {};
-          let query = window.location.search.substring(1);
-          console.log("query" + query);
-          let vars = query.split("&");
-          for (let i=0;i<vars.length;i++) {
-            let pair = vars[i].split("=");
-            query_string[pair[0]] = pair[1];
-          }
-          urlParams = query_string["urlParams"];
-          let urlParamsJSON = {
-            "userId" : urlParams
-          };
-          localStorage.setItem("access_token_"+this.userId, this.userId + "token")
-          this.cacheUserInfo = JSON.parse(JSON.stringify(urlParamsJSON));
-          this.token = localStorage.getItem("access_token_"+urlParams);
+            let query_string = {};
+            let query = window.location.search.substring(1);
+            console.log("query" + query);
+            let vars = query.split("&");
+            for (let i = 0; i < vars.length; i++) {
+                let pair = vars[i].split("=");
+                query_string[pair[0]] = pair[1];
+            }
+            urlParams = query_string["urlParams"];
+            port = query_string["port"];
+            let urlParamsJSON = {
+                "userId": urlParams
+            };
+            localStorage.setItem("access_token_" + this.userId, this.userId + "token")
+            this.cacheUserInfo = JSON.parse(JSON.stringify(urlParamsJSON));
+            this.token = localStorage.getItem("access_token_" + urlParams);
 
-          axios.get("/login/getImage").then((response)=>{
-            this.user = response.data;
-          });
+            axios.get("/login/getImage").then((response) => {
+                this.user = response.data;
+            });
         },
-        mounted(){
+        mounted() {
             let self = this;
             window.addEventListener('beforeunload', e => self.beforeunloadHandler(e))
             window.addEventListener('unload', e => self.unloadHandler(e))
@@ -300,7 +303,7 @@
             self.getSocket();
             // 心跳请求
             clearInterval(self.uuid);
-            self.uuid = setInterval(function() {
+            self.uuid = setInterval(function () {
                 if (self.socket.readyState == WebSocket.OPEN) {
                     let data = {
                         type: 11,
@@ -316,19 +319,14 @@
             }, 1000 * 25)
         },
         destroyed() {
-          window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
-          window.removeEventListener('unload', e => this.unloadHandler(e))
+            window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
+            window.removeEventListener('unload', e => this.unloadHandler(e))
         },
         watch: {
-            friendData: {
-                deep: true,
-                handler(newObj, oldObj) {
-                }
-            },
-            chatMessageList:{
+            chatMessageList: {
                 handler(newName, oldName) {
                     this.$nextTick(() => {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             let message = document.getElementById('overflowMessage');
                             let scrollVal = message.scrollHeight;
                             $("#overflowMessage").scrollTop(scrollVal);
@@ -347,20 +345,20 @@
             },
         },
         methods: {
-            selectExpression: function(title, name) {
+            selectExpression: function (title, name) {
                 let params = {
                     title: title,
                     name: name
                 }
                 this.seleceExpress(params);
             },
-            makesure: function() {
+            makesure: function () {
                 this.createChat(this.SelectedFriendList);
             },
-            cancel: function() {
-                this.isShowSelector= false;
+            cancel: function () {
+                this.isShowSelector = false;
             },
-            unSelected: function(val) {
+            unSelected: function (val) {
                 for (let i = 0; i < this.friendData.length; i++) {
                     if (this.friendData[i].userId == val.userId) {
                         this.friendData[i].selected = false;
@@ -369,30 +367,30 @@
                 }
                 this.SelectedFriendList.splice(this.SelectedFriendList.findIndex(e => e.userId === val.userId), 1)
             },
-            selectChange: function() {
-                this.SelectedFriendList = this.friendData.filter(function(item){
-                    return item.selected == true;
+            selectChange: function () {
+                this.SelectedFriendList = this.friendData.filter(function (item) {
+                    return item.selected === true;
                 })
             },
             close: function () {
-                this.isShowSelector= false;
+                this.isShowSelector = false;
             },
-            clickUserInfo: function(val, index) {
+            clickUserInfo: function (val, index) {
                 let self = this;
                 self.currentSort = index;
             },
             //聊天排序公用
-            charSortCommon: function(flag) {
-                let sortFunction = function(a, b) {
+            charSortCommon: function (flag) {
+                let sortFunction = function (a, b) {
                     return a.sortIndex - b.sortIndex;
                 }
-                let sortFunctionDesc = function(a, b) {
+                let sortFunctionDesc = function (a, b) {
                     return b.sortIndex - a.sortIndex;
                 }
                 this.currentChatingList = this.currentChatingList.sort(flag ? sortFunction : sortFunctionDesc);
             },
             //取消置顶聊天
-            unTopChat: function() {
+            unTopChat: function () {
                 let self = this;
                 let offset = 0;
                 for (let i = 0; i < self.currentChatingList.length; i++) {
@@ -412,7 +410,7 @@
                 self.charSortCommon(false);
             },
             //置顶聊天
-            topChat: function() {
+            topChat: function () {
                 let self = this;
                 let offset = 0;
                 for (let i = 0; i < self.currentChatingList.length; i++) {
@@ -430,9 +428,9 @@
                 self.charSortCommon(true);
             },
             //右键选择删除聊天
-            deleteOnline: function() {
+            deleteOnline: function () {
                 let self = this;
-                self.currentChatingList.some(function(item, i) {
+                self.currentChatingList.some(function (item, i) {
                     if (self.rightHandItem.userId = item.userId) {
                         self.currentChatingList.splice(i, 1);
                         self.chatCurrentIndex--;
@@ -447,10 +445,10 @@
                     self.chatCurrentObject = {};
                 }
             },
-            fileClass: function(fileName) {
+            fileClass: function (fileName) {
                 let suffix = fileName.split(".")[1];
                 let className = "";
-                switch(suffix) {
+                switch (suffix) {
                     case "txt":
                         className = "icon-txt";
                         break;
@@ -469,7 +467,7 @@
                     default:
                         break;
                 }
-                this.$nextTick(function(){
+                this.$nextTick(function () {
                     let messageItemDom = $(".message-item");
                     for (let j = 0; j < messageItemDom.length; j++) {
                         let temp = $(messageItemDom[j]);
@@ -479,30 +477,38 @@
                 })
                 return className;
             },
-            closeMenu: function() {
+            closeMenu: function () {
                 this.visible = false;
             },
             // 右键弹出选择框 根据event对象拿到X Y 坐标
-            openMenu: function(e, item) {
+            openMenu: function (e, item) {
                 this.rightHandItem = item; //右键显示哪个聊天item
                 this.top = e.pageY;
                 this.left = e.pageX;
                 this.visible = true;
             },
             // v-html渲染方法
-            renderMessage: function(message) {
-                message = String(message);
+            renderMessage: function (message) {
+                let ReadType = message.readType;
+                message = String(message.message);
                 let lookData = this.expresionData;
                 let url = '';
                 let template = '';
+                let templateFinal = '';
                 for (let i = 0; i < lookData.length; i++) {
                     if (message.indexOf(lookData[i].title) > -1) {
                         url = './assets/' + lookData[i].name;
-                        template = '<img class="messageImg" src='+url+'>';
+                        template = '<img class="messageImg" src=' + url + '>';
                         message = message.replace(lookData[i].title, template);
                     }
                 }
-                this.$nextTick(function(){
+                let str = ReadType === 0 ? '未读': '已读';
+                templateFinal = '' +
+                    '<div class="ReadInformation">' +
+                    '<div class="readStatus-unread">'+ str +'</div>' +
+                    '</div>'
+                message = message + templateFinal;
+                this.$nextTick(function () {
                     let messageItemDom = $(".message-item");
                     for (let j = 0; j < messageItemDom.length; j++) {
                         let temp = $(messageItemDom[j]);
@@ -512,20 +518,23 @@
                 })
                 return message;
             },
+            generateClassNameImg(index){
+                return `messageText-${index}`
+            },
             //表情选择后
-            seleceExpress: function(val) {
+            seleceExpress: function (val) {
                 this.expressionActive = false;
                 this.message += val.title;
             },
             // 弹出表情选择框
-            emojiClick: function() {
+            emojiClick: function () {
                 this.expressionActive = !this.expressionActive;
             },
-            fileDownload: function(fileName) {
+            fileDownload: function (fileName) {
                 let params = {
-                    fileName:  fileName,
+                    fileName: fileName,
                 }
-                axios.post("/wechat/download", params, this.token).then(function(res){
+                axios.post("/wechat/download", params, this.token).then(function (res) {
                     let url = window.URL.createObjectURL(new Blob([res.data]));
                     let link = document.createElement('a');
                     link.style.display = 'none';
@@ -534,7 +543,7 @@
                     link.setAttribute('download', res.config.params.fileName);
                     document.body.appendChild(link);
                     link.click();
-                }).catch(function(error){
+                }).catch(function (error) {
                     if (error.response.data.error == "invalid_token") {
                         self.$message({
                             message: 'token失效请重新登录！',
@@ -546,15 +555,15 @@
             },
             copy(obj) {
                 let newobj = obj.constructor === Array ? [] : {};
-                if(typeof obj !== 'object'){
+                if (typeof obj !== 'object') {
                     return;
                 }
-                for(let i in obj){
+                for (let i in obj) {
                     newobj[i] = typeof obj[i] === 'object' ? this.copy(obj[i]) : obj[i];
                 }
                 return newobj
             },
-            fileSelected: function() {
+            fileSelected: function () {
                 let self = this;
                 let cacheUserInfo = self.cacheUserInfo;
                 let file = this.$refs.fileInt.files[0];
@@ -562,11 +571,11 @@
                 fd.append("file", file);
                 let fileDom = document.getElementById('filebutton');
                 fileDom.value = ''; //file的value值只能设置为空字符串
-                axios.post("/wechat/upload", fd, self.token).then(function(res){
-                    if(res.data.obj) {
+                axios.post("/wechat/upload", fd, self.token).then(function (res) {
+                    if (res.data.obj) {
                         let FileResultObj = res.data.obj;
                         let parmas = {
-                            message: FileResultObj.fileName + "(" + FileResultObj.fileSize +"B)",
+                            message: FileResultObj.fileName + "(" + FileResultObj.fileSize + "B)",
                             fileName: FileResultObj.fileName,
                             type: self.Messagetype,
                             image: cacheUserInfo.image,
@@ -591,7 +600,7 @@
                             });
                         }
                     }
-                }).catch(function(error){
+                }).catch(function (error) {
                     if (error.response.data.error == "invalid_token") {
                         self.$message({
                             message: 'token失效请重新登录！',
@@ -601,10 +610,10 @@
                     }
                 })
             },
-            uploadClick: function() {
+            uploadClick: function () {
                 $("#filebutton").click();
             },
-            commonCode: function() {
+            commonCode: function () {
                 let self = this;
                 self.isShowSelector = false; //隐藏弹出选择框
                 self.tabActive = true;
@@ -612,7 +621,7 @@
                 self.inputMessageActive = true;
             },
             // 通过选择框确定创建的聊天  可能是单聊  可能是群聊
-            createChat: function(userList) {
+            createChat: function (userList) {
                 let self = this;
                 if (userList.length == 1) {
                     // 转化为创建单聊
@@ -663,32 +672,35 @@
                 }
             },
             // 关闭群聊选择框
-            closeFrame: function(val) {
-                this.friendList.forEach(function(item){
+            closeFrame: function (val) {
+                this.friendList.forEach(function (item) {
                     item.selected = false;
                 })
                 this.isShowSelector = val;
             },
             // 弹出群聊选择框
-            openGroupSelect: function() {
+            openGroupSelect: function () {
                 this.selectIndex++;
+                for (let i = 0; i < this.friendList.length; i++) {
+                    this.friendData.push(this.friendList[i]);
+                }
                 this.isShowSelector = true;
             },
-            margintype: function(val) {
+            margintype: function (val) {
                 if (val == 1 || val == 9) {
                     return false;
                 } else {
                     return true;
                 }
             },
-            typeFloat: function(type) {
+            typeFloat: function (type) {
                 if (type == 1 || type == 9) {
                     return 'right';
                 } else {
                     return 'left';
                 }
             },
-            changeChatObject: function(val, index) {
+            changeChatObject: function (val, index) {
                 if (val.hasOwnProperty("groupId")) {
                     this.Messagetype = 9;
                 } else {
@@ -701,7 +713,7 @@
                 //聊天内容框 需要根据不同的聊天对象映射不同的内容框
                 this.chatMessageList = this.messageContentMapping[val.userId] || [];
             },
-            createMessageFrame: function(val) {
+            createMessageFrame: function (val) {
                 if (this.currentChatingList.length == 0) {
                     this.chatCurrentIndex = 0;
                 }
@@ -732,8 +744,27 @@
                 this.userInfoActive = false;
                 this.inputMessageActive = true;
             },
+            getUuid: function (len, radix) {
+                let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+                let uuid = [], i;
+                radix = radix || chars.length;
+                if (len) {
+                    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+                } else {
+                    let r;
+                    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+                    uuid[14] = '4';
+                    for (i = 0; i < 36; i++) {
+                        if (!uuid[i]) {
+                            r = 0 | Math.random() * 16;
+                            uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+                        }
+                    }
+                }
+                return uuid.join('');
+            },
             //点击发送消息
-            sendMessage: function() {
+            sendMessage: function () {
                 let self = this;
                 if (self.message == "") {
                     self.$message({
@@ -744,9 +775,11 @@
                 }
                 let cacheUserInfo = self.cacheUserInfo;
                 let parmas = {
+                    messageId: self.getUuid(16,32),
                     message: self.message,
                     type: self.Messagetype,
                     image: cacheUserInfo.image,
+                    readType: 0,
                     fileType: 0,
                 }
                 self.chatMessageList.push(parmas);
@@ -756,12 +789,14 @@
                     let data = {
                         type: self.Messagetype,
                         params: {
+                            messageId: parmas.messageId,
                             toMessageId: self.chatCurrentObject.userId,
-                            fromUserid: self.userId,
+                            fromUserid: self.cacheUserInfo.userId,
                             message: parmas.message,
                             fileType: 0,
                         },
                     }
+                    console.log("我的发送：" , data);
                     self.socket.send(JSON.stringify(data));
                 } else {
                     self.$message({
@@ -770,7 +805,7 @@
                     });
                 }
             },
-            chatInput: function(event) {
+            chatInput: function (event) {
                 if (event.keyCode == 13) {
                     console.log("触发enter输入事件");
                     if (this.message.trim() == "") {
@@ -778,14 +813,14 @@
                     }
                 }
             },
-            clickUserInfo: function(val, index) {
+            clickUserInfo: function (val, index) {
                 let self = this;
                 self.userInfoActive = true;
                 self.currentSort = index;
                 // 当前点击了那个好友详细信息
                 self.selectFriendInfo = val;
             },
-            changeToChat: function() {
+            changeToChat: function () {
                 this.tabActive = true;
                 this.userInfoActive = false;
                 this.inputMessageActive = true;
@@ -793,7 +828,7 @@
             /**
              * 切换到好友列表
              */
-            changeFirend: function() {
+            changeFirend: function () {
                 let self = this;
                 self.tabActive = false;
                 self.inputMessageActive = false;
@@ -810,12 +845,12 @@
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     params: paramsObj
-                }).then(function(res){
+                }).then(function (res) {
                     self.friendList = res.data.obj;
                     for (let i = 0; i < self.friendList.length; i++) {
                         self.friendList[i].selected = false; // 供给弹出框chebox初始化选择
                     }
-                }).catch(function(error){
+                }).catch(function (error) {
                     if (error.response.data.error == "invalid_token") {
                         self.$message({
                             message: 'token失效请重新登录！',
@@ -828,15 +863,20 @@
             getSocket: function () {
                 let socket;
                 let self = this;
+                self.nettyPort = port;
                 if (!window.WebSocket) {
                     window.WebSocket = window.MozWebSocket;
                 }
                 if (window.WebSocket) {
-                    socket = new WebSocket("ws://localhost:9998");
+                    if (self.nettyPort === '9999') {
+                        socket = new WebSocket("ws://localhost:9999");
+                    } else if (self.nettyPort === '9998') {
+                        socket = new WebSocket("ws://localhost:9998");
+                    }
                     socket.onmessage = function (event) {
                         let json = JSON.parse(event.data);
                         if (json.status == 200) {
-                            switch(json.type) {
+                            switch (json.type) {
                                 case 2:
                                     self.handleSingleMessage(json);
                                     break;
@@ -848,6 +888,9 @@
                                     break;
                                 case 12:
                                     console.log("收到心跳检测回复")
+                                    break;
+                                case 20:
+                                    self.handleReadMessageResponse(json);
                                     break;
                                 default:
                                     break;
@@ -891,10 +934,28 @@
                 }
                 this.socket = socket;
             },
+            //处理已读未读消息
+            handleReadMessageResponse: function (jsonObj) {
+                let self = this;
+                let parmas ={
+                    messageId: jsonObj.params.messageId,
+                    type: 20,
+                    fileType: jsonObj.params.fileType,
+                    readType: jsonObj.params.readType,
+                }
+                if (jsonObj.params.fileType === "1") {
+                    parmas.fileName = jsonObj.params.message.split("(")[0];
+                }
+                let str = parmas.readType === 0 ? '未读': '已读';
+                let c = '#messageText-' + parmas.messageId;
+                let messageElement = document.querySelector(c).querySelector('.readStatus-unread');
+                messageElement.innerHTML = '<div class="ReadInformation"><div class="readStatus-read">'+ str +'</div></div>'
+            },
             // 处理收到单聊的信息
-            handleSingleMessage: function(jsonObj) {
+            handleSingleMessage: function (jsonObj) {
                 let self = this;
                 let parmas = {
+                    messageId: jsonObj.params.messageId,
                     message: jsonObj.params.message,
                     type: 2,
                     image: jsonObj.params.fromUser.image,
@@ -939,9 +1000,31 @@
                 }
                 //self.chatMessageList = self.messageContentMapping[fromUser.userId];
                 //self.messageContentMapping[fromUser.userId] = request.copy(self.chatMessageList);
+                //发送回发送者已读
+                if(!(parmas.message === '连接成功' || parmas.message === '连接失败')){
+                    if (self.socket.readyState == WebSocket.OPEN) {
+                        let data = {
+                            type: 19,
+                            params: {
+                                toMessageId: fromUser.userId,
+                                fromUserid: toUser.userId,
+                                messageId: parmas.messageId,
+                                fileType: parmas.fileType,
+                                readType: 1,
+                            },
+                        }
+                        self.socket.send(JSON.stringify(data));
+                    } else {
+                        self.$message({
+                            message: 'Websocket连接没有开启！已读回执发送失败',
+                            type: 'warning'
+                        });
+                        //发送失败回调接口保存逻辑
+                    }
+                }
             },
             // 处理创建聊天成功返回处理
-            handleCreateChatResponse: function(jsonObj) {
+            handleCreateChatResponse: function (jsonObj) {
                 let self = this;
                 let createParams = {
                     messageTip: "",
@@ -961,7 +1044,7 @@
                 self.commonCode();
             },
             // 接受群聊信息返回处理
-            handleGroupMessageResponse: function(jsonObj) {
+            handleGroupMessageResponse: function (jsonObj) {
                 let self = this;
                 let parmas = {
                     message: jsonObj.params.message,
@@ -1014,15 +1097,14 @@
             beforeunloadHandler() {
                 //关闭页面前执行
                 this.socket.onclose()
-                //关闭页面时回调下线标识
+                //关闭页面时回调下线标识 让用户下线 并缓存下线标识
 
-                // alert(1)
+                alert(1)
             },
             unloadHandler(e) {
                 //关闭后执行
                 alert("close")
             }
-
         },
     })
 </script>

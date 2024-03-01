@@ -15,6 +15,7 @@ import com.student.util.jwt.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,9 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+
+    @Value("${netty.port}")
+    private int port;
 
     @RequestMapping("/user")
     @Log(title="登录模块",action="login")
@@ -128,6 +132,10 @@ public class LoginController {
         log.info("getUserId:{}",u.getId());
         return new User(u.getId().toString(),u.getUsername(),u.getImage());
     }
+    @RequestMapping("/getPort")
+    public String getPort(){
+        return String.valueOf(port);
+    }
 
     private static String getString() {
         String userName;
@@ -204,6 +212,12 @@ public class LoginController {
             e.printStackTrace();
         }
         return map;
+    }
+
+    @RequestMapping("/downLine/{userId}")
+    @Log(title="下线回调标识", action="closeService")
+    public void userDownLine(@PathVariable("userId") String userId){
+        loginService.downLine(userId);
     }
 
     @GetMapping("/shutdown")

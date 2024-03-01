@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static com.student.Constant.RedisKey.ONLINE_SIGN;
@@ -42,7 +43,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
 		if (msg instanceof FullHttpRequest) {
 			handleHttpRequest(ctx, (FullHttpRequest)msg);
-			logger.info("http 握手成功");
+			logger.info("HTTP 握手成功");
 		} else if (msg instanceof WebSocketFrame) {
 			//fireChannelRead 传递给下一个handler
 			try  {
@@ -79,15 +80,18 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 				RegisterRequestPacket registerRequestPacket = new RegisterRequestPacket();
 				User user = JSON.parseObject(parmas.toJSONString(), User.class);
 				registerRequestPacket.setUser(user);
+				registerRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = registerRequestPacket;
 				break;
 			// 单聊
 			case 1:
 				MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
+				messageRequestPacket.setMessageId(parmas.getString("messageId"));
 				messageRequestPacket.setMessage(parmas.getString("message"));
 				messageRequestPacket.setToUserId(parmas.getString("toMessageId"));
 				messageRequestPacket.setFromUserId(parmas.getString("fromUserid"));
 				messageRequestPacket.setFileType(parmas.getString("fileType"));
+				messageRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = messageRequestPacket;
 				break;
 			// 创建群聊
@@ -96,6 +100,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 				String userListStr = parmas.getString("userIdList");
 				List<String> userIdList = Arrays.asList(userListStr.split(","));
 				createGroupRequestPacket.setUserIdList(userIdList);
+				createGroupRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = createGroupRequestPacket;
 				break;
 			// 群聊消息
@@ -105,12 +110,25 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 				groupMessageRequestPacket.setToGroupId(parmas.getString("toMessageId"));
 				groupMessageRequestPacket.setFromUserId(parmas.getString("fromUserid"));
 				groupMessageRequestPacket.setFileType(parmas.getString("fileType"));
+				groupMessageRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = groupMessageRequestPacket;
 				break;
 			//心跳检测
 			case 11:
 				HeartBeatRequestPacket heartBeatRequestPacket = new HeartBeatRequestPacket();
+				heartBeatRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = heartBeatRequestPacket;
+				break;
+			//已读未读回执
+			case 19:
+				ReadRequestPacket readRequestPacket = new ReadRequestPacket();
+				readRequestPacket.setMessageId(parmas.getString("messageId"));
+				readRequestPacket.setToUserId(parmas.getString("toMessageId"));
+				readRequestPacket.setFromUserid(parmas.getString("fromUserid"));
+				readRequestPacket.setReadType(parmas.getString("readType"));
+				readRequestPacket.setFileType(parmas.getString("fileType"));
+				readRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
+				packet = readRequestPacket;
 				break;
 			default:
 				break;
@@ -119,7 +137,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 	}
 
 	  /**
-     * 描述：处理Http请求，主要是完成HTTP协议到Websocket协议的升级
+     * 处理Http请求，完成HTTP协议到Websocket协议升级
      * @param ctx
      * @param req
      */
@@ -157,10 +175,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
-     * 描述：异常处理，关闭channel
+     * 异常处理，关闭channel
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("HTTP协议转换异常：{}", cause.getMessage());
         cause.printStackTrace();
         ctx.close();
     }

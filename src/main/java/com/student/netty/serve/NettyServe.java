@@ -29,7 +29,7 @@ public class NettyServe implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
+
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		// boss 线程组用于处理连接工作
 		EventLoopGroup boss = new NioEventLoopGroup();
@@ -58,18 +58,19 @@ public class NettyServe implements InitializingBean {
 				ch.pipeline().addLast(MessageRequestHandler.INSTANCE);
 				ch.pipeline().addLast(CreateGroupRequestHandler.INSTANCE);
 				ch.pipeline().addLast(GroupMessageRequestHandler.INSTANCE);
+				ch.pipeline().addLast(ReadRequestHandler.INSTANCE);
 				ch.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);
 				ch.pipeline().addLast(ExceptionHandler.INSTANCE);
 			}
 		});
 		bind(bootstrap, nettyPort);
 	}
-	
+
 	public void bind(final ServerBootstrap serverBootstrap, final int port) {
 		serverBootstrap.bind(port).addListener(new GenericFutureListener<Future<? super Void>>() {
 
 			public void operationComplete(Future<? super Void> future) throws Exception {
-				
+
 				 if (future.isSuccess()) {
 		            System.out.println("端口[" + port + "]绑定成功!");
 				 } else {

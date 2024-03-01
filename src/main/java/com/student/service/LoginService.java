@@ -2,6 +2,7 @@ package com.student.service;
 
 import com.student.Constant.RedisKey;
 import com.student.mapper.LoginMapper;
+import com.student.netty.utils.RedisCache;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
@@ -17,12 +18,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.student.Constant.RedisKey.DOWNLINE_SIGN;
+import static com.student.Constant.RedisKey.ONLINE_SIGN;
 
 /**
  * 登录业务类<br>
@@ -39,6 +44,8 @@ public class LoginService {
         System.out.println(DigestUtils.md5DigestAsHex("000000".getBytes()));
     }
 
+    @Resource
+    private RedisCache redisCache;
     /**
      * <h3>mapper层</h3>
      */
@@ -154,6 +161,10 @@ public class LoginService {
         return new User(String.valueOf(user.getId()), user.getUsername(), user.getImage());
     }
 
+    public List<String> queryUserByIds(List<String> userIds){
+        return mapper.queryIds(userIds.toString().replace("[", ""));
+    }
+
     public void saveGroupName(String groupId, List<String> userIds){
         for (String userId : userIds) {
             mapper.saveUserIds(groupId, userId);
@@ -168,4 +179,21 @@ public class LoginService {
 
     }
 
+    /**
+     * 聊天用户下线回调方法
+     * @param userId
+     */
+    public void downLine(String userId) {
+        try {
+            //缓存下线时间
+            redisCache.set(DOWNLINE_SIGN + "_" + userId, new Date(System.currentTimeMillis()));
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            //删除用户在线标识
+            redisCache.del(ONLINE_SIGN + "_" + userId);
+        }
+
+
+    }
 }

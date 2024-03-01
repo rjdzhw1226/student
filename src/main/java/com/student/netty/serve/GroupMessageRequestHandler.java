@@ -36,8 +36,8 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 	protected void channelRead0(ChannelHandlerContext ctx, GroupMessageRequestPacket groupMessageRequestPacket) throws Exception {
 		//分布式发送
 		String groupId = groupMessageRequestPacket.getToGroupId();
-		ByteBuf byteBuf = getByteBufRes(ctx, groupMessageRequestPacket);
-		publishPo po = new publishPo(9, groupId, groupMessageRequestPacket.getFromUserId(),groupMessageRequestPacket.getMessage(),byteBuf);
+		String json = getByteBufRes(ctx, groupMessageRequestPacket);
+		publishPo po = new publishPo(9, groupId, groupMessageRequestPacket.getFromUserId(),groupMessageRequestPacket.getMessage(),null, json, null);
 		A.a.redisService.publish("channel_group", po);
 	}
 
@@ -60,8 +60,7 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 		return byteBuf;
 	}
 
-	public ByteBuf getByteBufRes(ChannelHandlerContext ctx, GroupMessageRequestPacket groupMessageRequestPacket) {
-		ByteBuf byteBuf = ctx.alloc().buffer();
+	public String getByteBufRes(ChannelHandlerContext ctx, GroupMessageRequestPacket groupMessageRequestPacket) {
 		User fromUser = A.a.loginService.queryUserById(groupMessageRequestPacket.getFromUserId());
 		List<String> nameList = A.a.loginService.findGroup(groupMessageRequestPacket.getToGroupId());
 		JSONObject data = new JSONObject();
@@ -74,8 +73,6 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 		params.put("groupId", groupMessageRequestPacket.getToGroupId());
 		params.put("nameList", nameList);
 		data.put("params", params);
-		byte []bytes = data.toJSONString().getBytes(Charset.forName("utf-8"));
-		byteBuf.writeBytes(bytes);
-		return byteBuf;
+		return data.toJSONString();
 	}
 }

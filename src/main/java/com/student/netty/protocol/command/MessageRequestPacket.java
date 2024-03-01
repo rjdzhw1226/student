@@ -2,6 +2,7 @@ package com.student.netty.protocol.command;
 
 public class MessageRequestPacket extends Packet{
 
+	private String messageId;
 	private String toUserId;
 	private String fromUserId;
 	private String message;
@@ -11,11 +12,20 @@ public class MessageRequestPacket extends Packet{
 		super();
 	}
 
-	public MessageRequestPacket(String toUserId, String fromUserId, String message) {
+	public MessageRequestPacket(String toUserId, String fromUserId, String messageId, String message) {
 		super();
+		this.messageId = messageId;
 		this.toUserId = toUserId;
-		this.fromUserId = toUserId;
+		this.fromUserId = fromUserId;
 		this.message = message;
+	}
+
+	public String getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 
 	public String getFromUserId() {

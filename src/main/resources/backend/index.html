@@ -164,6 +164,7 @@
         user:{},
         value:'获取验证码',
         clock:'',
+        nettyPort:'',
         nums:30,
         isCollapse: false,
         dialogFormVisible: false,
@@ -190,7 +191,10 @@
       });
       axios.get("/login/getImage").then((response)=>{
         this.user = response.data;
-      })
+      });
+      axios.get("/login/getPort").then((response)=>{
+        this.nettyPort = response.data;
+      });
     },
     methods: {
       toggleCollapse() {
@@ -210,7 +214,7 @@
       menuHandle(item){
         this.loading = true
         if(item.url === 'wechat.html'){
-          this.iframeUrl = 'wechat.html?urlParams='+ this.user.userId;
+          this.iframeUrl = 'wechat.html?urlParams='+ this.user.userId +"&port=" + this.nettyPort;
         } else {
           this.iframeUrl = item.url
         }

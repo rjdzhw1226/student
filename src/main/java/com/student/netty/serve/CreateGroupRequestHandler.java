@@ -5,6 +5,7 @@ import com.student.netty.protocol.command.CreateGroupRequestPacket;
 import com.student.netty.utils.A;
 import com.student.netty.utils.SessionUtils;
 import com.student.pojo.vo.User;
+import com.student.util.BaseContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -13,6 +14,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.UUID;
  * 2020-11-12
  */
 @Sharable
+@Slf4j
 public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<CreateGroupRequestPacket>{
 
 	public static CreateGroupRequestHandler INSTANCE = new CreateGroupRequestHandler();
@@ -34,26 +37,20 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, CreateGroupRequestPacket createGroupRequestPacket) throws Exception {
-		List<String> userIdList = createGroupRequestPacket.getUserIdList();
-		List<String> nameList = new ArrayList<>();
-		ChannelGroup channelGroup = new DefaultChannelGroup(ctx.executor());
-		channelGroup.add(ctx.channel());
-		nameList.add(SessionUtils.getUser(ctx.channel()).getUserName());
-		for (String userId : userIdList) {
-			Channel channel = SessionUtils.getChannel(userId);
-			User user = SessionUtils.getUser(channel);
-			if (channel != null) {
-				channelGroup.add(channel);
-				nameList.add(user.getShowName());
-			}
-		}
 		String groupId = UUID.randomUUID().toString();
-		// 绑定群Id 和 channelgroup的映射
-		SessionUtils.bindChannelGroup(groupId, channelGroup);
+
+		List<String> userIdList = createGroupRequestPacket.getUserIdList();
+		log.info("userIdList: {}", userIdList.toString());
+
+		List<String> nameList = A.a.loginService.queryUserByIds(userIdList);
+		String userName = SessionUtils.getUser(ctx.channel()).getUserName();
+		nameList.add(userName);
+
+		userIdList.add(String.valueOf(A.a.loginService.queryUser(userName).getId()));
 		//落表持久化
 		A.a.loginService.saveGroupName(groupId, userIdList);
 		ByteBuf byteBuf = getByteBuf(ctx, groupId, nameList);
-		channelGroup.writeAndFlush(new TextWebSocketFrame(byteBuf));
+		ctx.writeAndFlush(new TextWebSocketFrame(byteBuf));
 	}
 
 	public ByteBuf getByteBuf(ChannelHandlerContext ctx, String groupId, List<String> nameList) {

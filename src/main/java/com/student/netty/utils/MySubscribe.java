@@ -13,6 +13,7 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class MySubscribe implements MessageListener {
             log.info("单聊：{}传输数据为：{}",po.getType(), str);
             //消息落库
             A.a.loginService.saveMessage(MessageVo.builder()
+                    .messageId(po.getMessageId())
                     .message(po.getMessage())
                     .type(po.getType().byteValue())
                     .fromUserId(po.getFromId())
@@ -44,7 +46,9 @@ public class MySubscribe implements MessageListener {
             );
             Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, po.getId());
             Channel toUserChannel = SessionUtils.findChannelGroup((ChannelId) channelId);
-            toUserChannel.writeAndFlush(new TextWebSocketFrame(po.getBuf()));
+            if (toUserChannel != null){
+                toUserChannel.writeAndFlush(new TextWebSocketFrame(po.getJson()));
+            }
         //群聊
         } else if(key.contains("channel_group")){
             publishPo po = JSON.parseObject(str, publishPo.class);
@@ -64,7 +68,7 @@ public class MySubscribe implements MessageListener {
                             .toUserId(userId)
                             .toGroupId(po.getId()).build()
                     );
-                    toUserChannel.writeAndFlush(po.getBuf());
+                    toUserChannel.writeAndFlush(po.getJson());
                 } else {
                     log.error("未在本机：{} toChannel 为空", serverPort);
                 }
@@ -72,10 +76,15 @@ public class MySubscribe implements MessageListener {
         //已读未读
         } else if (key.contains("channel_read")) {
             log.info("已读未读数据为：{}", str);
-
+            publishPo po = JSON.parseObject(str, publishPo.class);
+            Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, po.getId());
+            Channel toUserChannel = SessionUtils.findChannelGroup((ChannelId) channelId);
+            if (toUserChannel != null){
+                toUserChannel.writeAndFlush(new TextWebSocketFrame(po.getJson()));
+            }
         }
-        System.out.println("订阅频道:" + new String(message.getChannel()));
-        System.out.println("接收数据:" + new String(message.getBody()));
+        log.info("订阅频道:" + new String(message.getChannel()));
+        log.info("接收数据:" + new String(message.getBody()));
     }
 }
 

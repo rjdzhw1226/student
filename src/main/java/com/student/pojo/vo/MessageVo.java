@@ -8,6 +8,7 @@ import lombok.*;
 @ToString
 @Builder
 public class MessageVo {
+    private String messageId;
     private Byte type;
     private String toGroupId;
     private String toUserId;

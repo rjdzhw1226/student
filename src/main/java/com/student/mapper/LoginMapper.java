@@ -32,4 +32,6 @@ public interface LoginMapper {
     public void saveUserIds(String groupId, String userId);
     @Select("select user_id from group where group_id = #{groupId}")
     List<String> findGroup(String groupId);
+    @Select("select username from user where id in(#{userIds})")
+    List<String> queryIds(String userIds);
 }

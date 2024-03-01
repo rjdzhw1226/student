@@ -137,7 +137,7 @@ public class WebSecurityConfg extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //配置静态文件不需要认证
-        web.ignoring().antMatchers("/static/**","/backend/**","/ws/**");
+        web.ignoring().antMatchers("/static/**","/backend/**","/ws/**","/wechat/**");
     }
 
 /**

@@ -13,4 +13,6 @@ public interface Command {
      Byte GROUP_MESSAGE_RESPONSE = 10; //接收群消息
      Byte HEARTBEAT_REQUEST = 11; //心跳消息请求
      Byte HEARTBEAT_RESPONSE = 12; //心跳消息恢复
+     Byte READ_REQUEST = 19; //已读未读信息请求
+     Byte READ_RESPONSE = 20; //已读未读信息响应
 }

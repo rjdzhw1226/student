@@ -43,15 +43,17 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
 		//分布式注册
 		SessionUtils.addChannelGroup(ctx.channel());
 		A.a.redisService.nSetBinary(CHANNEL_ID_KEY, loginUser.getUserId(), ctx.channel().id());
+		boolean hasLogin = SessionUtils.hasLogin(ctx.channel());
 		//判断登录与否
-		if (SessionUtils.hasLogin(ctx.channel())) {
-			log.info("本机上该用户已登录");
-		} else if ((Boolean) A.a.redisService.get(ONLINE_SIGN + loginUser.getUserId())) {
-			log.info("该用户已登录其它服务器");
+		if (hasLogin && (Boolean) A.a.redisService.get(ONLINE_SIGN + "_" + loginUser.getUserId())) {
+			log.info("该用户已登录，且该用户已注册到中间件");
+			//返回消息
+			ByteBuf buffer = getByteBuf(ctx, "连接成功", registerRequestPacket);
+			ctx.channel().writeAndFlush(new TextWebSocketFrame(buffer));
+		} else {
+			ByteBuf buffer = getByteBuf(ctx, "连接失败", registerRequestPacket);
+			ctx.channel().writeAndFlush(new TextWebSocketFrame(buffer));
 		}
-		//返回消息
-		ByteBuf buffer = getByteBuf(ctx, "连接成功", registerRequestPacket);
-		ctx.channel().writeAndFlush(new TextWebSocketFrame(buffer));
 	}
 
 	public ByteBuf getByteBuf(ChannelHandlerContext ctx, String message, RegisterRequestPacket registerRequestPacket) {

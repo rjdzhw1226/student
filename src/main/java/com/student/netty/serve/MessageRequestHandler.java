@@ -35,11 +35,13 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 		Channel toUserChannel = SessionUtils.getChannel(messageRequestPacket.getToUserId());
 		if (toUserChannel != null && SessionUtils.hasLogin(toUserChannel)) {
 			//本机发送 本机在线
+			String messageId = messageRequestPacket.getMessageId();
 			message = messageRequestPacket.getMessage();
 			User toUser = SessionUtils.getUser(toUserChannel);
 			String fileType = messageRequestPacket.getFileType();
 			//消息落库
 			A.a.loginService.saveMessage(MessageVo.builder()
+					.messageId(messageId)
 					.message(message)
 					.type(messageRequestPacket.getCommand())
 					.fromUserId(messageRequestPacket.getFromUserId())
@@ -47,14 +49,14 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 					.fileType(fileType)
 					.toGroupId(null).build()
 			);
-			ByteBuf buf = getByteBuf(ctx, message, toUser, fileType);
+			ByteBuf buf = getByteBuf(ctx, message, toUser, fileType, messageId);
 			toUserChannel.writeAndFlush(new TextWebSocketFrame(buf));
 		} else {
 			log.error("当前用户："+messageRequestPacket.getToUserId()+"未在本机登录！其它服务器在线标识：{}",message);
-			ByteBuf buf = getByteBufRes(ctx, messageRequestPacket);
+			String json = getByteBufRes(messageRequestPacket);
 			String toUserId = messageRequestPacket.getToUserId();
-			String fromId = messageRequestPacket.getToUserId();
-			publishPo po = new publishPo(1,toUserId,fromId,messageRequestPacket.getMessage(),buf);
+			String fromId = messageRequestPacket.getFromUserId();
+			publishPo po = new publishPo(1,toUserId,fromId,messageRequestPacket.getMessage(),null, json, messageRequestPacket.getMessageId());
 			//分布式发送
 			A.a.redisService.publish("channel_single", po);
 		}
@@ -62,15 +64,17 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 		A.a.redisService.set(ONLINE_SIGN + "_" + messageRequestPacket.getFromUserId(), true, 1800);
 	}
 
-	public ByteBuf getByteBuf(ChannelHandlerContext ctx, String message, User toUser, String fileType) {
+	public ByteBuf getByteBuf(ChannelHandlerContext ctx, String message, User toUser, String fileType,String messageId) {
 		ByteBuf byteBuf = ctx.alloc().buffer();
 		User fromUser = SessionUtils.getUser(ctx.channel());
 		JSONObject data = new JSONObject();
 		data.put("type", 2);
 		data.put("status", 200);
 		JSONObject params = new JSONObject();
+		params.put("messageId", messageId);
 		params.put("message", message);
 		params.put("fileType", fileType);
+		params.put("readType", 0);
 		params.put("fromUser", fromUser);
 		params.put("toUser", toUser);
 		data.put("params", params);
@@ -79,21 +83,20 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 		return byteBuf;
 	}
 
-	public ByteBuf getByteBufRes(ChannelHandlerContext ctx,MessageRequestPacket messageRequestPacket) {
-		ByteBuf byteBuf = ctx.alloc().buffer();
+	public String getByteBufRes(MessageRequestPacket messageRequestPacket) {
 		User fromUser = A.a.loginService.queryUserById(messageRequestPacket.getFromUserId());
 		User toUser = A.a.loginService.queryUserById(messageRequestPacket.getToUserId());
 		JSONObject data = new JSONObject();
 		data.put("type", 2);
 		data.put("status", 200);
 		JSONObject params = new JSONObject();
+		params.put("messageId", messageRequestPacket.getMessageId());
 		params.put("message", messageRequestPacket.getMessage());
 		params.put("fileType", messageRequestPacket.getFileType());
+		params.put("readType", 0);
 		params.put("fromUser", fromUser);
 		params.put("toUser",toUser);
 		data.put("params", params);
-		byte []bytes = data.toJSONString().getBytes(Charset.forName("utf-8"));
-		byteBuf.writeBytes(bytes);
-		return byteBuf;
+		return data.toJSONString();
 	}
 }
