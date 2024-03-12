@@ -1,8 +1,10 @@
 package com.student;
 
+import com.student.mapper.LoginMapper;
 import com.student.mapper.TeacherMapper;
 import com.student.pojo.dto.teacherDtos;
 import com.student.pojo.teacher;
+import com.student.service.LoginService;
 import com.student.service.TeacherService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,10 @@ class StudentDemoApplicationTests {
     public TeacherService ts;
 
     @Autowired
-    private JavaMailSender mailSender;
+    public LoginMapper mapper;
+
+//    @Autowired
+//    private JavaMailSender mailSender;
 
     @Test
     public void contextLoads() {

@@ -2,14 +2,22 @@ package com.student.service;
 
 import com.student.Constant.RedisKey;
 import com.student.mapper.LoginMapper;
+import com.student.netty.protocol.command.ReadGroupRequestPacket;
 import com.student.netty.protocol.command.ReadRequestPacket;
+import com.student.netty.utils.A;
+import com.student.netty.utils.MakeGropHeadPicUtil;
 import com.student.netty.utils.RedisCache;
+import com.student.pojo.ReadResult;
+import com.student.pojo.dto.messageDto;
+import com.student.pojo.publishPo;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
 import com.student.pojo.vo.MessageVo;
 import com.student.pojo.vo.User;
 import com.student.util.Mail;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -25,12 +33,12 @@ import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.student.Constant.RedisKey.DOWNLINE_SIGN;
-import static com.student.Constant.RedisKey.ONLINE_SIGN;
+import static com.student.Constant.RedisKey.*;
 
 /**
  * 登录业务类<br>
@@ -165,7 +173,11 @@ public class LoginService {
     }
 
     public List<String> queryUserByIds(List<String> userIds){
-        return mapper.queryIds(userIds.toString().replace("[", ""));
+        String replace = userIds.toString().replace("[", "('").replace("]", "')").replace(", ", "','");
+        if(replace.contains("drop")||replace.contains("delete")||replace.contains("update")||replace.contains("insert")){
+            return new ArrayList<>();
+        }
+        return mapper.queryIds(replace);
     }
 
     public void saveGroupName(String groupId, List<String> userIds){
@@ -178,8 +190,10 @@ public class LoginService {
         return mapper.findGroup(groupId);
     }
 
+    @Transactional
+    @Async("taskExecutor")
     public void saveMessage(MessageVo vo){
-
+        mapper.saveMessage(vo);
     }
 
     /**
@@ -196,14 +210,110 @@ public class LoginService {
             //删除用户在线标识
             redisCache.del(ONLINE_SIGN + "_" + userId);
         }
-
-
     }
 
     @Transactional
     @Async("taskExecutor")
     public void asyncUpdateMessage(ReadRequestPacket read) {
         mapper.updateMessage(read.getMessageId(), read.getReadType());
+    }
 
+    public List<String> addChat(List<String> userIdList, String userName, String groupId, String chatType, String title) {
+        List<String> userIds = new ArrayList<>(userIdList);
+        List<String> nameList = queryUserByIds(userIdList);
+        nameList.add(userName);
+        userIds.add(String.valueOf(queryUser(userName).getId()));
+        //落表持久化
+        saveGroupMain(userIds, groupId, userName, nameList.size(), chatType, nameList.toString().replace("[","").replace("]",""), title);
+        if(nameList.size() > 2){
+            MakeGropHeadPicUtil picUtil = new MakeGropHeadPicUtil();
+            List<String> list = generateHeadPic(groupId, nameList);
+            picUtil.getCombinationOfhead(list, this.getClass().getClassLoader().getResource("/") + "\\backend\\assets\\", title);
+        }
+        return nameList;
+    }
+
+    private List<String> generateHeadPic(String groupId, List<String> nameList) {
+        List<String> pics = new ArrayList<>();
+        for (String s : nameList) {
+            pics.add("D:\\DOWNLOAD\\项目\\student\\studentNew\\student\\src\\main\\resources\\backend\\assets\\" + queryImage(s));
+        }
+        return pics;
+    }
+
+    private String queryImage(String s) {
+        return mapper.queryI(s);
+    }
+
+    @Transactional
+    public void saveGroupMain(List<String> userIds, String groupId, String userName, int size, String type, String title, String chatName) {
+        saveGroupName(groupId, userIds);
+        switch (type) {
+            case "1":
+                mapper.saveGroup(groupId, userName, size, type, title);
+                break;
+            case "2":
+            case "3":
+                //讨论组
+                //同事群
+                if (!(chatName == null || "".equals(chatName))) {
+                    title = chatName;
+                }
+                mapper.saveGroup(groupId, userName, size, type, title);
+                break;
+            case "6":
+                //公众号
+                title = userName + "@" + chatName;
+                mapper.saveGroup(groupId, userName, size, type, title);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Resource
+    private RedissonClient redissonClient;
+
+    //查单聊 查群聊
+    public List<MessageVo> queryMessage(messageDto message) {
+        List<MessageVo> list = null;
+        Object obj = redisCache.get(DOWNLINE_SIGN + "_" + message.getUserId());
+        //获取锁 接收人 也就是发送时的
+        RLock lock = redissonClient.getLock(LOCK_KEY + message.getUserId());
+        try{
+            lock.lock();
+            if(obj != null){
+                Date start = new Date((Long)obj);
+                message.setStart(start);
+                list = mapper.queryMessage(message);
+                lock.unlock();
+                return list;
+            } else {
+                //第一次登录 拉取当前时间之前所有的数据
+                list = mapper.queryMessageEndTime(message);
+                lock.unlock();
+                return list;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            lock.unlock();
+            return list;
+        }finally {
+            lock.unlock();
+        }
+    }
+
+    public void saveReadMessage(publishPo po, List<String> userIds) {
+        for (String userId : userIds) {
+            mapper.saveReadMessage(po.getMessageId(), po.getId(), po.getFromId(), userId);
+        }
+    }
+
+    public void asyncUpdateGroupMessage(ReadGroupRequestPacket readPacket) {
+        mapper.update(readPacket.getFromUserId(), readPacket.getMessageId(), readPacket.getGroupId(), readPacket.getToUserId(), new Date(System.currentTimeMillis()));
+    }
+
+    public ReadResult selectGroupMessage(ReadGroupRequestPacket readGroup) {
+        return mapper.selectCountGroup(readGroup.getGroupId(), readGroup.getMessageId(), readGroup.getToUserId(), readGroup.getFromUserId());
     }
 }

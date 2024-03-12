@@ -98,14 +98,18 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 			case 3:
 				CreateGroupRequestPacket createGroupRequestPacket = new CreateGroupRequestPacket();
 				String userListStr = parmas.getString("userIdList");
+				String title = parmas.getString("title");
 				List<String> userIdList = Arrays.asList(userListStr.split(","));
 				createGroupRequestPacket.setUserIdList(userIdList);
+				createGroupRequestPacket.setTitle(title);
+				createGroupRequestPacket.setChatType("1");
 				createGroupRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = createGroupRequestPacket;
 				break;
 			// 群聊消息
 			case 9:
 				GroupMessageRequestPacket groupMessageRequestPacket = new GroupMessageRequestPacket();
+				groupMessageRequestPacket.setMessageId(parmas.getString("messageId"));
 				groupMessageRequestPacket.setMessage(parmas.getString("message"));
 				groupMessageRequestPacket.setToGroupId(parmas.getString("toMessageId"));
 				groupMessageRequestPacket.setFromUserId(parmas.getString("fromUserid"));
@@ -129,6 +133,16 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 				readRequestPacket.setFileType(parmas.getString("fileType"));
 				readRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = readRequestPacket;
+				break;
+				//群聊已读未读回执
+			case 21:
+				ReadGroupRequestPacket readGroupRequestPacket = new ReadGroupRequestPacket();
+				readGroupRequestPacket.setMessageId(parmas.getString("messageId"));
+				readGroupRequestPacket.setToUserId(parmas.getString("toMessageId"));
+				readGroupRequestPacket.setGroupId(parmas.getString("toGroupId"));
+				readGroupRequestPacket.setFromUserId(parmas.getString("fromUserid"));
+				readGroupRequestPacket.setReadType(parmas.getString("readType"));
+				packet = readGroupRequestPacket;
 				break;
 			default:
 				break;

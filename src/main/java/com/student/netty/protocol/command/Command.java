@@ -15,4 +15,7 @@ public interface Command {
      Byte HEARTBEAT_RESPONSE = 12; //心跳消息恢复
      Byte READ_REQUEST = 19; //已读未读信息请求
      Byte READ_RESPONSE = 20; //已读未读信息响应
+
+     Byte READ_GROUP_REQUEST = 21; //群已读未读请求
+     Byte READ_GROUP_RESPONSE = 22; // 群已读未读响应
 }

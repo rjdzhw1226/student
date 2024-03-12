@@ -10,6 +10,7 @@ public class RedisKey {
     public static final String ONLINE_SIGN = "online_sign";
     public static final String DOWNLINE_SIGN = "downline_sign";
 
+    public static final String LOCK_KEY = "lock:";
     public static final String CHANNEL_ID_KEY = "channelId:";
     public static final String MAP_KEY = "load:geo:";
 

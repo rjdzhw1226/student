@@ -214,7 +214,7 @@
       menuHandle(item){
         this.loading = true
         if(item.url === 'wechat.html'){
-          this.iframeUrl = 'wechat.html?urlParams='+ this.user.userId +"&port=" + this.nettyPort;
+          this.iframeUrl = 'wechat.html?urlParams='+ this.user.userId +'&urlName='+ this.user.userName +"&port=" + this.nettyPort;
         } else {
           this.iframeUrl = item.url
         }

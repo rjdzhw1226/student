@@ -70,4 +70,16 @@ public class User {
 	public void setShowName(String showName) {
 		this.showName = showName;
 	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"userId='" + userId + '\'' +
+				", userName='" + userName + '\'' +
+				", password='" + password + '\'' +
+				", sex='" + sex + '\'' +
+				", image='" + image + '\'' +
+				", showName='" + showName + '\'' +
+				'}';
+	}
 }

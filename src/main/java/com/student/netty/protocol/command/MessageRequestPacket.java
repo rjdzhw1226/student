@@ -2,6 +2,7 @@ package com.student.netty.protocol.command;
 
 public class MessageRequestPacket extends Packet{
 
+	private String chatId;
 	private String messageId;
 	private String toUserId;
 	private String fromUserId;
@@ -58,6 +59,14 @@ public class MessageRequestPacket extends Packet{
 
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public String getChatId() {
+		return chatId;
+	}
+
+	public void setChatId(String chatId) {
+		this.chatId = chatId;
 	}
 
 	@Override

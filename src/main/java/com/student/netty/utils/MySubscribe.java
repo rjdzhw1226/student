@@ -1,5 +1,6 @@
 package com.student.netty.utils;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.fastjson.JSON;
 import com.student.pojo.publishPo;
 import com.student.pojo.vo.MessageVo;
@@ -13,16 +14,18 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.student.Constant.RedisKey.CHANNEL_ID_KEY;
+import static com.student.Constant.RedisKey.LOCK_KEY;
 
 @Slf4j
 @Component
 public class MySubscribe implements MessageListener {
+    private static final Map<String,List<String>> cacheGroupMap = new ConcurrentHashMap<>();
 
     @Value("${netty.port}")
     private int serverPort;
@@ -39,9 +42,12 @@ public class MySubscribe implements MessageListener {
             A.a.loginService.saveMessage(MessageVo.builder()
                     .messageId(po.getMessageId())
                     .message(po.getMessage())
+                    .readType(po.getReadType())
                     .type(po.getType().byteValue())
                     .fromUserId(po.getFromId())
                     .toUserId(po.getId())
+                    .fileType(po.getFileType())
+                    .readType(po.getReadType())
                     .toGroupId(null).build()
             );
             Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, po.getId());
@@ -51,28 +57,41 @@ public class MySubscribe implements MessageListener {
             }
         //群聊
         } else if(key.contains("channel_group")){
+            List<String> userIds = null;
             publishPo po = JSON.parseObject(str, publishPo.class);
             log.info("群聊：{}传输数据为：{}",po.getType(), str);
-            List<String> userIds = A.a.loginService.findGroup(po.getId());
+            userIds = cacheGroupMap.get(po.getId());
+            if ((userIds) == null) {
+                userIds = A.a.loginService.findGroup(po.getId());
+            }
             userIds.remove(po.getFromId());
+            //消息落库
+            A.a.loginService.saveMessage(MessageVo.builder()
+                    .messageId(po.getMessageId())
+                    .message(po.getMessage())
+                    .type(po.getType().byteValue())
+                    .fileType(po.getFileType())
+                    .readType(po.getReadType())
+                    .fromUserId(po.getFromId())
+                    .toGroupId(po.getId()).build()
+            );
             for (String userId : userIds) {
                 Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, userId);
                 Channel toUserChannel = SessionUtils.findChannelGroup((ChannelId) channelId);
-                if(toUserChannel != null){
-                    log.info(" toChannel 有值");
-                    //消息落库
-                    A.a.loginService.saveMessage(MessageVo.builder()
-                            .message(po.getMessage())
-                            .type(po.getType().byteValue())
-                            .fromUserId(po.getFromId())
-                            .toUserId(userId)
-                            .toGroupId(po.getId()).build()
-                    );
-                    toUserChannel.writeAndFlush(po.getJson());
-                } else {
-                    log.error("未在本机：{} toChannel 为空", serverPort);
+                while (true){
+                    if (!A.a.redissonClient.getLock(LOCK_KEY + userId).isLocked()) {
+                        if(toUserChannel != null){
+                            log.info(" toChannel 有值");
+                            toUserChannel.writeAndFlush(po.getJson());
+                        } else {
+                            log.error("未在本机：{} toChannel 为空", serverPort);
+                        }
+                        break;
+                    }
                 }
             }
+            //已读未读消息落库
+            A.a.loginService.saveReadMessage(po, userIds);
         //已读未读
         } else if (key.contains("channel_read")) {
             log.info("已读未读数据为：{}", str);

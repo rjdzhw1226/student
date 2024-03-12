@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("用户不存在");
         }
         //在线标识
-        redisCache.set(ONLINE_SIGN + "_" + use.getId(), true, 1800);
+        redisCache.set(ONLINE_SIGN + "_" + use.getId(), true);
         BaseContext.setCurrentId(use.getUsername());
         return new userLogin(use);
     }

@@ -11,12 +11,15 @@ public class publishPo {
     private String message;
     private ByteBuf buf;
 
+    private String groupId;
+    private String readType;
+    private String fileType;
     private String json;
 
     public publishPo() {
     }
 
-    public publishPo(Integer type, String id, String fromId, String message, ByteBuf buf, String json, String messageId) {
+    public publishPo(Integer type, String id, String fromId, String message, ByteBuf buf, String json, String messageId, String readType, String fileType) {
         this.type = type;
         this.id = id;
         this.fromId = fromId;
@@ -24,6 +27,45 @@ public class publishPo {
         this.buf = buf;
         this.json = json;
         this.messageId = messageId;
+        this.readType = readType;
+        this.fileType = fileType;
+    }
+
+    public publishPo(Integer type, String id, String fromId, String message, ByteBuf buf, String json, String messageId, String readType, String fileType, String groupId) {
+        this.type = type;
+        this.id = id;
+        this.fromId = fromId;
+        this.message = message;
+        this.buf = buf;
+        this.json = json;
+        this.messageId = messageId;
+        this.readType = readType;
+        this.fileType = fileType;
+        this.groupId = groupId;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public String getReadType() {
+        return readType;
+    }
+
+    public void setReadType(String readType) {
+        this.readType = readType;
     }
 
     public String getMessageId() {
@@ -85,11 +127,16 @@ public class publishPo {
     @Override
     public String toString() {
         return "publishPo{" +
-                "type=" + type +
+                "messageId='" + messageId + '\'' +
+                ", type=" + type +
                 ", id='" + id + '\'' +
                 ", fromId='" + fromId + '\'' +
                 ", message='" + message + '\'' +
                 ", buf=" + buf +
+                ", groupId='" + groupId + '\'' +
+                ", readType='" + readType + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", json='" + json + '\'' +
                 '}';
     }
 }

@@ -2,6 +2,7 @@ package com.student.service.impl;
 
 
 import com.student.mapper.UserMapper;
+import com.student.pojo.Chat;
 import com.student.pojo.vo.User;
 import com.student.service.UserNettyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,12 @@ public class UserNettyServiceImpl implements UserNettyService{
 	@Override
 	public List<User> getFriendListData(String userId) {
 		return userRespositoryDao.getFriendListById(userId);
+	}
+
+	@Override
+	public List<Chat> getChatList(String userId) {
+
+		return null;
 	}
 
 }

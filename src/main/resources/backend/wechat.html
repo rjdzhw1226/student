@@ -153,13 +153,27 @@
 </div>
 </body>
 <script>
+    function copy(obj) {
+        let newobj = obj.constructor === Array ? [] : {};
+        if(typeof obj !== 'object'){
+            return;
+        }
+        for(let i in obj){
+            newobj[i] = typeof obj[i] === 'object' ? copy(obj[i]) : obj[i];
+        }
+        return newobj
+    }
+</script>
+<script>
     let urlParams = null;
+    let urlName = null;
     let port = null;
     new Vue({
         el: '#app',
         data: {
             user:{},
             tabActive: true,
+            groupCount: 0,
             nettyPort: '',
             socket: null,
             userInfoActive: false,
@@ -269,12 +283,10 @@
             ]
         },
         beforeCreate(){
-            //获取下线标识 和当前时间做条件 拉取数据库最新数据
-            
+            //'http://localhost:40000/#/wechat?urlParams={"userId"%3A"04150901"}'
 
         },
         created() {
-            //'http://localhost:40000/#/wechat?urlParams={"userId"%3A"04150901"}'
             let query_string = {};
             let query = window.location.search.substring(1);
             console.log("query" + query);
@@ -284,16 +296,28 @@
                 query_string[pair[0]] = pair[1];
             }
             urlParams = query_string["urlParams"];
+            urlName = query_string["urlName"];
             port = query_string["port"];
             let urlParamsJSON = {
-                "userId": urlParams
+                "userId": urlParams,
+                "userName": urlName
             };
             localStorage.setItem("access_token_" + this.userId, this.userId + "token")
             this.cacheUserInfo = JSON.parse(JSON.stringify(urlParamsJSON));
             this.token = localStorage.getItem("access_token_" + urlParams);
-
             axios.get("/login/getImage").then((response) => {
                 this.user = response.data;
+            });
+            //获取下线标识 和当前时间做条件 拉取数据库最新数据
+            axios({
+                method: 'post',
+                url: '/login/messageMine',
+                params: {
+                    userId: this.cacheUserInfo.userId,
+                    end: new Date()
+                }
+            }).then((response)=>{
+                console.log(response)
             });
         },
         mounted() {
@@ -309,7 +333,7 @@
             // 心跳请求
             clearInterval(self.uuid);
             self.uuid = setInterval(function () {
-                if (self.socket.readyState == WebSocket.OPEN) {
+                if (self.socket.readyState === WebSocket.OPEN) {
                     let data = {
                         type: 11,
                         params: {},
@@ -365,7 +389,7 @@
             },
             unSelected: function (val) {
                 for (let i = 0; i < this.friendData.length; i++) {
-                    if (this.friendData[i].userId == val.userId) {
+                    if (this.friendData[i].userId === val.userId) {
                         this.friendData[i].selected = false;
                         this.$set(this.friendData, i, this.friendData[i])
                     }
@@ -399,7 +423,7 @@
                 let self = this;
                 let offset = 0;
                 for (let i = 0; i < self.currentChatingList.length; i++) {
-                    if (self.rightHandItem.userId == self.currentChatingList[i].userId) {
+                    if (self.rightHandItem.userId === self.currentChatingList[i].userId) {
                         self.currentChatingList[i].sortIndex = self.currentChatingList[i].oldIndex;
                         self.currentChatingList[i].isTop = false;
                         offset = i;
@@ -407,7 +431,7 @@
                 }
                 if (offset > self.chatCurrentIndex) {
                     self.chatCurrentIndex++;
-                } else if (offset == self.chatCurrentIndex) {
+                } else if (offset === self.chatCurrentIndex) {
                     self.chatCurrentIndex = 0
                 } else {
                     self.chatCurrentIndex--;
@@ -419,7 +443,7 @@
                 let self = this;
                 let offset = 0;
                 for (let i = 0; i < self.currentChatingList.length; i++) {
-                    if (self.rightHandItem.userId == self.currentChatingList[i].userId) {
+                    if (self.rightHandItem.userId === self.currentChatingList[i].userId) {
                         self.currentChatingList[i].sortIndex = -1;
                         self.currentChatingList[i].isTop = true;
                         offset = i;
@@ -427,7 +451,7 @@
                 }
                 if (offset > self.chatCurrentIndex) {
                     self.chatCurrentIndex++;
-                } else if (offset == self.chatCurrentIndex) {
+                } else if (offset === self.chatCurrentIndex) {
                     self.chatCurrentIndex = 0
                 }
                 self.charSortCommon(true);
@@ -436,20 +460,21 @@
             deleteOnline: function () {
                 let self = this;
                 self.currentChatingList.some(function (item, i) {
-                    if (self.rightHandItem.userId = item.userId) {
+                    if (self.rightHandItem.userId === item.userId) {
                         self.currentChatingList.splice(i, 1);
                         self.chatCurrentIndex--;
                         self.$delete(self.messageContentMapping, self.rightHandItem.userId)
                         return true;
                     }
                 })
-                if (self.rightHandItem.userId == self.chatCurrentObject.userId) {
+                if (self.rightHandItem.userId === self.chatCurrentObject.userId) {
                     self.userInfoActive = false;
                     self.inputMessageActive = false;
                     self.chatCurrentIndex = null;
                     self.chatCurrentObject = {};
                 }
             },
+            //文件类型标签
             fileClass: function (fileName) {
                 let suffix = fileName.split(".")[1];
                 let className = "";
@@ -495,6 +520,8 @@
             // v-html渲染方法
             renderMessage: function (message) {
                 let ReadType = message.readType;
+                let Type = message.type;
+                let cah = message;
                 message = String(message.message);
                 let lookData = this.expresionData;
                 let url = '';
@@ -508,10 +535,36 @@
                     }
                 }
                 let str = ReadType === 0 ? '未读': '已读';
-                templateFinal = '' +
-                    '<div class="ReadInformation">' +
-                    '<div class="readStatus-unread">'+ str +'</div>' +
-                    '</div>'
+                if(Type === 9){
+                    let GroupCount = cah.groupCount;
+                    let ReadCount = cah.readCount;
+                    let unReadCount = GroupCount - ReadCount - 1;
+                    if(ReadType === 0){
+                        templateFinal = '' +
+                            '<div class="ReadInformation">' +
+                            '<div class="readStatus-unread">'+ unReadCount +'人未读,'+ ReadCount+ '人已读' +
+                            '</div>' +
+                            '</div>'
+                    } else {
+                        templateFinal = '' +
+                            '<div class="ReadInformation">' +
+                            '<div class="readStatus-read">'+ unReadCount +'人未读,'+ ReadCount+ '人已读' +
+                            '</div>' +
+                            '</div>'
+                    }
+                } else if(Type === 1){
+                    if(ReadType === 0){
+                        templateFinal = '' +
+                            '<div class="ReadInformation">' +
+                            '<div class="readStatus-unread">'+str+'</div>' +
+                            '</div>'
+                    } else {
+                        templateFinal = '' +
+                            '<div class="ReadInformation">' +
+                            '<div class="readStatus-read">'+str+'</div>' +
+                            '</div>'
+                    }
+                }
                 message = message + templateFinal;
                 this.$nextTick(function () {
                     let messageItemDom = $(".message-item");
@@ -549,7 +602,7 @@
                     document.body.appendChild(link);
                     link.click();
                 }).catch(function (error) {
-                    if (error.response.data.error == "invalid_token") {
+                    if (error.response.data.error === "invalid_token") {
                         self.$message({
                             message: 'token失效请重新登录！',
                             type: 'warning'
@@ -557,16 +610,6 @@
                         window.location.href = "/login.html"
                     }
                 })
-            },
-            copy(obj) {
-                let newobj = obj.constructor === Array ? [] : {};
-                if (typeof obj !== 'object') {
-                    return;
-                }
-                for (let i in obj) {
-                    newobj[i] = typeof obj[i] === 'object' ? this.copy(obj[i]) : obj[i];
-                }
-                return newobj
             },
             fileSelected: function () {
                 let self = this;
@@ -587,8 +630,8 @@
                             fileType: 1
                         }
                         self.chatMessageList.push(parmas);
-                        self.messageContentMapping[self.chatCurrentObject.userId] = this.copy(self.chatMessageList);
-                        if (self.socket.readyState == WebSocket.OPEN) {
+                        self.messageContentMapping[self.chatCurrentObject.userId] = copy(self.chatMessageList);
+                        if (self.socket.readyState === WebSocket.OPEN) {
                             let data = {
                                 type: self.Messagetype,
                                 params: {
@@ -606,7 +649,7 @@
                         }
                     }
                 }).catch(function (error) {
-                    if (error.response.data.error == "invalid_token") {
+                    if (error.response.data.error === "invalid_token") {
                         self.$message({
                             message: 'token失效请重新登录！',
                             type: 'warning'
@@ -628,13 +671,13 @@
             // 通过选择框确定创建的聊天  可能是单聊  可能是群聊
             createChat: function (userList) {
                 let self = this;
-                if (userList.length == 1) {
+                if (userList.length === 1) {
                     // 转化为创建单聊
-                    if (self.currentChatingList.length == 0) {
+                    if (self.currentChatingList.length === 0) {
                         self.chatCurrentIndex = 0;
                     }
                     for (let i = 0; i < self.currentChatingList.length; i++) {
-                        if (userList[0].userId == self.currentChatingList[i].userId) {
+                        if (userList[0].userId === self.currentChatingList[i].userId) {
                             self.chatCurrentIndex = i;
                             self.chatCurrentObject = self.currentChatingList[i];
                             self.chatMessageList = self.messageContentMapping[self.chatCurrentObject.userId] || [];
@@ -661,10 +704,11 @@
                 for (let i = 0; i < userList.length; i++) {
                     userIdList.push(userList[i].userId);
                 }
-                if (self.socket.readyState == WebSocket.OPEN) {
+                if (self.socket.readyState === WebSocket.OPEN) {
                     let data = {
                         type: 3,
                         params: {
+                            title: 'chatG',
                             userIdList: userIdList.toString(),
                         },
                     }
@@ -692,14 +736,14 @@
                 this.isShowSelector = true;
             },
             margintype: function (val) {
-                if (val == 1 || val == 9) {
+                if (val === 1 || val === 9) {
                     return false;
                 } else {
                     return true;
                 }
             },
             typeFloat: function (type) {
-                if (type == 1 || type == 9) {
+                if (type === 1 || type === 9) {
                     return 'right';
                 } else {
                     return 'left';
@@ -708,6 +752,7 @@
             changeChatObject: function (val, index) {
                 if (val.hasOwnProperty("groupId")) {
                     this.Messagetype = 9;
+                    this.groupCount = val.groupCount;
                 } else {
                     this.Messagetype = 1;
                 }
@@ -719,11 +764,11 @@
                 this.chatMessageList = this.messageContentMapping[val.userId] || [];
             },
             createMessageFrame: function (val) {
-                if (this.currentChatingList.length == 0) {
+                if (this.currentChatingList.length === 0) {
                     this.chatCurrentIndex = 0;
                 }
                 for (let i = 0; i < this.currentChatingList.length; i++) {
-                    if (this.selectFriendInfo.userId == this.currentChatingList[i].userId) {
+                    if (this.selectFriendInfo.userId === this.currentChatingList[i].userId) {
                         this.chatCurrentIndex = i;
                         this.chatCurrentObject = this.currentChatingList[i];
                         this.chatMessageList = this.messageContentMapping[this.chatCurrentObject.userId] || [];
@@ -762,7 +807,7 @@
                     for (i = 0; i < 36; i++) {
                         if (!uuid[i]) {
                             r = 0 | Math.random() * 16;
-                            uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+                            uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r];
                         }
                     }
                 }
@@ -771,7 +816,7 @@
             //点击发送消息
             sendMessage: function () {
                 let self = this;
-                if (self.message == "") {
+                if (self.message === "") {
                     self.$message({
                         message: '发送内容不能为空！',
                         type: 'warning'
@@ -779,18 +824,33 @@
                     return;
                 }
                 let cacheUserInfo = self.cacheUserInfo;
-                let parmas = {
-                    messageId: self.getUuid(16,32),
-                    message: self.message,
-                    type: self.Messagetype,
-                    image: cacheUserInfo.image,
-                    readType: 0,
-                    fileType: 0,
+                let parmas = {};
+                if(self.Messagetype === 9){
+                    parmas = {
+                        messageId: self.getUuid(16,32),
+                        message: self.message,
+                        type: self.Messagetype,
+                        image: cacheUserInfo.image,
+                        readType: 0,
+                        readCount: 0,
+                        groupCount: self.groupCount,
+                        fileType: 0,
+                    }
+                } else if(self.Messagetype === 1){
+                    parmas = {
+                        messageId: self.getUuid(16,32),
+                        message: self.message,
+                        type: self.Messagetype,
+                        image: cacheUserInfo.image,
+                        readType: 0,
+                        fileType: 0,
+                    }
                 }
+
                 self.chatMessageList.push(parmas);
-                self.messageContentMapping[self.chatCurrentObject.userId] = this.copy(self.chatMessageList);
+                self.messageContentMapping[self.chatCurrentObject.userId] = copy(self.chatMessageList);
                 self.message = "";
-                if (self.socket.readyState == WebSocket.OPEN) {
+                if (self.socket.readyState === WebSocket.OPEN) {
                     let data = {
                         type: self.Messagetype,
                         params: {
@@ -810,10 +870,11 @@
                     });
                 }
             },
+            //回车发送
             chatInput: function (event) {
-                if (event.keyCode == 13) {
+                if (event.keyCode === 13) {
                     console.log("触发enter输入事件");
-                    if (this.message.trim() == "") {
+                    if (this.message.trim() === "") {
                         alert("不能发送空消息")
                     }
                 }
@@ -856,7 +917,7 @@
                         self.friendList[i].selected = false; // 供给弹出框chebox初始化选择
                     }
                 }).catch(function (error) {
-                    if (error.response.data.error == "invalid_token") {
+                    if (error.response.data.error === "invalid_token") {
                         self.$message({
                             message: 'token失效请重新登录！',
                             type: 'warning'
@@ -880,7 +941,7 @@
                     }
                     socket.onmessage = function (event) {
                         let json = JSON.parse(event.data);
-                        if (json.status == 200) {
+                        if (json.status === 200) {
                             switch (json.type) {
                                 case 2:
                                     self.handleSingleMessage(json);
@@ -896,6 +957,9 @@
                                     break;
                                 case 20:
                                     self.handleReadMessageResponse(json);
+                                    break;
+                                case 22:
+                                    self.handleGroupReadMessageResponse(json);
                                     break;
                                 default:
                                     break;
@@ -914,7 +978,7 @@
                             return;
                         }
                         let cacheUserInfo = self.cacheUserInfo;
-                        if (socket.readyState == WebSocket.OPEN) {
+                        if (socket.readyState === WebSocket.OPEN) {
                             let data = {
                                 type: 7,
                                 params: cacheUserInfo,
@@ -939,6 +1003,104 @@
                 }
                 this.socket = socket;
             },
+            //处理群已读未读消息
+            handleGroupReadMessageResponse: function (jsonObj) {
+                let self = this;
+                let parmas ={
+                    groupId: jsonObj.params.groupId,
+                    messageId: jsonObj.params.messageId,
+                    type: 2,
+                    fromUser: jsonObj.params.fromUser,
+                    toUser: jsonObj.params.toUser,
+                    groupCount: jsonObj.params.groupCount,
+                    readCount: jsonObj.params.readCount,
+                    unReadCount: jsonObj.params.unReadCount
+                }
+                let c = '#messageText-' + parmas.messageId;
+                let messageElement = document.querySelector(c).querySelector('.readStatus-unread');
+                messageElement.innerHTML = '<div class="ReadInformation">' +
+                    '<div class="readStatus-read">'+ parmas.unReadCount +'人未读,'+ parmas.readCount+ '人已读' +
+                    '</div>' +
+                    '</div>'
+                for (let i = 0; i < self.chatMessageList.length; i++) {
+                    if (self.chatMessageList[i].messageId === parmas.messageId) {
+                        self.chatMessageList[i].readType = 1;
+                    }
+                }
+            },
+            // 接受群聊信息返回处理
+            handleGroupMessageResponse: function (jsonObj) {
+                let self = this;
+                let parmas = {
+                    messageId: jsonObj.params.messageId,
+                    message: jsonObj.params.message,
+                    type: 2,
+                    image: jsonObj.params.fromUser.image,
+                    fileType: jsonObj.params.fileType,
+                    showName: jsonObj.params.nameList.toString(),
+                    groupCount: jsonObj.params.groupCount,
+                    readCount: 0,
+
+                }
+                if (jsonObj.params.fileType === "1") {
+                    parmas.fileName = jsonObj.params.message.split("(")[0];
+                }
+                let fromUser = jsonObj.params.fromUser;
+                let groupId = jsonObj.params.groupId;
+                let exist = false;
+                for (let i = 0; i < self.currentChatingList.length; i++) {
+                    if (groupId === self.currentChatingList[i].groupId) {
+                        self.currentChatingList[i].messageTip = parmas.message;
+                        if (self.chatCurrentObject.userId != groupId) {
+                            self.currentChatingList[i].unReadCount++;
+                        }
+                        exist = true;
+                    }
+                }
+                if (!exist) {
+                    //聊天列表不存在  就添加新记录   并且接收到一条消息那么未读提醒unReadCount开始就为0
+                    let createParams = {
+                        messageTip: parmas.message,
+                        unReadCount: 1,
+                        userId: groupId,
+                        showName: parmas.showName,
+                        image: 'group.jpg',
+                        groupId: groupId,
+                        sortIndex: self.currentChatingList.length,
+                        oldIndex: self.currentChatingList.length,
+                        isTop: false,
+                    };
+                    if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) != "{}") {
+                        self.chatCurrentIndex++;
+                    }
+                    self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
+                }
+                if (self.messageContentMapping[groupId] === undefined) {
+                    self.messageContentMapping[groupId] = [];
+                }
+                self.messageContentMapping[groupId].push(parmas);
+                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId === groupId) {
+                    self.chatMessageList = self.messageContentMapping[groupId];
+                }
+                if(self.socket.readyState === WebSocket.OPEN){
+                    let data = {
+                        type: 21,
+                        params:{
+                            toMessageId: fromUser.userId,
+                            fromUserid: self.user.userId,
+                            messageId: parmas.messageId,
+                            toGroupId: groupId,
+                            readType: '1'
+                        }
+                    }
+                    self.socket.send(JSON.stringify(data));
+                } else {
+                    self.$message({
+                        message: 'Websocket连接没有开启！已读回执发送失败',
+                        type: 'warning'
+                    });
+                }
+            },
             //处理已读未读消息
             handleReadMessageResponse: function (jsonObj) {
                 let self = this;
@@ -955,6 +1117,11 @@
                 let c = '#messageText-' + parmas.messageId;
                 let messageElement = document.querySelector(c).querySelector('.readStatus-unread');
                 messageElement.innerHTML = '<div class="ReadInformation"><div class="readStatus-read">'+ str +'</div></div>'
+                for (let i = 0; i < self.chatMessageList.length; i++) {
+                    if (self.chatMessageList[i].messageId === parmas.messageId) {
+                        self.chatMessageList[i].readType = parmas.readType;
+                    }
+                }
             },
             // 处理收到单聊的信息
             handleSingleMessage: function (jsonObj) {
@@ -966,14 +1133,14 @@
                     image: jsonObj.params.fromUser.image,
                     fileType: jsonObj.params.fileType,
                 }
-                if (jsonObj.params.fileType == "1") {
+                if (jsonObj.params.fileType === "1") {
                     parmas.fileName = jsonObj.params.message.split("(")[0];
                 }
                 let fromUser = jsonObj.params.fromUser;
                 let toUser = jsonObj.params.toUser;
                 let exist = false;
                 for (let i = 0; i < self.currentChatingList.length; i++) {
-                    if (fromUser.userId == self.currentChatingList[i].userId) {
+                    if (fromUser.userId === self.currentChatingList[i].userId) {
                         self.currentChatingList[i].messageTip = parmas.message;
                         if (self.chatCurrentObject.userId != fromUser.userId) {
                             self.currentChatingList[i].unReadCount++;
@@ -996,18 +1163,18 @@
                     }
                     self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
                 }
-                if (self.messageContentMapping[fromUser.userId] == undefined) {
+                if (self.messageContentMapping[fromUser.userId] === undefined) {
                     self.messageContentMapping[fromUser.userId] = [];
                 }
                 self.messageContentMapping[fromUser.userId].push(parmas);
-                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId == fromUser.userId) {
+                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId === fromUser.userId) {
                     self.chatMessageList = self.messageContentMapping[self.chatCurrentObject.userId];
                 }
                 //self.chatMessageList = self.messageContentMapping[fromUser.userId];
                 //self.messageContentMapping[fromUser.userId] = request.copy(self.chatMessageList);
                 //发送回发送者已读
                 if(!(parmas.message === '连接成功' || parmas.message === '连接失败')){
-                    if (self.socket.readyState == WebSocket.OPEN) {
+                    if (self.socket.readyState === WebSocket.OPEN) {
                         let data = {
                             type: 19,
                             params: {
@@ -1036,8 +1203,10 @@
                     unReadCount: 0,
                     userId: jsonObj.groupId,
                     showName: jsonObj.nameList.toString(),
-                    image: 'group.jpg',
+                    // image: 'group.jpg',
+                    image: jsonObj.image,
                     groupId: jsonObj.groupId,
+                    groupCount: jsonObj.groupCount,
                     sortIndex: self.currentChatingList.length,
                     oldIndex: self.currentChatingList.length,
                     isTop: false,
@@ -1048,63 +1217,13 @@
                 self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
                 self.commonCode();
             },
-            // 接受群聊信息返回处理
-            handleGroupMessageResponse: function (jsonObj) {
-                let self = this;
-                let parmas = {
-                    message: jsonObj.params.message,
-                    type: 2,
-                    image: jsonObj.params.fromUser.image,
-                    fileType: jsonObj.params.fileType,
-                    showName: jsonObj.params.nameList.toString(),
-                }
-                if (jsonObj.params.fileType == "1") {
-                    parmas.fileName = jsonObj.params.message.split("(")[0];
-                }
-                let fromUser = jsonObj.params.fromUser;
-                let groupId = jsonObj.params.groupId;
-                let exist = false;
-                for (let i = 0; i < self.currentChatingList.length; i++) {
-                    if (groupId == self.currentChatingList[i].groupId) {
-                        self.currentChatingList[i].messageTip = parmas.message;
-                        if (self.chatCurrentObject.userId != groupId) {
-                            self.currentChatingList[i].unReadCount++;
-                        }
-                        exist = true;
-                    }
-                }
-                if (!exist) {
-                    //聊天列表不存在  就添加新记录   并且接收到一条消息那么未读提醒unReadCount开始就为0
-                    let createParams = {
-                        messageTip: parmas.message,
-                        unReadCount: 1,
-                        userId: groupId,
-                        showName: parmas.showName,
-                        image: 'group.jpg',
-                        groupId: groupId,
-                        sortIndex: self.currentChatingList.length,
-                        oldIndex: self.currentChatingList.length,
-                        isTop: false,
-                    };
-                    if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) != "{}") {
-                        self.chatCurrentIndex++;
-                    }
-                    self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
-                }
-                if (self.messageContentMapping[groupId] == undefined) {
-                    self.messageContentMapping[groupId] = [];
-                }
-                self.messageContentMapping[groupId].push(parmas);
-                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId == groupId) {
-                    self.chatMessageList = self.messageContentMapping[groupId];
-                }
-            },
             beforeunloadHandler() {
                 //关闭页面前执行
                 this.socket.onclose()
                 //关闭页面时回调下线标识 让用户下线 并缓存下线标识
-
-                alert(1)
+                axios.get('/login/downLine/'+this.cacheUserInfo.userId).then((response)=>{
+                    alert(response)
+                });
             },
             unloadHandler(e) {
                 //关闭后执行

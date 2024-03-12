@@ -19,12 +19,10 @@ public class SessionUtils {
 	/**
 	 * userID 映射 连接channel
 	 */
-	private static Map<String, Channel> userIdChannelMap = new ConcurrentHashMap<>();
+	private static final Map<String, Channel> userIdChannelMap = new ConcurrentHashMap<>();
 
-	/**
-	 * groupId ---> channelgroup 群聊ID和群聊ChannelGroup映射
-	 */
-	private static Map<String, ChannelGroup> groupIdChannelGroupMap = new ConcurrentHashMap<>();
+
+	private static final Map<String, ChannelGroup> groupIdChannelGroupMap = new ConcurrentHashMap<>();
 
 	public static void bindChannel(User user, Channel channel) {
 		userIdChannelMap.put(user.getUserId(), channel);

@@ -26,13 +26,6 @@ public class ReadRequestHandler extends SimpleChannelInboundHandler<ReadRequestP
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ReadRequestPacket readRequestPacket) throws Exception {
-        if (!(Boolean) A.a.redisService.get(ONLINE_SIGN + "_" + readRequestPacket.getToUserId())) {
-            //未登录 入库持久化
-            //异步更新数据库信息
-            //必须是对方接收回执在此发现发送方不在线才落表 存在拉数据时和发送数据时
-            A.a.loginService.asyncUpdateMessage(readRequestPacket);
-            return;
-        }
         Channel toUserChannel = SessionUtils.getChannel(readRequestPacket.getToUserId());
         if (toUserChannel != null && SessionUtils.hasLogin(toUserChannel)) {
             //本机发送
@@ -42,16 +35,16 @@ public class ReadRequestHandler extends SimpleChannelInboundHandler<ReadRequestP
             String json = getByteBufRes(readRequestPacket);
             String toUserId = readRequestPacket.getToUserId();
             String fromId = readRequestPacket.getFromUserid();
-            publishPo po = new publishPo(20,toUserId,fromId,"已读未读回执",null, json, readRequestPacket.getMessageId());
+            publishPo po = new publishPo(20,toUserId,fromId,"已读未读回执",null, json, readRequestPacket.getMessageId(), readRequestPacket.getReadType(), readRequestPacket.getFileType());
             //分布式发送
             A.a.redisService.publish("channel_read", po);
         }
+        //异步更新数据库
+        A.a.loginService.asyncUpdateMessage(readRequestPacket);
     }
 
 
     public String getByteBufRes(ReadRequestPacket readRequestPacket) {
-        User fromUser = A.a.loginService.queryUserById(readRequestPacket.getFromUserid());
-        User toUser = A.a.loginService.queryUserById(readRequestPacket.getToUserId());
         JSONObject data = new JSONObject();
         data.put("type", 20);
         data.put("status", 200);
@@ -59,8 +52,8 @@ public class ReadRequestHandler extends SimpleChannelInboundHandler<ReadRequestP
         params.put("messageId", readRequestPacket.getMessageId());
         params.put("readType", readRequestPacket.getReadType());
         params.put("fileType", readRequestPacket.getFileType());
-        params.put("fromUser", fromUser);
-        params.put("toUser",toUser);
+        params.put("fromUser", readRequestPacket.getFromUserid());
+        params.put("toUser",readRequestPacket.getToUserId());
         data.put("params", params);
         return data.toJSONString();
     }

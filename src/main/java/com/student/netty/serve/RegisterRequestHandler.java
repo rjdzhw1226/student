@@ -20,11 +20,6 @@ import java.nio.charset.Charset;
 import static com.student.Constant.RedisKey.CHANNEL_ID_KEY;
 import static com.student.Constant.RedisKey.ONLINE_SIGN;
 
-/**
- * 注册 绑定用户channel
- * 
- * date 2020-11-04
- */
 @Sharable
 @Slf4j
 public class RegisterRequestHandler extends SimpleChannelInboundHandler<RegisterRequestPacket>{

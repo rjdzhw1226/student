@@ -3,9 +3,11 @@ package com.student.controller;
 import com.student.Constant.RedisKey;
 import com.student.annotaion.Log;
 import com.student.config.SpringBeanUtils;
+import com.student.pojo.dto.messageDto;
 import com.student.pojo.user;
 import com.student.pojo.dto.userDto;
 import com.student.pojo.userLogin;
+import com.student.pojo.vo.MessageVo;
 import com.student.pojo.vo.User;
 import com.student.service.LoginService;
 import com.student.util.BaseContext;
@@ -30,9 +32,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -220,6 +220,11 @@ public class LoginController {
         loginService.downLine(userId);
     }
 
+
+    @RequestMapping("/messageMine")
+    public List<MessageVo> getMessageUn(@RequestBody messageDto message){
+        return loginService.queryMessage(message);
+    }
     @GetMapping("/shutdown")
     @Log(title="关闭模块",action="shutdown")
     public void shutdown() {

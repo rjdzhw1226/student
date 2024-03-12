@@ -2,11 +2,10 @@ package com.student.netty.protocol.command;
 
 public class GroupMessageRequestPacket extends Packet{
 
+	private String messageId;
 	private String toGroupId;
 	private String fromUserId;
-
 	private String message;
-
 	private String fileType;
 
 	public GroupMessageRequestPacket() {
@@ -18,6 +17,14 @@ public class GroupMessageRequestPacket extends Packet{
 		this.toGroupId = toGroupId;
 		this.fromUserId = fromUserId;
 		this.message = message;
+	}
+
+	public String getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 
 	public String getFromUserId() {

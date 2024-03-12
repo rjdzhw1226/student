@@ -18,11 +18,15 @@ public class A {
 	@Resource
 	public LoginService loginService;
 
+	@Resource
+	public RedissonClient redissonClient;
+
 
 	@PostConstruct
 	public void init() {
 		a = this;
 		a.redisService = this.redisService;
 		a.loginService = this.loginService;
+		a.redissonClient = this.redissonClient;
 	}
 }
