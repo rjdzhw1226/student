@@ -134,7 +134,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 				readRequestPacket.setSendTime(new Date(System.currentTimeMillis()));
 				packet = readRequestPacket;
 				break;
-				//群聊已读未读回执
+			//群聊已读未读回执
 			case 21:
 				ReadGroupRequestPacket readGroupRequestPacket = new ReadGroupRequestPacket();
 				readGroupRequestPacket.setMessageId(parmas.getString("messageId"));

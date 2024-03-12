@@ -3,6 +3,9 @@ package com.student.pojo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.netty.buffer.ByteBuf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class publishPo {
     private String messageId;
     private Integer type;
@@ -11,12 +14,18 @@ public class publishPo {
     private String message;
     private ByteBuf buf;
 
+    private List<String> userIds;
     private String groupId;
     private String readType;
     private String fileType;
     private String json;
 
     public publishPo() {
+    }
+
+    public publishPo(String json, List<String> userIds) {
+        this.json = json;
+        this.userIds = new ArrayList<>(userIds);
     }
 
     public publishPo(Integer type, String id, String fromId, String message, ByteBuf buf, String json, String messageId, String readType, String fileType) {
@@ -42,6 +51,14 @@ public class publishPo {
         this.readType = readType;
         this.fileType = fileType;
         this.groupId = groupId;
+    }
+
+    public List<String> getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(List<String> userIds) {
+        this.userIds = userIds;
     }
 
     public String getFileType() {
@@ -133,6 +150,7 @@ public class publishPo {
                 ", fromId='" + fromId + '\'' +
                 ", message='" + message + '\'' +
                 ", buf=" + buf +
+                ", userIds=" + userIds +
                 ", groupId='" + groupId + '\'' +
                 ", readType='" + readType + '\'' +
                 ", fileType='" + fileType + '\'' +

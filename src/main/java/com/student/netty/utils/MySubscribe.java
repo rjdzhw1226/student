@@ -101,6 +101,19 @@ public class MySubscribe implements MessageListener {
             if (toUserChannel != null){
                 toUserChannel.writeAndFlush(new TextWebSocketFrame(po.getJson()));
             }
+        //创建群
+        } else if (key.contains("channel_create")) {
+            log.info("创建群数据为：{}", str);
+            publishPo po = JSON.parseObject(str, publishPo.class);
+            for (String userId : po.getUserIds()) {
+                Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, userId);
+                Channel toUserChannel = SessionUtils.findChannelGroup((ChannelId) channelId);
+                if (toUserChannel != null){
+                    toUserChannel.writeAndFlush(new TextWebSocketFrame(po.getJson()));
+                } else {
+                    log.error("未在本机：{} toChannel 为空", serverPort);
+                }
+            }
         }
         log.info("订阅频道:" + new String(message.getChannel()));
         log.info("接收数据:" + new String(message.getBody()));

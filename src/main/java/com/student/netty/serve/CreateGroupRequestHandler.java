@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.student.netty.protocol.command.CreateGroupRequestPacket;
 import com.student.netty.utils.A;
 import com.student.netty.utils.SessionUtils;
+import com.student.pojo.publishPo;
 import com.student.pojo.vo.User;
 import com.student.util.BaseContext;
 import io.netty.buffer.ByteBuf;
@@ -41,16 +42,18 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 		String userName = SessionUtils.getUser(ctx.channel()).getUserName();
 
 		List<String> userIdList = createGroupRequestPacket.getUserIdList();
+		userIdList.add(String.valueOf(A.a.loginService.queryUser(userName).getId()));
 		log.info("userIdList: {}", userIdList);
 
 		List<String> nameList = A.a.loginService.addChat(userIdList, userName, groupId, createGroupRequestPacket.getChatType(), createGroupRequestPacket.getTitle());
-
-		ByteBuf byteBuf = getByteBuf(ctx, groupId, nameList, createGroupRequestPacket.getTitle());
-		ctx.writeAndFlush(new TextWebSocketFrame(byteBuf));
+		String json = getByteBuf(groupId, nameList, createGroupRequestPacket.getTitle());
+		publishPo po = new publishPo(json, userIdList);
+		//广播通知
+		A.a.redisService.publish("channel_create", po);
+		//ctx.writeAndFlush(new TextWebSocketFrame(byteBuf));
 	}
 
-	public ByteBuf getByteBuf(ChannelHandlerContext ctx, String groupId, List<String> nameList, String title) {
-		ByteBuf bytebuf = ctx.alloc().buffer();
+	public String getByteBuf(String groupId, List<String> nameList, String title) {
 		JSONObject data = new JSONObject();
 		data.put("type", 4);
 		data.put("status", 200);
@@ -58,8 +61,6 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 		data.put("nameList", nameList);
 		data.put("groupCount", nameList.size());
 		data.put("image", title + ".png");
-		byte []bytes = data.toJSONString().getBytes(Charset.forName("utf-8"));
-		bytebuf.writeBytes(bytes);
-		return bytebuf;
+		return data.toJSONString();
 	}
 }
