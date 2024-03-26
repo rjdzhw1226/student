@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 /**
  * netty服务端启动类
- * 
+ *
  * 2020-10-21
  */
 @Component
@@ -59,6 +59,7 @@ public class NettyServe implements InitializingBean {
 				ch.pipeline().addLast(CreateGroupRequestHandler.INSTANCE);
 				ch.pipeline().addLast(GroupMessageRequestHandler.INSTANCE);
 				ch.pipeline().addLast(ReadRequestHandler.INSTANCE);
+				ch.pipeline().addLast(ReadGroupRequestHandler.INSTANCE);
 				ch.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);
 				ch.pipeline().addLast(ExceptionHandler.INSTANCE);
 			}

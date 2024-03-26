@@ -16,6 +16,7 @@ import com.student.pojo.userLogin;
 import com.student.pojo.vo.MessageVo;
 import com.student.pojo.vo.User;
 import com.student.util.Mail;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,7 @@ import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.student.Constant.RedisKey.*;
@@ -218,7 +217,7 @@ public class LoginService {
         mapper.updateMessage(read.getMessageId(), read.getReadType());
     }
 
-    public List<String> addChat(List<String> userIdList, String userName, String groupId, String chatType, String title) {
+    public Map<String, List<String>> addChat(List<String> userIdList, String userName, String groupId, String chatType, String title) {
         List<String> userIds = new ArrayList<>(userIdList);
         List<String> nameList = queryUserByIds(userIdList);
         nameList.add(userName);
@@ -230,7 +229,10 @@ public class LoginService {
             List<String> list = generateHeadPic(groupId, nameList);
             picUtil.getCombinationOfhead(list, this.getClass().getClassLoader().getResource("/") + "\\backend\\assets\\", title);
         }
-        return nameList;
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("name", nameList);
+        map.put("id", userIds);
+        return map;
     }
 
     private List<String> generateHeadPic(String groupId, List<String> nameList) {
@@ -274,6 +276,9 @@ public class LoginService {
     @Resource
     private RedissonClient redissonClient;
 
+    @Resource
+    private RDelayedQueue<String> rDelayedQueue;
+
     //查单聊 查群聊
     public List<MessageVo> queryMessage(messageDto message) {
         List<MessageVo> list = null;
@@ -281,7 +286,7 @@ public class LoginService {
         //获取锁 接收人 也就是发送时的
         RLock lock = redissonClient.getLock(LOCK_KEY + message.getUserId());
         try{
-            lock.lock();
+            lock.lock(5, TimeUnit.SECONDS);
             if(obj != null){
                 Date start = new Date((Long)obj);
                 message.setStart(start);
@@ -315,5 +320,14 @@ public class LoginService {
 
     public ReadResult selectGroupMessage(ReadGroupRequestPacket readGroup) {
         return mapper.selectCountGroup(readGroup.getGroupId(), readGroup.getMessageId(), readGroup.getToUserId(), readGroup.getFromUserId());
+    }
+
+    @Async("taskExecutor")
+    public void asyncAllTask(String json, long sec) {
+        if(sec == 0){
+            rDelayedQueue.offer(json);
+        } else {
+            rDelayedQueue.offer(json, sec, TimeUnit.SECONDS);
+        }
     }
 }

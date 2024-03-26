@@ -935,9 +935,9 @@
                 }
                 if (window.WebSocket) {
                     if (self.nettyPort === '9999') {
-                        socket = new WebSocket("ws://localhost:9999");
+                        socket = new WebSocket("ws://localhost:9999/socket.io");
                     } else if (self.nettyPort === '9998') {
-                        socket = new WebSocket("ws://localhost:9998");
+                        socket = new WebSocket("ws://localhost:9998/socket.io");
                     }
                     socket.onmessage = function (event) {
                         let json = JSON.parse(event.data);
@@ -950,6 +950,7 @@
                                     self.handleCreateChatResponse(json);
                                     break;
                                 case 10: //群聊消息接受 其实 也是适配单聊
+                                    console.log(json)
                                     self.handleGroupMessageResponse(json);
                                     break;
                                 case 12:
@@ -1070,7 +1071,7 @@
                         oldIndex: self.currentChatingList.length,
                         isTop: false,
                     };
-                    if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) != "{}") {
+                    if (self.currentChatingList.length > 0 && JSON.stringify(self.chatCurrentObject) !== "{}") {
                         self.chatCurrentIndex++;
                     }
                     self.currentChatingList.unshift(JSON.parse(JSON.stringify(createParams)));
@@ -1079,7 +1080,7 @@
                     self.messageContentMapping[groupId] = [];
                 }
                 self.messageContentMapping[groupId].push(parmas);
-                if (JSON.stringify(self.chatCurrentObject) != "{}" && self.chatCurrentObject.userId === groupId) {
+                if (JSON.stringify(self.chatCurrentObject) !== "{}" && self.chatCurrentObject.userId === groupId) {
                     self.chatMessageList = self.messageContentMapping[groupId];
                 }
                 if(self.socket.readyState === WebSocket.OPEN){
@@ -1203,8 +1204,8 @@
                     unReadCount: 0,
                     userId: jsonObj.groupId,
                     showName: jsonObj.nameList.toString(),
-                    // image: 'group.jpg',
-                    image: jsonObj.image,
+                    image: 'group.jpg',
+                    //image: jsonObj.image,
                     groupId: jsonObj.groupId,
                     groupCount: jsonObj.groupCount,
                     sortIndex: self.currentChatingList.length,

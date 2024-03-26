@@ -50,7 +50,8 @@ public interface LoginMapper {
     @Insert("insert into group_a (group_id,chat_name,chat_type,status,size_m,create_by) values (#{groupId},#{title},#{type},'1',#{size}, #{userName})")
     public void saveGroup(String groupId, String userName, int size, String type, String title);
 
-    @Select("select * from message where send_time between #{start} and #{end} and to_id = #{userId} or to_group_id in (select group_id from group_m where user_id = #{userId}) order by send_time")
+    @Select("select * from message where send_time between #{start} and #{end} and to_id = #{userId} or to_group_id in " +
+            "(select group_id from group_m where user_id = #{userId}) order by send_time")
     public List<MessageVo> queryMessage(messageDto message);
     @Select("select * from message where send_time < #{end} and to_id = #{userId} or to_group_id in (select group_id from group_m where user_id = #{userId}) order by send_time")
     public List<MessageVo> queryMessageEndTime(messageDto message);

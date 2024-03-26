@@ -25,7 +25,7 @@ public class LoginTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        log.info("VerificationCodeFilter  doFilterInternal --- 执行");
+//        log.info("VerificationCodeFilter  doFilterInternal --- 执行");
         String uri = request.getRequestURI();
         if( !"/login".equals(uri)){
             //过滤器正常执行，不参与验证码操作

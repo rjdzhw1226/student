@@ -60,11 +60,25 @@ public class MySubscribe implements MessageListener {
             List<String> userIds = null;
             publishPo po = JSON.parseObject(str, publishPo.class);
             log.info("群聊：{}传输数据为：{}",po.getType(), str);
-            userIds = cacheGroupMap.get(po.getId());
-            if ((userIds) == null) {
-                userIds = A.a.loginService.findGroup(po.getId());
-            }
+            userIds = po.getUserIds();
             userIds.remove(po.getFromId());
+            //已读未读消息落库
+            A.a.loginService.saveReadMessage(po, userIds);
+            for (String userId : userIds) {
+                Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, userId);
+                Channel toUserChannel = SessionUtils.findChannelGroup((ChannelId) channelId);
+                while (true){
+                    if (!A.a.redissonClient.getLock(LOCK_KEY + userId).isLocked()) {
+                        if(toUserChannel != null){
+                            log.info(" toChannel 有值");
+                            toUserChannel.writeAndFlush(new TextWebSocketFrame(po.getJson()));
+                        } else {
+                            log.error("未在本机：{} toChannel 为空", serverPort);
+                        }
+                        break;
+                    }
+                }
+            }
             //消息落库
             A.a.loginService.saveMessage(MessageVo.builder()
                     .messageId(po.getMessageId())
@@ -75,23 +89,6 @@ public class MySubscribe implements MessageListener {
                     .fromUserId(po.getFromId())
                     .toGroupId(po.getId()).build()
             );
-            for (String userId : userIds) {
-                Object channelId = A.a.redisService.nGetBinary(CHANNEL_ID_KEY, userId);
-                Channel toUserChannel = SessionUtils.findChannelGroup((ChannelId) channelId);
-                while (true){
-                    if (!A.a.redissonClient.getLock(LOCK_KEY + userId).isLocked()) {
-                        if(toUserChannel != null){
-                            log.info(" toChannel 有值");
-                            toUserChannel.writeAndFlush(po.getJson());
-                        } else {
-                            log.error("未在本机：{} toChannel 为空", serverPort);
-                        }
-                        break;
-                    }
-                }
-            }
-            //已读未读消息落库
-            A.a.loginService.saveReadMessage(po, userIds);
         //已读未读
         } else if (key.contains("channel_read")) {
             log.info("已读未读数据为：{}", str);

@@ -26,14 +26,14 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 	protected void channelRead0(ChannelHandlerContext ctx, GroupMessageRequestPacket groupMessageRequestPacket) throws Exception {
 		//分布式发送 还待完善 没写完 群聊在多节点发送时加锁
 		String groupId = groupMessageRequestPacket.getToGroupId();
-		String json = getByteBufRes(groupMessageRequestPacket);
-		publishPo po = new publishPo(9, groupId, groupMessageRequestPacket.getFromUserId(),groupMessageRequestPacket.getMessage(),null, json, groupMessageRequestPacket.getMessageId(),"0", "0");
+		List<String> nameList = A.a.loginService.findGroup(groupId);
+		String json = getByteBufRes(groupMessageRequestPacket, nameList);
+		publishPo po = new publishPo(9, groupId, groupMessageRequestPacket.getFromUserId(),groupMessageRequestPacket.getMessage(),null, json, groupMessageRequestPacket.getMessageId(),"0", "0", nameList);
 		A.a.redisService.publish("channel_group", po);
 	}
 
-	public String getByteBufRes(GroupMessageRequestPacket groupMessageRequestPacket) {
+	public String getByteBufRes(GroupMessageRequestPacket groupMessageRequestPacket, List<String> nameList) {
 		User fromUser = A.a.loginService.queryUserById(groupMessageRequestPacket.getFromUserId());
-		List<String> nameList = A.a.loginService.findGroup(groupMessageRequestPacket.getToGroupId());
 		JSONObject data = new JSONObject();
 		data.put("type", 10);
 		data.put("status", 200);

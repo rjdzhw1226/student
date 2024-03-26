@@ -40,6 +40,19 @@ public class publishPo {
         this.fileType = fileType;
     }
 
+    public publishPo(Integer type, String id, String fromId, String message, ByteBuf buf, String json, String messageId, String readType, String fileType, List<String> userIds) {
+        this.type = type;
+        this.id = id;
+        this.fromId = fromId;
+        this.message = message;
+        this.buf = buf;
+        this.json = json;
+        this.messageId = messageId;
+        this.readType = readType;
+        this.fileType = fileType;
+        this.userIds = new ArrayList<>(userIds);
+    }
+
     public publishPo(Integer type, String id, String fromId, String message, ByteBuf buf, String json, String messageId, String readType, String fileType, String groupId) {
         this.type = type;
         this.id = id;

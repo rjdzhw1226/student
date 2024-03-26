@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 /**
  * 创建群号ChannelHandler组件
@@ -41,13 +42,12 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
 		String groupId = UUID.randomUUID().toString().replace("-","");
 		String userName = SessionUtils.getUser(ctx.channel()).getUserName();
 
-		List<String> userIdList = createGroupRequestPacket.getUserIdList();
-		userIdList.add(String.valueOf(A.a.loginService.queryUser(userName).getId()));
+		List<String> userIdList = new ArrayList<>(createGroupRequestPacket.getUserIdList());
 		log.info("userIdList: {}", userIdList);
 
-		List<String> nameList = A.a.loginService.addChat(userIdList, userName, groupId, createGroupRequestPacket.getChatType(), createGroupRequestPacket.getTitle());
-		String json = getByteBuf(groupId, nameList, createGroupRequestPacket.getTitle());
-		publishPo po = new publishPo(json, userIdList);
+		Map<String, List<String>> nameList = A.a.loginService.addChat(userIdList, userName, groupId, createGroupRequestPacket.getChatType(), createGroupRequestPacket.getTitle());
+		String json = getByteBuf(groupId, nameList.get("name"), createGroupRequestPacket.getTitle());
+		publishPo po = new publishPo(json, nameList.get("id"));
 		//广播通知
 		A.a.redisService.publish("channel_create", po);
 		//ctx.writeAndFlush(new TextWebSocketFrame(byteBuf));

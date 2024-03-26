@@ -12,7 +12,7 @@ import com.student.pojo.vo.subjectVo;
 import com.student.service.ExcelService;
 import com.student.service.SubjectService;
 import com.student.util.BaseContext;
-import com.student.util.rabbitMQ.MQSender;
+//import com.student.util.rabbitMQ.MQSender;
 import com.student.util.redis.LockRedis;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -70,8 +70,8 @@ public class SubjectServiceImpl implements SubjectService {
     @Autowired
     private ExcelService excelService;
 
-    @Autowired
-    private MQSender mqSender;
+//    @Autowired
+//    private MQSender mqSender;
 
     private HashMap<String, Boolean> localOverMap = new HashMap<String, Boolean>();
 
@@ -203,7 +203,7 @@ public class SubjectServiceImpl implements SubjectService {
             stringRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_COUNT_KEY + subId,String.valueOf(integer - 1));
             mapRedisTemplate.opsForValue().set(RedisKey.CACHE_SUB_CHOOSE_KEY + userName + subId, "1");
             // 将用户信息和subId 传入队列存储 后续做数据库增减
-            mqSender.send(subId,userName);
+//            mqSender.send(subId,userName);
             //}
         }catch(Exception e){
             e.printStackTrace();
