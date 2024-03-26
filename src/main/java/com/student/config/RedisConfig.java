@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.student.netty.utils.MySubscribe;
 import com.student.util.redis.FastJsonJsonRedisSerializer;
 import org.redisson.Redisson;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -107,6 +109,17 @@ public class RedisConfig extends CachingConfigurerSupport {
 
 
     }
+
+    @Bean
+	public RBlockingQueue<String> blockingQueue(RedissonClient redissonClient) {
+		return redissonClient.getBlockingQueue("NETTY_TASK");
+	}
+
+	@Bean
+	public RDelayedQueue<String> delayedQueue(RBlockingQueue<String> blockingQueue,
+                                              RedissonClient redissonClient) {
+		return redissonClient.getDelayedQueue(blockingQueue);
+	}
 
 
 }
